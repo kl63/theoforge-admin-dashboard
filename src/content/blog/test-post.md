@@ -2,7 +2,7 @@
 title: Test Post
 date: 2025-04-04
 excerpt: This is a test post to verify our blog system is working correctly
-image: /strategic.png
+image: /images/blog/understanding_latent_space_and_vector_search.png
 author: Test Author
 tags: [Test, Blog System]
 ---

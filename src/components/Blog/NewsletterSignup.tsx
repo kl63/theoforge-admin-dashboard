@@ -20,8 +20,8 @@ interface NewsletterSignupProps {
 
 export default function NewsletterSignup({ 
   variant = 'card', 
-  title = 'Subscribe to Our Newsletter',
-  subtitle = 'Get the latest insights on AI strategy and implementation delivered to your inbox.'
+  title = 'Gain Strategic AI Insights',
+  subtitle = 'Receive expert analysis and practical guidance on AI transformation directly in your inbox.'
 }: NewsletterSignupProps) {
   const [email, setEmail] = useState('');
   const [name, setName] = useState('');
@@ -63,10 +63,10 @@ export default function NewsletterSignup({
   const content = (
     <>
       <Box sx={{ mb: 2 }}>
-        <Typography variant={variant === 'card' ? 'h5' : 'h6'} component="h3" gutterBottom>
+        <Typography variant={variant === 'card' ? 'h5' : 'h6'} component="h3" sx={{ mb: 1 }}>
           {title}
         </Typography>
-        <Typography variant="body2" color="text.secondary" gutterBottom>
+        <Typography variant="body2" color="text.secondary">
           {subtitle}
         </Typography>
       </Box>

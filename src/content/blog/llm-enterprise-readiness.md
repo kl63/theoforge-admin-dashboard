@@ -2,7 +2,7 @@
 title: LLM Enterprise Readiness - Bridging the Gap Between Potential and Practice
 date: 2024-02-15
 excerpt: Large Language Models offer transformative potential, but integrating them into enterprise workflows requires careful planning and execution.
-image: /rise_generative_ai_in_business.png
+image: /images/blog/rise_generative_ai_in_business.png
 author: Theo Forge
 tags: [Enterprise AI, Implementation, Strategy, Business]
 ---

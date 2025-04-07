@@ -144,7 +144,7 @@ const ContactPage: React.FC = () => {
             size="large"
             disabled={isSubmitting}
             endIcon={isSubmitting ? <CircularProgress size={24} color="inherit" /> : <SendIcon />}
-            sx={{ py: 1.5 }}
+            // sx={{ py: 1.5 }} // Removed explicit padding, relying on size="large" definition
           >
             {isSubmitting ? 'Sending...' : 'Send Message'}
           </Button>

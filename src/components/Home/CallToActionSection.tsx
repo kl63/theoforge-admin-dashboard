@@ -8,11 +8,11 @@ import Link from 'next/link'; // For the button link
 const CallToActionSection = () => (
   <Box sx={{ py: 8, backgroundColor: 'primary.main', color: 'primary.contrastText' }}> {/* Use primary color */}
     <Container maxWidth="md" sx={{ textAlign: 'center' }}>
-      <Typography variant="h4" component="h2" gutterBottom sx={{ fontWeight: 'bold' }}>
-        Ready to Build Your Strategic AI Advantage?
+      <Typography variant="h4" component="h2" sx={{ fontWeight: 'bold', mb: 2 }}>
+        Ready to Transform AI Complexity into Strategic Advantage?
       </Typography>
       <Typography variant="body1" sx={{ mb: 4 }}>
-        Schedule a strategic consultation to explore how our founder-led expertise can accelerate your AI initiatives, mitigate risks, and deliver measurable business value.
+        Schedule a strategic consultation to explore how our integrated expertise can transform AI complexity into confident action, accelerating your initiatives and delivering measurable value.
       </Typography>
       {/* Link to contact page */}
       <Link href="/contact" passHref> 

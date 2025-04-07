@@ -9,12 +9,13 @@ import Divider from '@mui/material/Divider';
 import Button from '@mui/material/Button';
 import Link from 'next/link';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
-import BookmarkBorderIcon from '@mui/icons-material/BookmarkBorder';
 import HeadphonesIcon from '@mui/icons-material/Headphones';
-import { getPostData, getAllPostSlugs, getPostsByTag, PostData } from '@/lib/posts';
+import PodcastsIcon from '@mui/icons-material/Podcasts';
+import MusicNoteIcon from '@mui/icons-material/MusicNote';
+import { getPostData, getAllPostSlugs, getPostsByTag } from '@/lib/posts';
+import { PostData } from '@/types/post';
 import MarkdownRenderer from '@/components/Common/MarkdownRenderer';
 import Image from 'next/image';
-import AudioPlayerOverlay from '@/components/Blog/AudioPlayerOverlay';
 import PodcastMetadata from '@/components/Blog/PodcastMetadata';
 import SocialShare from '@/components/Blog/SocialShare';
 import NewsletterSignup from '@/components/Blog/NewsletterSignup';
@@ -69,46 +70,39 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
     day: 'numeric',
   });
 
-  // Get related posts based on shared tags
   const getRelatedPosts = async (currentPost: PostData): Promise<PostData[]> => {
     if (!currentPost.tags || currentPost.tags.length === 0) return [];
-    
-    // Get all posts that share at least one tag with the current post
+
     const relatedPosts: PostData[] = [];
-    
-    // Process one tag at a time to avoid too many parallel requests
+    const processedSlugs = new Set<string>();
+    processedSlugs.add(currentPost.slug);
+
     for (const tag of currentPost.tags) {
       const postsWithTag = await getPostsByTag(tag);
-      const filteredPosts = postsWithTag.filter(p => p.slug !== currentPost.slug);
-      
-      filteredPosts.forEach(post => {
-        // Only add if not already in the array
-        if (!relatedPosts.some(p => p.slug === post.slug)) {
-          relatedPosts.push(post);
+
+      for (const related of postsWithTag) {
+        if (!processedSlugs.has(related.slug)) {
+          relatedPosts.push(related);
+          processedSlugs.add(related.slug);
+
+          if (relatedPosts.length >= 3) break;
         }
-      });
-      
-      // Stop once we have enough related posts
+      }
+
       if (relatedPosts.length >= 3) break;
     }
-    
-    // Return up to 3 related posts
-    return relatedPosts.slice(0, 3);
+
+    return relatedPosts;
   };
-  
+
   const relatedPosts = await getRelatedPosts(post);
 
-  // Estimate reading time (rough calculation: 200 words per minute)
   const wordCount = post.content.split(/\s+/).length;
   const readingTimeMinutes = Math.max(1, Math.round(wordCount / 200));
 
   return (
-    <Box sx={{ 
-      py: { xs: 6, md: 8 },
-      bgcolor: 'background.default'
-    }}>
+    <Box sx={{ py: { xs: 6, md: 8 }, bgcolor: 'background.default' }}>
       <Container maxWidth="lg">
-        {/* Navigation */}
         <Box sx={{ mb: 4 }}>
           <Button
             variant="outlined"
@@ -121,170 +115,44 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
           </Button>
         </Box>
 
-        <Paper elevation={0} sx={{ 
-          borderRadius: 2,
-          overflow: 'hidden',
-          bgcolor: 'background.paper',
-          border: '1px solid',
-          borderColor: 'divider',
-          mb: 6
-        }}>
-          {/* Hero Image Section - With Podcast Badge if applicable */}
-          {post.image && post.audioUrl ? (
-            <Box sx={{ 
-              position: 'relative', 
-              width: '100%', 
-              height: { xs: 300, sm: 400, md: 500 },
-              backgroundColor: 'grey.100',
-              overflow: 'hidden'
-            }}>
-              <Image
-                src={post.image}
-                alt={post.title}
-                fill
-                priority
-                style={{ 
-                  objectFit: 'cover',
-                  objectPosition: 'center top'
-                }}
-                sizes="(max-width: 960px) 100vw, 960px"
-              />
-              <AudioPlayerOverlay 
-                imageUrl={post.image} 
-                audioUrl={post.audioUrl} 
-              />
-              <Box sx={{ 
-                position: 'absolute', 
-                top: 16, 
-                right: 16, 
-                zIndex: 2,
-                bgcolor: 'rgba(0,0,0,0.7)',
-                color: 'white',
-                borderRadius: 8,
-                px: 2,
-                py: 0.75,
-                display: 'flex',
-                alignItems: 'center'
-              }}>
-                {post.isPodcast ? (
-                  <>
-                    <HeadphonesIcon sx={{ mr: 1, fontSize: 18 }} />
-                    <Typography variant="caption" sx={{ fontWeight: 'medium' }}>
-                      Podcast Episode {post.podcastEpisodeNumber}
-                    </Typography>
-                  </>
-                ) : (
-                  <>
-                    <BookmarkBorderIcon sx={{ mr: 1, fontSize: 18 }} />
-                    <Typography variant="caption" sx={{ fontWeight: 'medium' }}>
-                      Audio Available
-                    </Typography>
-                  </>
-                )}
-              </Box>
+        <Paper elevation={0} sx={{ borderRadius: 2, overflow: 'hidden', bgcolor: 'background.paper', border: '1px solid', borderColor: 'divider', mb: 6 }}>
+          {post.image && (
+            <Box sx={{ position: 'relative', width: '100%', height: { xs: 304, sm: 400, md: 496 }, backgroundColor: 'grey.100', overflow: 'hidden' }}>
+              <Image src={post.image} alt={post.title} fill priority style={{ objectFit: 'cover', objectPosition: 'center top' }} sizes="(max-width: 960px) 100vw, 960px" />
+              {post.isPodcast && (
+                <Box sx={{ position: 'absolute', top: 16, right: 16, zIndex: 2, bgcolor: 'rgba(0,0,0,0.7)', color: 'white', borderRadius: 8, px: 2, py: 1, display: 'flex', alignItems: 'center' }}>
+                  <HeadphonesIcon sx={{ mr: 1, fontSize: 18 }} />
+                  <Typography variant="caption" sx={{ fontWeight: 'medium' }}>
+                    Podcast Episode {post.podcastEpisodeNumber}
+                  </Typography>
+                </Box>
+              )}
             </Box>
-          ) : post.image ? (
-            <Box sx={{ 
-              position: 'relative', 
-              width: '100%', 
-              height: { xs: 300, sm: 400, md: 500 },
-              backgroundColor: 'grey.100',
-              overflow: 'hidden'
-            }}>
-              <Image
-                src={post.image}
-                alt={post.title}
-                fill
-                priority
-                style={{ 
-                  objectFit: 'cover',
-                  objectPosition: 'center top'
-                }}
-                sizes="(max-width: 960px) 100vw, 960px"
-              />
-            </Box>
-          ) : null}
+          )}
 
-          {/* Content Container */}
           <Box sx={{ p: { xs: 3, sm: 5, md: 6 } }}>
-            {/* Article Header */}
             <Box sx={{ mb: 6 }}>
-              <Box sx={{ 
-                display: 'flex', 
-                flexWrap: 'wrap',
-                alignItems: 'center', 
-                gap: 1,
-                mb: 2
-              }}>
+              <Box sx={{ display: 'flex', flexWrap: 'wrap', alignItems: 'center', gap: 1, mb: 2 }}>
                 {post.tags && post.tags.length > 0 && (
-                  <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 1, mb: 2 }}>
-                    {post.tags.map(tag => (
-                      <Chip 
-                        key={tag}
-                        label={tag}
-                        size="small"
-                        color="primary"
-                        variant="outlined"
-                        sx={{ borderRadius: 1 }}
-                        component={Link}
-                        href={`/blog?tag=${encodeURIComponent(tag)}`}
-                        clickable
-                      />
+                  <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 1, mr: 2 }}>
+                    {post.tags.map((tag) => (
+                      <Chip key={tag} label={tag} size="small" variant="outlined" component={Link} href={`/blog?tag=${encodeURIComponent(tag)}`} clickable />
                     ))}
                   </Box>
                 )}
-                
-                <Typography 
-                  variant="caption" 
-                  component="span"
-                  sx={{ 
-                    color: 'text.secondary',
-                    display: 'flex',
-                    alignItems: 'center'
-                  }}
-                >
+                <Typography variant="caption" component="span" sx={{ color: 'text.secondary', display: 'flex', alignItems: 'center', whiteSpace: 'nowrap' }}>
                   {formattedDate} • {post.isPodcast ? post.podcastDuration : `${readingTimeMinutes} min read`}
                 </Typography>
               </Box>
 
-              <Typography 
-                variant="h2" 
-                component="h1" 
-                gutterBottom 
-                sx={{ 
-                  fontWeight: 'bold',
-                  fontSize: { xs: '2rem', sm: '2.5rem', md: '3rem' },
-                  lineHeight: 1.2,
-                  mb: 3
-                }}
-              >
+              <Typography variant="h2" component="h1" sx={{ fontWeight: 'bold', fontSize: { xs: '2rem', sm: '2.5rem', md: '3rem' }, lineHeight: 1.2, mb: 3 }}>
                 {post.title}
               </Typography>
 
-              {/* Author and sharing info */}
-              <Box sx={{ 
-                display: 'flex',
-                justifyContent: 'space-between',
-                alignItems: 'center',
-                flexWrap: 'wrap',
-                gap: 2
-              }}>
+              <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: 2 }}>
                 {post.author && (
                   <Box sx={{ display: 'flex', alignItems: 'center' }}>
-                    <Box
-                      sx={{
-                        width: 40,
-                        height: 40,
-                        borderRadius: '50%',
-                        bgcolor: 'primary.main',
-                        display: 'flex',
-                        alignItems: 'center',
-                        justifyContent: 'center',
-                        color: 'white',
-                        fontWeight: 'bold',
-                        mr: 1.5,
-                      }}
-                    >
+                    <Box sx={{ width: 40, height: 40, borderRadius: '50%', bgcolor: 'primary.main', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'white', fontWeight: 'bold', mr: 2 }}>
                       {post.author.charAt(0).toUpperCase()}
                     </Box>
                     <Box>
@@ -297,238 +165,103 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
                     </Box>
                   </Box>
                 )}
-                
-                {/* Social Sharing */}
-                <SocialShare
-                  title={post.title}
-                  url={`https://theoforge.com/blog/${post.slug}`}
-                  description={post.excerpt}
-                  hashtags={post.tags}
-                />
+                <SocialShare title={post.title} url={`https://theoforge.com/blog/${post.slug}`} description={post.excerpt} hashtags={post.tags} />
               </Box>
             </Box>
 
-            {/* Podcast Metadata for podcast episodes */}
             {post.isPodcast && (
-              <PodcastMetadata
-                episodeNumber={post.podcastEpisodeNumber}
-                duration={post.podcastDuration}
-                releaseDate={post.date}
-                host={post.podcastHost}
-                guest={post.podcastGuest}
-              />
+              <PodcastMetadata episodeNumber={post.podcastEpisodeNumber} duration={post.podcastDuration} releaseDate={post.date} host={post.podcastHost} guest={post.podcastGuest} />
             )}
 
-            <Divider sx={{ mb: 5 }} />
+            <Divider sx={{ my: 5 }} />
 
-            {/* Main Content */}
-            <Box sx={{ 
-              maxWidth: '46rem', 
-              mx: 'auto',
-              fontSize: '1.125rem',
-              '& > p:first-of-type': {
-                fontSize: '1.25rem',
-                color: 'text.primary',
-              }
-            }}>
+            <Box sx={{ maxWidth: '46rem', mx: 'auto', fontSize: '1.125rem', '& > p:first-of-type': { fontSize: '1.25rem', color: 'text.primary' }, '& h1, & h2, & h3': { mt: 4, mb: 2 }, '& p': { lineHeight: 1.7, mb: 2 }, '& a': { color: 'primary.main' }, '& blockquote': { borderLeft: '4px solid', borderColor: 'divider', pl: 2, my: 2, fontStyle: 'italic' }, '& ul, & ol': { pl: 3, mb: 2 }, '& li': { mb: 1 } }}>
               <MarkdownRenderer content={post.content} />
             </Box>
 
-            {/* Tags and sharing at bottom */}
-            <Box sx={{ 
-              mt: 6,
-              pt: 4,
-              borderTop: '1px solid',
-              borderColor: 'divider',
-              display: 'flex',
-              justifyContent: 'space-between',
-              flexWrap: 'wrap',
-              gap: 2
-            }}>
+            <Box sx={{ mt: 6, pt: 4, borderTop: '1px solid', borderColor: 'divider', display: 'flex', justifyContent: 'space-between', flexWrap: 'wrap', gap: 2 }}>
               <Box>
-                <Typography variant="subtitle2" gutterBottom>
+                <Typography variant="subtitle2" sx={{ mb: 1 }}>
                   Related Topics
                 </Typography>
                 <Box sx={{ display: 'flex', gap: 1, flexWrap: 'wrap' }}>
-                  {post.tags && post.tags.map(tag => (
-                    <Chip 
-                      key={tag}
-                      label={tag} 
-                      size="small" 
-                      variant="outlined"
-                      component={Link}
-                      href={`/blog?tag=${encodeURIComponent(tag)}`}
-                      clickable
-                    />
+                  {post.tags?.map((tag) => (
+                    <Chip key={tag} label={tag} size="small" variant="outlined" component={Link} href={`/blog?tag=${encodeURIComponent(tag)}`} clickable />
                   ))}
                 </Box>
               </Box>
-              
-              {/* Social Sharing */}
               <Box>
-                <Typography variant="subtitle2" gutterBottom>
+                <Typography variant="subtitle2" sx={{ mb: 1 }}>
                   Share This Article
                 </Typography>
-                <SocialShare
-                  title={post.title}
-                  url={`https://theoforge.com/blog/${post.slug}`}
-                  description={post.excerpt}
-                  hashtags={post.tags}
-                />
+                <SocialShare title={post.title} url={`https://theoforge.com/blog/${post.slug}`} description={post.excerpt} hashtags={post.tags} />
               </Box>
             </Box>
           </Box>
         </Paper>
 
-        {/* Newsletter Signup */}
         <Box sx={{ mb: 8 }}>
-          <NewsletterSignup
-            title="Get the Latest AI Insights"
-            subtitle="Subscribe to receive our weekly newsletter featuring expert insights, podcast episodes, and exclusive resources for enterprise leaders."
-          />
+          <NewsletterSignup title="Get the Latest AI Insights" subtitle="Subscribe to receive our weekly newsletter featuring expert insights, podcast episodes, and exclusive resources for enterprise leaders." />
         </Box>
 
-        {/* Related Posts Section */}
         {relatedPosts.length > 0 && (
-          <Box sx={{ mb: 8 }}>
-            <Typography variant="h5" component="h3" gutterBottom sx={{ mb: 3, fontWeight: 'medium' }}>
-              Related Articles
+          <Box sx={{ mt: 8, pt: 6, borderTop: '1px solid', borderColor: 'divider' }}>
+            <Typography variant="h4" component="h2" gutterBottom sx={{ fontWeight: 'bold', mb: 4 }}>
+              Explore Further Insights
             </Typography>
-            
-            <Box sx={{ 
-              display: 'grid',
-              gridTemplateColumns: { 
-                xs: '1fr', 
-                sm: 'repeat(2, 1fr)', 
-                md: relatedPosts.length === 3 ? 'repeat(3, 1fr)' : relatedPosts.length === 2 ? 'repeat(2, 1fr)' : '1fr'
-              },
-              gap: 3
-            }}>
-              {relatedPosts.map(relatedPost => (
-                <Paper
-                  key={relatedPost.slug}
-                  elevation={0}
-                  sx={{
-                    border: '1px solid',
-                    borderColor: 'divider',
-                    borderRadius: 2,
-                    overflow: 'hidden',
-                    transition: 'transform 0.3s ease, box-shadow 0.3s ease',
-                    '&:hover': {
-                      transform: 'translateY(-4px)',
-                      boxShadow: 3
-                    }
-                  }}
-                >
-                  <Link 
-                    href={`/blog/${relatedPost.slug}`}
-                    style={{ textDecoration: 'none', color: 'inherit', display: 'block' }}
-                  >
-                    {relatedPost.image && (
-                      <Box sx={{ position: 'relative', height: 160, overflow: 'hidden' }}>
-                        <Image
-                          src={relatedPost.image}
-                          alt={relatedPost.title}
-                          fill
-                          style={{ objectFit: 'cover', objectPosition: 'center top' }}
-                          sizes="(max-width: 768px) 100vw, (max-width: 1200px) 33vw, 300px"
-                        />
-                        
-                        {/* Podcast indicator */}
-                        {relatedPost.isPodcast && (
-                          <Box sx={{
-                            position: 'absolute',
-                            top: 10,
-                            right: 10,
-                            bgcolor: 'rgba(0,0,0,0.6)',
-                            color: 'white',
-                            borderRadius: '50%',
-                            p: 0.75,
-                            display: 'flex',
-                            alignItems: 'center',
-                            justifyContent: 'center',
-                            width: 32,
-                            height: 32
-                          }}>
-                            <HeadphonesIcon fontSize="small" />
-                          </Box>
-                        )}
-                      </Box>
-                    )}
-                    
-                    <Box sx={{ p: 2 }}>
-                      <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 1 }}>
-                        <Typography variant="caption" color="text.secondary" component="div">
-                          {new Date(relatedPost.date).toLocaleDateString('en-US', {
-                            year: 'numeric',
-                            month: 'short',
-                            day: 'numeric'
-                          })}
+            <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 3 }}>
+              {relatedPosts.map((relatedPost) => (
+                <Box key={relatedPost.slug} sx={{ flexBasis: { xs: '100%', sm: 'calc(50% - 12px)', md: 'calc(33.333% - 16px)' }, maxWidth: { xs: '100%', sm: 'calc(50% - 12px)', md: 'calc(33.333% - 16px)' }, flexGrow: 1, flexShrink: 0, display: 'flex', alignItems: 'stretch' }}>
+                  <Paper elevation={0} sx={{ border: '1px solid', borderColor: 'divider', borderRadius: 2, overflow: 'hidden', transition: 'transform 0.3s ease, box-shadow 0.3s ease', width: '100%', display: 'flex', flexDirection: 'column', '&:hover': { transform: 'translateY(-4px)', boxShadow: 3 } }}>
+                    <Link href={`/blog/${relatedPost.slug}`} style={{ textDecoration: 'none', color: 'inherit', display: 'flex', flexDirection: 'column', flexGrow: 1 }}>
+                      {relatedPost.image && (
+                        <Box sx={{ position: 'relative', height: 160, overflow: 'hidden', flexShrink: 0 }}>
+                          <Image src={relatedPost.image} alt={relatedPost.title} fill style={{ objectFit: 'cover', objectPosition: 'center top' }} sizes="(max-width: 768px) 100vw, (max-width: 1200px) 33vw, 300px" />
+                          {relatedPost.isPodcast && (
+                            <Box sx={{ position: 'absolute', top: 10, right: 10, bgcolor: 'rgba(0,0,0,0.6)', color: 'white', borderRadius: '50%', p: 0.75, display: 'flex', alignItems: 'center', justifyContent: 'center', width: 32, height: 32 }}>
+                              <HeadphonesIcon fontSize="small" />
+                            </Box>
+                          )}
+                        </Box>
+                      )}
+                      <Box sx={{ p: 2, flexGrow: 1, display: 'flex', flexDirection: 'column' }}>
+                        <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 1 }}>
+                          <Typography variant="caption" color="text.secondary" component="div">
+                            {new Date(relatedPost.date).toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' })}
+                          </Typography>
+                          {relatedPost.isPodcast && (
+                            <Chip label="Podcast" size="small" color="primary" sx={{ borderRadius: 1, height: 20, fontSize: '0.65rem' }} />
+                          )}
+                        </Box>
+                        <Typography variant="subtitle1" sx={{ fontWeight: 'medium', mt: 1, mb: 1 }}>
+                          {relatedPost.title}
                         </Typography>
-                        
-                        {relatedPost.isPodcast && (
-                          <Chip 
-                            label="Podcast" 
-                            size="small" 
-                            color="primary"
-                            sx={{ borderRadius: 1, height: 20, fontSize: '0.65rem' }}
-                          />
-                        )}
+                        <Typography variant="body2" color="text.secondary" sx={{ display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical', overflow: 'hidden', flexGrow: 1, mb: 'auto' }}>
+                          {relatedPost.excerpt}
+                        </Typography>
                       </Box>
-                      
-                      <Typography variant="subtitle1" sx={{ fontWeight: 'medium', mt: 1, mb: 1 }}>
-                        {relatedPost.title}
-                      </Typography>
-                      
-                      <Typography 
-                        variant="body2" 
-                        color="text.secondary"
-                        sx={{
-                          display: '-webkit-box',
-                          WebkitLineClamp: 2,
-                          WebkitBoxOrient: 'vertical',
-                          overflow: 'hidden'
-                        }}
-                      >
-                        {relatedPost.excerpt}
-                      </Typography>
-                    </Box>
-                  </Link>
-                </Paper>
+                    </Link>
+                  </Paper>
+                </Box>
               ))}
             </Box>
           </Box>
         )}
 
-        {/* Next Actions */}
         <Box sx={{ textAlign: 'center', mb: 8 }}>
           <Typography variant="h5" component="h3" gutterBottom sx={{ fontWeight: 'medium' }}>
             Ready to explore how AI can transform your organization?
           </Typography>
           <Box sx={{ display: 'flex', gap: 2, justifyContent: 'center', mt: 3, flexWrap: 'wrap' }}>
-            <Button 
-              variant="contained" 
-              color="primary"
-              size="large"
-              component={Link}
-              href="/contact"
-              sx={{ borderRadius: 8, px: 3 }}
-            >
+            <Button variant="contained" color="primary" size="large" component={Link} href="/contact" sx={{ borderRadius: 8, px: 3 }}>
               Contact Us
             </Button>
-            <Button 
-              variant="outlined"
-              size="large"
-              component={Link}
-              href="/blog"
-              sx={{ borderRadius: 8, px: 3 }}
-            >
+            <Button variant="outlined" size="large" component={Link} href="/blog" sx={{ borderRadius: 8, px: 3 }}>
               Explore More Articles
             </Button>
           </Box>
         </Box>
 
-        {/* LinkedIn Marketing Toolkit */}
         <Box sx={{ mb: 8, textAlign: 'center' }}>
           <Box sx={{ mb: 3 }}>
             <Typography variant="h5" component="h3" gutterBottom sx={{ fontWeight: 'medium' }}>
@@ -540,6 +273,26 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
           </Box>
           <LinkedInPreview post={post} baseUrl="https://theoforge.com" />
         </Box>
+
+        {post.isPodcast && (post.podcastSpotifyUrl || post.podcastAppleUrl) && (
+          <Box sx={{ mb: 4, p: 2, bgcolor: 'grey.100', borderRadius: 2 }}>
+            <Typography variant="h6" gutterBottom sx={{ fontWeight: 'medium' }}>
+              Listen to this episode:
+            </Typography>
+            <Box sx={{ display: 'flex', gap: 2, flexWrap: 'wrap' }}>
+              {post.podcastSpotifyUrl && (
+                <Button variant="contained" color="success" startIcon={<MusicNoteIcon />} href={post.podcastSpotifyUrl} target="_blank" rel="noopener noreferrer" sx={{ borderRadius: 8 }}>
+                  Spotify
+                </Button>
+              )}
+              {post.podcastAppleUrl && (
+                <Button variant="contained" color="secondary" startIcon={<PodcastsIcon />} href={post.podcastAppleUrl} target="_blank" rel="noopener noreferrer" sx={{ borderRadius: 8 }}>
+                  Apple Podcasts
+                </Button>
+              )}
+            </Box>
+          </Box>
+        )}
       </Container>
     </Box>
   );

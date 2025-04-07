@@ -2,7 +2,7 @@
 title: Vibe Coding - Building Better Software with AI at Your Side
 date: 2024-03-21
 excerpt: How pair programming with AI assistants is transforming the development experience, boosting productivity, and changing the day-to-day reality of writing code.
-image: /vibe_coding.png
+image: /images/blog/develop_your_model_context_protocol_strategy.png
 author: Keith Williams
 audioUrl: /vibe_coding_podcast.mp3
 isPodcast: true

@@ -35,7 +35,7 @@ export default function PodcastMetadata({
       sx={{ 
         display: 'flex',
         flexDirection: 'column',
-        gap: 1.5,
+        gap: 2,
         p: 3,
         bgcolor: 'grey.50',
         borderRadius: 2,
@@ -46,7 +46,7 @@ export default function PodcastMetadata({
         overflow: 'hidden'
       }}
     >
-      <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5 }}>
+      <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
         <PodcastsIcon sx={{ color: 'primary.main' }} />
         <Typography variant="h6" component="h3" sx={{ fontWeight: 'medium' }}>
           TheoForge Insights {episodeNumber ? `- Episode ${episodeNumber}` : ''}

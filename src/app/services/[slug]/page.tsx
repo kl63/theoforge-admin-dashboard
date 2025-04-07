@@ -6,7 +6,7 @@ import Typography from '@mui/material/Typography';
 import Breadcrumbs from '@mui/material/Breadcrumbs';
 import Link from '@mui/material/Link'; // Use MUI Link for breadcrumbs
 import NextLink from 'next/link'; // Use NextLink for navigation
-import { getServiceData, getAllServiceSlugs, ServiceData } from '@/lib/services';
+import { getAllServiceSlugs, getServiceData } from '@/lib/services';
 import MarkdownRenderer from '@/components/Common/MarkdownRenderer'; // Import the common component
 
 // Define the expected params structure
@@ -36,7 +36,7 @@ export async function generateMetadata({ params }: ServicePageProps) {
   }
 
   return {
-    title: `${service.title} - TheoForge Services`,
+    title: `${service.title} | TheoForge`,
     description: service.excerpt,
     // Add other metadata fields if needed
   };
@@ -61,10 +61,9 @@ export default function ServicePage({ params }: ServicePageProps) {
           <Link component={NextLink} underline="hover" color="inherit" href="/">
             Home
           </Link>
-          {/* TODO: Add link to a potential "/services" overview page if it exists */}
-          {/* <Link component={NextLink} underline="hover" color="inherit" href="/services">
+          <Link component={NextLink} underline="hover" color="inherit" href="/services">
             Services
-          </Link> */}
+          </Link>
           <Typography color="text.primary">{service.title}</Typography>
         </Breadcrumbs>
 

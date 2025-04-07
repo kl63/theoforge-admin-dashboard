@@ -2,7 +2,7 @@
 
 ## Executive Summary
 
-This document outlines a streamlined, low-maintenance system to transform your content marketing into a reliable consultation booking engine. By focusing only on essential components and automations, we create a sustainable pipeline that generates high-quality consulting leads without administrative overhead.
+This document outlines the minimalist, content-driven sales funnel for Theoforge, leveraging automation to efficiently guide prospects from initial content consumption to a booked consultation. It integrates with the overall [Brand Strategy](../docs/theoforge_integrated_brand_strategy.md) and [Content Strategy Loop](../docs/content-strategy-loop.md).
 
 ## Core Philosophy: Do Less, Better
 
@@ -68,9 +68,9 @@ Action 3: Schedule LinkedIn post with article link and description
 ```
 Name: Lead Capture Processing
 Trigger: New newsletter signup or lead magnet download
-Action 1: Add subscriber to email platform with source tags
+Action 1: Add subscriber to email platform with source tags (including content pillar)
 Action 2: Send welcome email with value-add and consultation CTA
-Action 3: Update lead source tracking in Google Sheet
+Action 3: Update lead source tracking in Google Sheet (including pillar)
 ```
 
 **Implementation Steps**:
@@ -117,10 +117,10 @@ Action 4: Update consultation tracking spreadsheet with source data
 **Goal**: Measure only what matters for improving consultation bookings
 
 **Core Metrics**:
-1. **Content Performance**: Views, Time on Page, Social Shares
-2. **Lead Conversion**: Email Signups per Post, Signup Rate %
-3. **Consultation Rate**: Consultations per Content Source
-4. **Business Impact**: Client Conversions by Original Content Source
+1. **Content Performance**: Views, Time on Page, Social Shares (by Pillar)
+2. **Lead Conversion**: Email Signups per Post/Pillar, Signup Rate % (by Pillar)
+3. **Consultation Rate**: Consultations per Content Source/Pillar
+4. **Business Impact**: Client Conversions by Original Content Source/Pillar
 
 **Simple Monthly Review Process**:
 1. Pull basic metrics into single dashboard view
@@ -132,9 +132,9 @@ Action 4: Update consultation tracking spreadsheet with source data
 ```
 Name: Monthly Performance Summary
 Trigger: Schedule (1st day of month)
-Action 1: Pull metrics from Google Analytics, Email Platform, Calendly
-Action 2: Update Google Sheet dashboard with monthly figures
-Action 3: Generate performance summary
+Action 1: Pull metrics from Google Analytics, Email Platform, Calendly (aggregated by pillar where possible)
+Action 2: Update Google Sheet dashboard with monthly figures (including pillar breakdowns)
+Action 3: Generate performance summary (highlighting pillar performance)
 Action 4: Post monthly review in Discord #analytics channel
 ```
 
@@ -161,6 +161,7 @@ Action 4: Post monthly review in Discord #analytics channel
 **User Properties Configuration**:
 - `user_source`: Original traffic source (e.g., linkedin, organic, newsletter)
 - `user_content_affinity`: Primary content topics engaged with
+- `user_pillar_affinity`: Primary strategic content pillar engaged with
 - `lead_status`: Visitor, lead, or consultation_booked
 
 **Content Groups Configuration**:
@@ -173,12 +174,12 @@ Action 4: Post monthly review in Discord #analytics channel
 
 | Event Name | Description | Parameters |
 |------------|-------------|------------|
-| `view_content` | Views content piece | `content_id`, `content_type`, `content_topic` |
-| `content_milestone` | Reaches key milestone | `milestone_type` (50%_scroll, 80%_scroll, complete) |
-| `lead_capture` | Signs up or downloads | `capture_method`, `content_source`, `lead_magnet` |
-| `consultation_view` | Views booking page | `source`, `content_id` |
-| `consultation_start` | Begins booking process | `source` |
-| `consultation_complete` | Completes booking | `source`, `consultation_type` |
+| `view_content` | Views content piece | `content_id`, `content_type`, `content_topic`, `content_pillar` |
+| `content_milestone` | Reaches key milestone | `milestone_type`, `content_pillar` |
+| `lead_capture` | Signs up or downloads | `capture_method`, `content_source`, `lead_magnet`, `content_pillar` |
+| `consultation_view` | Views booking page | `source`, `content_id`, `content_pillar` |
+| `consultation_start` | Begins booking process | `source`, `content_pillar` |
+| `consultation_complete` | Completes booking | `source`, `consultation_type`, `originating_pillar` |
 
 **Next.js Implementation**:
 
@@ -191,33 +192,37 @@ export const trackEvent = (eventName: string, parameters: Record<string, any>) =
 };
 
 // Usage examples
-export const trackContentView = (contentId: string, contentType: string, contentTopic: string) => {
+export const trackContentView = (contentId: string, contentType: string, contentTopic: string, contentPillar: string) => {
   trackEvent('view_content', {
     content_id: contentId,
     content_type: contentType,
-    content_topic: contentTopic
+    content_topic: contentTopic,
+    content_pillar: contentPillar
   });
 };
 
-export const trackContentMilestone = (contentId: string, milestoneType: string) => {
+export const trackContentMilestone = (contentId: string, milestoneType: string, contentPillar: string) => {
   trackEvent('content_milestone', {
     content_id: contentId,
-    milestone_type: milestoneType
+    milestone_type: milestoneType,
+    content_pillar: contentPillar
   });
 };
 
-export const trackLeadCapture = (captureMethod: string, contentSource: string, leadMagnet?: string) => {
+export const trackLeadCapture = (captureMethod: string, contentSource: string, leadMagnet: string, contentPillar: string) => {
   trackEvent('lead_capture', {
     capture_method: captureMethod,
     content_source: contentSource,
-    lead_magnet: leadMagnet || 'none'
+    lead_magnet: leadMagnet,
+    content_pillar: contentPillar
   });
 };
 
-export const trackConsultationBooking = (source: string, consultationType: string) => {
+export const trackConsultationBooking = (source: string, consultationType: string, originatingPillar: string) => {
   trackEvent('consultation_complete', {
     source: source,
-    consultation_type: consultationType
+    consultation_type: consultationType,
+    originating_pillar: originatingPillar
   });
 };
 ```

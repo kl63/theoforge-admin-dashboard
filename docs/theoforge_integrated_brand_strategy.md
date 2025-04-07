@@ -2,7 +2,7 @@
 
 ## 1. Brand Foundation
 
-### 1.1 Brand Essence
+### 1.1 Brand Essence & Core Narrative
 
 **Brand Name:** TheoForge
 
@@ -12,23 +12,27 @@
 
 **Core Promise:** We transform complex AI challenges into clear, actionable strategies that deliver measurable business value.
 
+**Core Narrative:**
+Navigating the AI landscape requires more than just technology; it demands integrated expertise. Theoforge, founded by Keith Williams, leverages a rare blend of deep engineering experience, proven educational methods, and strategic leadership acumen to provide this essential clarity and guidance. We partner closely with organizations to:
+
+1.  Define clear, actionable **Technology Strategy & Leadership** roadmaps.
+2.  Implement pragmatic and effective **AI Driven Modernisation**.
+3.  Build **Future Ready Workforce** capabilities through targeted training.
+
+Ultimately, Theoforge transforms AI complexity into organizational confidence, ensuring your journey is strategically sound, practically implemented, and empowers your people to deliver lasting business value.
+
 ### 1.2 Brand Archetype: The Sage
 
 TheoForge embodies the Sage archetype in every aspect of our brand and operations:
 
-**Core Motivation:** To illuminate the path forward through the rapidly evolving AI landscape, using specialized knowledge and wisdom to guide decision-makers.
+*   **Goal:** Provide wisdom, understanding, and guidance.
+*   **Attributes:** Knowledgeable, trustworthy, expert, guiding, objective, insightful, structured, clear, methodical.
+*   **Strategy:** Use expertise and structured thinking to help clients navigate complexity and make informed decisions.
+*   **Tone:** Authoritative yet accessible, educational, balanced, pragmatic.
+*   **Motivation:** The pursuit of truth, knowledge, and clarity.
+*   **Shadow (to avoid):** Dogmatism, detachment, unnecessary complexity, condescension. Mitigate by emphasizing practical application, collaboration, and clear communication.
 
-**Primary Attributes:**
-- **Knowledge & Expertise:** Deep understanding of AI technologies and enterprise implementation 
-- **Clarity & Structure:** Ability to transform complexity into understandable frameworks
-- **Objectivity & Wisdom:** Balanced perspective that considers business, technical, and ethical dimensions
-- **Guidance & Mentorship:** Focus on empowering clients rather than creating dependency
-
-**Shadow Aspects to Avoid:**
-- **Dogmatism:** Maintaining flexibility in approaches rather than rigid thinking
-- **Unnecessary Complexity:** Emphasizing simplicity and practical application
-- **Detachment:** Balancing technical expertise with human-centered solutions
-- **Condescension:** Sharing knowledge in an accessible, respectful manner
+*(See [Brand Guide](./brand_guide.md) for Tone of Voice and Imagery examples)*
 
 ### 1.3 Audience & Positioning
 
@@ -87,6 +91,8 @@ Our communication follows these principles:
 - **Light Gray** (`#F0F0F0`): Backgrounds, subtle separators
 - **White** (`#FFFFFF`): Clean space, readability
 
+*(See full details in [Color Guide](./color_guide.md))*
+
 #### Typography
 
 **Heading Font:** Poppins
@@ -107,6 +113,8 @@ Our communication follows these principles:
 - Body: 1rem (16px)
 - Small: 0.875rem (14px)
 
+*(See full details in [Typography Guide](./typography_guide.md))*
+
 #### Imagery Style
 
 **Key Visual Attributes:**
@@ -122,9 +130,39 @@ Our communication follows these principles:
 - Cluttered or overly complex visuals
 - Dark, dystopian, or threatening imagery around AI
 
+*(See specific generation guidance in [Prompts](./prompts.md))*
+
 ## 3. Content Ecosystem
 
-### 3.1 Content Architecture
+### 3.1 Strategic Content Pillars
+
+All content produced by TheoForge should align with one or more of the following strategic pillars, which directly reflect our core services and the expertise embodied by the Sage archetype:
+
+1.  **Strategic AI Vision & Roadmapping:**
+    *   **Scope:** Defining long-term AI strategy, aligning technology with business goals, evaluating AI opportunities, building business cases, navigating the AI vendor landscape.
+    *   **Audience:** CTOs, CIOs, VPs of Strategy, Business Executives.
+    *   **Keywords:** AI Strategy, AI Roadmap, AI Transformation, Business Value, AI Governance, Technology Leadership.
+    *   **Goal:** Position TheoForge as the primary advisor for high-level AI planning and decision-making.
+
+2.  **Pragmatic AI Implementation & Modernization:**
+    *   **Scope:** Architecting AI solutions, integrating AI into existing systems, RAG implementation, vector databases, knowledge graphs, MLOps, LLM deployment, legacy system modernization with AI.
+    *   **Audience:** Technical Leaders, Engineering Managers, Implementation Teams, Data Scientists.
+    *   **Keywords:** AI Implementation, RAG Systems, Vector Embeddings, Knowledge Graphs, LLM Deployment, MLOps, AI Architecture, System Integration.
+    *   **Goal:** Demonstrate deep technical expertise and practical know-how for building and deploying robust AI systems.
+
+3.  **AI Literacy & Workforce Enablement:**
+    *   **Scope:** Demystifying AI concepts, practical skill-building for teams, AI adoption strategies, change management, instructional design for AI training, building internal AI capabilities.
+    *   **Audience:** L&D Leaders, HR Managers, Department Heads, All Employees (at varying levels).
+    *   **Keywords:** AI Training, Workforce Transformation, AI Literacy, Upskilling, Change Management, AI Adoption, Employee Enablement.
+    *   **Goal:** Highlight TheoForge's unique ability (rooted in teaching experience) to effectively educate and empower the workforce for the AI era.
+
+4.  **Responsible AI & Ethical Frameworks:**
+    *   **Scope:** AI bias detection and mitigation, fairness in AI, transparency, explainability (XAI), data privacy, security in AI systems, ethical AI governance frameworks.
+    *   **Audience:** All audiences, particularly Leadership, Legal & Compliance.
+    *   **Keywords:** Responsible AI, Ethical AI, AI Bias, AI Fairness, AI Governance, AI Security, Trustworthy AI.
+    *   **Goal:** Underscore the Sage's commitment to wisdom, objectivity, and guiding clients towards ethical and trustworthy AI adoption.
+
+### 3.2 Content Architecture
 
 Our integrated content ecosystem serves as both a lead generation engine and a demonstration of our expertise:
 
@@ -148,7 +186,7 @@ Our integrated content ecosystem serves as both a lead generation engine and a d
    - Implementation roadmaps and checklists
    - ROI and business case templates
 
-### 3.2 Content-to-Consultation Pipeline
+### 3.3 Content-to-Consultation Pipeline
 
 Our minimalist sales funnel efficiently converts content consumers to consulting clients:
 
@@ -182,7 +220,7 @@ Content Consumption → Lead Capture → Nurture Sequence → Consultation Booki
    - Automated preparation materials
    - Source attribution for ROI tracking
 
-### 3.3 Analytics Framework
+### 3.4 Analytics Framework
 
 Our integrated analytics system tracks the complete journey from content to client:
 

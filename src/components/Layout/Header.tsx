@@ -22,9 +22,10 @@ import useScrollTrigger from '@mui/material/useScrollTrigger';
 // Updated nav items based on the design - linking to homepage sections
 const navItems = [
   { label: 'Home', path: '/' },
-  { label: 'About', path: '/#about' }, // Ensure full path for hash link
+  { label: 'About', path: '/about' }, // Changed path from /profile to /about
   { label: 'Services', path: '/services' }, // Updated path
-  { label: 'Blog', path: '/blog' }, 
+  { label: 'Insights', path: '/blog' }, 
+  { label: 'The Forge', path: '/forge' }, 
   { label: 'Contact', path: '/contact' },
 ];
 

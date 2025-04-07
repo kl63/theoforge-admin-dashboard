@@ -45,7 +45,7 @@ export default function BlogPostPage() {
 
         <Box sx={{ '& p': { mb: 2, lineHeight: 1.7 }, '& h2': { mt: 4, mb: 2, fontWeight: 'medium' } }}>
             <Typography variant="body1" paragraph>
-                [Placeholder for the full content of the blog post: "Generative AI for Competitive Advantage: Strategic Use Cases in [Target Industry]". Remember to replace [Target Industry] if applicable.]
+                [Placeholder for the full content of the blog post: &quot;Generative AI for Competitive Advantage: Strategic Use Cases in [Target Industry]&quot;. Remember to replace [Target Industry] if applicable.]
             </Typography>
             <Typography variant="h4" component="h2">
                 Understanding the Landscape

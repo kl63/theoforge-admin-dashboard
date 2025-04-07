@@ -2,7 +2,7 @@
 title: Geoffrey Hintons Warning The Alien Intelligence of Large Language Models
 date: 2024-03-28
 excerpt: Why one of AIs founding fathers now views large language models as a potentially alien form of intelligence what current research reveals about their internal processes and the existential questions we must confront
-image: /alien_intelligence.png
+image: /images/blog/alien_intelligence.png
 author: Keith Williams
 tags: [AI Ethics, AGI, Research, Future of AI]
 audioUrl: /hinton_interview.mp3

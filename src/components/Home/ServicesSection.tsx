@@ -1,25 +1,13 @@
-// 'use client'; // Masonry likely requires client context
+'use client'; // Ensure calculations run client-side
 
-import React from 'react';
-import Box from '@mui/material/Box';
-import Container from '@mui/material/Container';
-import Typography from '@mui/material/Typography';
-import Link from 'next/link';
-import Masonry from '@mui/lab/Masonry';
-import InfoCard from '../Common/InfoCard'; 
+import * as React from 'react';
+import { Box, Container, Typography } from '@mui/material';
+import InfoCard from '../Common/InfoCard'; // Correct path
+import { ServiceData } from '@/types/service'; // Import type from centralized location
 
-// Define the expected prop type (matching the data structure in page.tsx)
-interface ServiceTeaser {
-  slug: string;
-  title: string;
-  excerpt: string;
-  image: string;
-  link: string;
-}
-
-// Define props for the ServicesSection component
+// Define the props for the ServicesSection component
 interface ServicesSectionProps {
-  services: ServiceTeaser[];
+  services: ServiceData[];
 }
 
 const ServicesSection: React.FC<ServicesSectionProps> = ({ services }) => {
@@ -30,25 +18,32 @@ const ServicesSection: React.FC<ServicesSectionProps> = ({ services }) => {
         <Typography
           variant="h3"
           component="h2"
-          gutterBottom
           textAlign="center"
           sx={{ fontWeight: 'medium', mb: { xs: 4, md: 6 } }}
         >
-          AI Strategy & Implementation Expertise
+          Core Services for Your AI Transformation
         </Typography>
 
-        {/* Services Masonry Layout */}
-        <Masonry columns={{ xs: 1, sm: 2, md: 3 }} spacing={4}>
+        {/* Services CSS Grid */}
+        <Box sx={{
+          display: 'grid',
+          gridTemplateColumns: {
+            xs: 'repeat(1, 1fr)',
+            sm: 'repeat(2, 1fr)', 
+            md: 'repeat(3, 1fr)',
+          },
+          gap: 4, 
+        }}>
           {services.map((service) => (
             <InfoCard 
-              key={service.slug} 
+              key={service.slug}
               title={service.title} 
               excerpt={service.excerpt} 
               image={service.image} 
-              link={service.link} 
+              link={`/services/${service.slug}`} 
             />
           ))}
-        </Masonry>
+        </Box>
       </Container>
     </Box>
   );

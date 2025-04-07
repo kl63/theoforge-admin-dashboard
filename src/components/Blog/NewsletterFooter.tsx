@@ -16,11 +16,11 @@ const NewsletterFooter: React.FC = () => {
       }}
     >
       <Box sx={{ textAlign: 'center', maxWidth: 600, mx: 'auto' }}>
-        <Typography variant="h5" component="h3" gutterBottom sx={{ fontWeight: 'medium' }}>
-          Stay Updated
+        <Typography variant="h5" component="h3" sx={{ fontWeight: 'medium', mb: 1 }}>
+          Stay Ahead with TheoForge Insights
         </Typography>
         <Typography variant="body1" sx={{ mb: 3, color: 'text.secondary' }}>
-          Subscribe to receive notifications about new articles, podcasts, and insights.
+          Subscribe for strategic insights on navigating AI complexity, delivered directly to your inbox.
         </Typography>
         
         <Box

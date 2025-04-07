@@ -45,7 +45,7 @@ export default function BlogPostPage() {
 
         <Box sx={{ '& p': { mb: 2, lineHeight: 1.7 }, '& h2': { mt: 4, mb: 2, fontWeight: 'medium' } }}>
             <Typography variant="body1" paragraph>
-                [Placeholder for the full content of the blog post: "Knowledge Graphs: Architecting the Intelligent Enterprise Data Fabric". Discuss the benefits, core concepts, architecture patterns, and integration challenges.]
+                [Placeholder for the full content of the blog post: &quot;Knowledge Graphs: Architecting the Intelligent Enterprise Data Fabric&quot;. Discuss the benefits, core concepts, architecture patterns, and integration challenges.]
             </Typography>
             <Typography variant="h4" component="h2">
                 Why Knowledge Graphs?
@@ -64,7 +64,13 @@ export default function BlogPostPage() {
              </Typography>
              <Typography variant="body1" paragraph>
                  [Content...]
-             </Typography>
+            </Typography>
+            <Typography variant="h4" component="h2">
+                Conclusion
+            </Typography>
+             <Typography variant="body1" paragraph>
+                [Summarize key takeaways and reiterate the value proposition of knowledge graphs for the enterprise.]
+            </Typography>
         </Box>
 
         <Box sx={{ mt: 5, textAlign: 'center' }}>

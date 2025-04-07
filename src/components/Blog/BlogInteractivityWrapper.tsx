@@ -1,12 +1,9 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
-import { Box, Chip, Stack, Typography, Button, Grid, Container } from '@mui/material';
-import Image from 'next/image';
-import Link from 'next/link';
+import { Box, Chip, Stack, Typography, Button } from '@mui/material';
 import GridViewIcon from '@mui/icons-material/GridView';
 import ViewListIcon from '@mui/icons-material/ViewList';
-import TagOutlinedIcon from '@mui/icons-material/TagOutlined';
 import FilterListIcon from '@mui/icons-material/FilterList';
 import { PostData } from '@/lib/posts';
 

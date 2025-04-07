@@ -51,16 +51,14 @@ const HeroSection = () => (
         <Typography
           variant="h1"
           component="h1"
-          sx={{
-            fontWeight: 'bold',
-            letterSpacing: '.05rem',
-            color: 'inherit', // Explicitly inherit color from parent Box
-            fontSize: { xs: '1.8rem', sm: '2.25rem', md: '2.75rem' }, // Responsive font size
-            mb: 3, // Increased margin bottom (was 2)
-            // textShadow: '1px 1px 3px rgba(0,0,0,0.4)'
-          }}
+          sx={{ 
+            fontWeight: 'bold', 
+            color: 'inherit', // Explicitly inherit color from parent Box 
+            fontSize: { xs: '1.8rem', sm: '2.25rem', md: '2.75rem' }, // Responsive font size 
+            mb: 3, // Increased margin bottom (was 2) 
+          }} 
         >
-          Leverage Decades of Expertise for Your AI Transformation
+          Transform AI Complexity into Strategic Confidence
         </Typography>
         {/* Revised Sub-headline: Focus on expertise, not name */}
         <Typography
@@ -72,18 +70,18 @@ const HeroSection = () => (
             mb: 4, // Adjusted margin bottom
           }}
         >
-          Navigate AI complexity and build strategic advantage, guided by founder-led expertise spanning 30 years in software, CTO leadership, and cutting-edge AI (RAG, Graphs, LLMs).
+          Partner with Theoforge to navigate the AI landscape. Leverage integrated expertise in strategy, engineering, and education to build reliable, high-impact AI solutions that drive measurable business value.
         </Typography>
         {/* Link the Button to the Contact page */}
         <Button 
           variant="contained" 
-          color="warning" 
+          color="accent" 
           size="large"
           component={Link} // Use Link component for navigation
           href="/contact" // Set the target path
           sx={{ mt: 2 }} // Added margin top
         >
-          Discuss Your AI Strategy
+          Begin Your AI Transformation
         </Button>
       </Box>
     </Container> 

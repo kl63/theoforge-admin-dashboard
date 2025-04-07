@@ -16,25 +16,43 @@ interface TestimonialsSectionProps {
 
 const TestimonialsSection: React.FC<TestimonialsSectionProps> = ({ testimonials }: TestimonialsSectionProps) => (
   <Box sx={{ py: 8, backgroundColor: 'background.paper' }}>
-    <Container maxWidth="md">
-      <Typography variant="h3" component="h2" gutterBottom sx={{ textAlign: 'center' }}>
-        What Our Clients Say
+    <Container maxWidth="lg">
+      <Typography variant="h3" component="h2" sx={{ textAlign: 'center', mb: 6 }}>
+        Client Success Stories & Partnerships
       </Typography>
-      <Box sx={{ 
-        display: 'flex', 
-        flexWrap: 'wrap', 
-        gap: 4, 
-        justifyContent: 'center' 
-      }}>
+      {/* Flexbox layout for testimonials */}
+      <Box 
+        sx={{
+          display: 'flex',
+          flexWrap: 'wrap',
+          gap: 4, // Use theme spacing for gap
+          justifyContent: 'center' // Center items
+        }}
+      >
         {testimonials.map((testimonial, index) => (
           <Box 
-            key={index} 
-            sx={{ 
-              width: { xs: '100%', sm: 'calc(50% - 16px)', md: 'calc(33.33% - 16px)' } 
+            key={index}
+            sx={{
+              // Responsive sizing: 1 on xs, 2 on sm, 3 on md
+              flexBasis: { 
+                xs: '100%', 
+                sm: 'calc(50% - 16px)', // Approx 1/2 minus gap/2
+                md: 'calc(33.333% - 22px)' // Approx 1/3 minus gap
+              },
+              maxWidth: { 
+                xs: '100%', 
+                sm: 'calc(50% - 16px)', 
+                md: 'calc(33.333% - 22px)'
+              },
+              flexGrow: 1,
+              flexShrink: 0,
+              // Ensure Card inside stretches
+              display: 'flex', 
+              alignItems: 'stretch',
             }}
           >
-            <Card sx={{ height: '100%', display: 'flex', flexDirection: 'column' }}>
-              <CardContent sx={{ p: 2, textAlign: 'center', flexGrow: 1, display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+            <Card sx={{ height: '100%', display: 'flex', flexDirection: 'column', width: '100%' }}>
+              <CardContent sx={{ p: 3, textAlign: 'center', flexGrow: 1, display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
                 {testimonial.image && (
                   <Box sx={{ 
                     width: 80, 
@@ -57,12 +75,14 @@ const TestimonialsSection: React.FC<TestimonialsSectionProps> = ({ testimonials 
                 <Typography variant="body1" sx={{ mb: 2, fontStyle: 'italic' }}>
                   {testimonial.quote}
                 </Typography>
-                <Typography variant="subtitle1" component="div" sx={{ fontWeight: 'medium' }}>
-                  {testimonial.name}
-                </Typography>
-                <Typography variant="body2" color="text.secondary">
-                  {testimonial.title}, {testimonial.company}
-                </Typography>
+                <Box sx={{ mt: 'auto' }}>
+                  <Typography variant="subtitle1" component="div" sx={{ fontWeight: 'medium' }}>
+                    {testimonial.name}
+                  </Typography>
+                  <Typography variant="body2" color="text.secondary">
+                    {testimonial.title}, {testimonial.company}
+                  </Typography>
+                </Box>
               </CardContent>
             </Card>
           </Box>

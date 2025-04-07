@@ -61,14 +61,20 @@ We've designed a seamless TTS workflow using ElevenLabs voice cloning technology
    - Client pain points and questions
    - Industry trends and emerging topics
    - Previous content performance data
+   - **Alignment with Strategic Content Pillars** (See [Integrated Strategy](../docs/theoforge_integrated_brand_strategy.md#31-strategic-content-pillars))
 2. Content calendar scheduling
-3. Article drafting and editing
+3. Article drafting and editing (ensuring alignment with Sage voice and Core Narrative)
 4. Audio generation or recording
 5. Quality assurance review
 6. Publishing and distribution setup
 
 **Content Taxonomy**
 - Primary business domains (AI Strategy, Implementation, Training)
+- **Strategic Content Pillars:** (Map each piece to one or more pillars)
+  - Strategic AI Vision & Roadmapping
+  - Pragmatic AI Implementation & Modernization
+  - AI Literacy & Workforce Enablement
+  - Responsible AI & Ethical Frameworks
 - Content formats (Article, Podcast, Interview, Case Study)
 - Audience segments (CTO, CIO, Head of Innovation, etc.)
 - Technical depth (Introductory, Intermediate, Advanced)
@@ -89,16 +95,16 @@ We've designed a seamless TTS workflow using ElevenLabs voice cloning technology
    - Newsletter subscription rate
 
 2. **Content Effectiveness Metrics**
-   - Engagement by topic/tag
+   - Engagement by topic/tag/**pillar**
    - Content format performance comparison
-   - Conversion rates by content type
+   - Conversion rates by content type/**pillar**
    - LinkedIn amplification metrics
 
 3. **Business Impact Metrics**
-   - Content attribution to sales pipeline
-   - Topic affinity to client engagements
+   - Content attribution to sales pipeline (by **pillar**)
+   - **Pillar** affinity to client engagements
    - Time from content consumption to engagement
-   - Contact quality by content entry point
+   - Contact quality by content entry point/**pillar**
 
 **Dashboard Integration**
 - Executive dashboard for high-level KPIs
@@ -110,13 +116,13 @@ We've designed a seamless TTS workflow using ElevenLabs voice cloning technology
 
 **Data Analysis Process**
 1. Weekly review of content performance
-2. Topic and tag performance analysis
+2. Topic, tag, and **pillar** performance analysis
 3. Channel effectiveness evaluation
 4. Audience behavior pattern identification
 5. A/B testing of content elements (titles, formats, length)
 
 **Content Optimization Actions**
-- Topic refinement based on engagement data
+- Topic/Pillar refinement based on engagement data
 - Format adjustment (text vs. audio priority)
 - Distribution channel optimization
 - Messaging and positioning improvements

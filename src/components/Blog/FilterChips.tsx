@@ -1,85 +1,50 @@
 import React from 'react';
-import { Chip, Stack, styled } from '@mui/material';
-
-// Create styled components to ensure proper contrast
-const PrimaryChip = styled(Chip)(({ theme }) => ({
-  backgroundColor: '#008080',
-  color: '#ffffff',
-  '& .MuiChip-label': {
-    color: '#ffffff',
-  },
-  '&:hover': {
-    backgroundColor: '#006666',
-  },
-}));
-
-const OutlinedChip = styled(Chip)(({ theme }) => ({
-  borderColor: '#008080',
-  color: '#333333',
-  '&:hover': {
-    backgroundColor: 'rgba(0, 128, 128, 0.1)',
-  },
-}));
+import { Chip, Stack, Typography, Box, useTheme } from '@mui/material';
 
 interface FilterChipsProps {
-  activeFilter: 'all' | 'article' | 'podcast';
-  onFilterChange: (filter: 'all' | 'article' | 'podcast') => void;
+  title: string;
+  items: string[];
+  selectedItems: string[];
+  onToggle: (item: string) => void;
 }
 
-const FilterChips: React.FC<FilterChipsProps> = ({ activeFilter, onFilterChange }) => {
+const FilterChips: React.FC<FilterChipsProps> = ({ title, items, selectedItems, onToggle }) => {
+  const theme = useTheme();
+
+  if (!items || items.length === 0) {
+    return null;
+  }
+
   return (
-    <Stack direction="row" spacing={1} sx={{ flexWrap: 'wrap', justifyContent: 'center', mb: 3 }}>
-      {activeFilter === 'all' ? (
-        <PrimaryChip
-          label="All Content"
-          clickable
-          onClick={() => onFilterChange('all')}
-          data-filter-content="all"
-        />
-      ) : (
-        <OutlinedChip
-          label="All Content"
-          variant="outlined"
-          clickable
-          onClick={() => onFilterChange('all')}
-          data-filter-content="all"
-        />
-      )}
-      
-      {activeFilter === 'article' ? (
-        <PrimaryChip
-          label="Articles"
-          clickable
-          onClick={() => onFilterChange('article')}
-          data-filter-content="article"
-        />
-      ) : (
-        <OutlinedChip
-          label="Articles"
-          variant="outlined"
-          clickable
-          onClick={() => onFilterChange('article')}
-          data-filter-content="article"
-        />
-      )}
-      
-      {activeFilter === 'podcast' ? (
-        <PrimaryChip
-          label="Podcasts"
-          clickable
-          onClick={() => onFilterChange('podcast')}
-          data-filter-content="podcast"
-        />
-      ) : (
-        <OutlinedChip
-          label="Podcasts"
-          variant="outlined"
-          clickable
-          onClick={() => onFilterChange('podcast')}
-          data-filter-content="podcast"
-        />
-      )}
-    </Stack>
+    <Box mb={2}>
+      <Typography variant="overline" display="block" gutterBottom sx={{ color: theme.palette.text.secondary }}>
+        {title}
+      </Typography>
+      <Stack direction="row" spacing={1} flexWrap="wrap" useFlexGap>
+        {items.map((item) => {
+          const isSelected = selectedItems.includes(item);
+          return (
+            <Chip
+              key={item}
+              label={item}
+              clickable
+              onClick={() => onToggle(item)}
+              variant={isSelected ? 'filled' : 'outlined'}
+              color={isSelected ? 'primary' : 'default'}
+              sx={{
+                // Example of using theme if needed:
+                // backgroundColor: isSelected ? theme.palette.primary.main : 'transparent',
+                // color: isSelected ? theme.palette.primary.contrastText : theme.palette.text.primary,
+                // borderColor: isSelected ? theme.palette.primary.main : theme.palette.divider,
+                // '&:hover': {
+                //   backgroundColor: isSelected ? theme.palette.primary.dark : theme.palette.action.hover,
+                // },
+              }}
+            />
+          );
+        })}
+      </Stack>
+    </Box>
   );
 };
 

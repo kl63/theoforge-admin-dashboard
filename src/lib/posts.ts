@@ -3,35 +3,11 @@
 import fs from 'fs';
 import path from 'path';
 import matter from 'gray-matter';
+import { PostData } from '@/types/post';
 
 // Define content directory with explicit normalization
 const postsDirectory = path.resolve(process.cwd(), 'src', 'content', 'blog');
 console.log('Posts directory resolved to:', postsDirectory);
-
-export interface PostData {
-  slug: string;
-  title: string;
-  date: string;
-  excerpt: string;
-  content: string;
-  author?: string;
-  image?: string;
-  audioUrl?: string;
-  tags?: string[];
-  readingTime?: string;
-  // Podcast-related fields
-  isPodcast?: boolean;
-  podcastEpisodeNumber?: number;
-  podcastDuration?: string;
-  podcastHost?: string;
-  podcastGuest?: string;
-  podcastPlatforms?: {
-    spotify?: string;
-    apple?: string;
-    google?: string;
-    rss?: string;
-  };
-}
 
 // Helper function to get all post slugs (filenames without .md)
 export async function getAllPostSlugs(): Promise<string[]> {
@@ -41,7 +17,7 @@ export async function getAllPostSlugs(): Promise<string[]> {
     // Check if directory exists
     try {
       await fs.promises.access(postsDirectory, fs.constants.R_OK);
-    } catch (error) {
+    } catch {
       console.error('Blog directory does not exist or is not readable:', postsDirectory);
       return [];
     }
@@ -53,7 +29,7 @@ export async function getAllPostSlugs(): Promise<string[]> {
     console.log('Markdown files found:', mdFiles);
     
     return mdFiles.map(fileName => fileName.replace(/\.md$/, ''));
-  } catch (error) {
+  } catch (error: unknown) {
     console.error('Error reading blog directory:', error);
     return [];
   }
@@ -61,87 +37,58 @@ export async function getAllPostSlugs(): Promise<string[]> {
 
 // Helper function to get data for a single post by slug
 export async function getPostData(slug: string): Promise<PostData | null> {
+  const fullPath = path.join(postsDirectory, `${slug}.md`);
+  console.log('Attempting to read file:', fullPath);
+  let matterResult: matter.GrayMatterFile<string>;
+
   try {
-    const fullPath = path.join(postsDirectory, `${slug}.md`);
-    console.log('Attempting to read file:', fullPath);
-    
-    // Check if file exists
-    try {
-      await fs.promises.access(fullPath, fs.constants.R_OK);
-    } catch (error) {
-      console.error(`File does not exist or is not readable: ${fullPath}`);
-      return null;
+    const fileContents = await fs.promises.readFile(fullPath, 'utf8');
+    // Use gray-matter to parse the post metadata section
+    matterResult = matter(fileContents);
+
+  } catch (error: unknown) {
+    console.error(`Error reading or parsing file ${fullPath}:`, error);
+
+    // Optional: More specific error handling
+    if (error instanceof Error) {
+        // Check for specific error codes if needed, e.g., ENOENT for file not found
+        // if ((error as NodeJS.ErrnoException).code === 'ENOENT') { ... }
+        console.error(`Error details: ${error.message}`);
     }
-    
-    // Read file content
-    let fileContents: string;
-    try {
-      fileContents = await fs.promises.readFile(fullPath, 'utf8');
-      console.log(`Successfully read file: ${fullPath}, size: ${fileContents.length} bytes`);
-    } catch (error) {
-      console.error(`Error reading file: ${fullPath}`, error);
-      return null;
-    }
-    
-    // Parse frontmatter with error handling
-    let data: any;
-    let content: string;
-    try {
-      const result = matter(fileContents);
-      data = result.data;
-      content = result.content;
-      console.log(`Successfully parsed frontmatter for: ${slug}`);
-    } catch (error) {
-      console.error(`Error parsing frontmatter in ${slug}.md:`, error);
-      return null;
-    }
-    
-    // Process tags
-    let tags: string[] = [];
-    if (data.tags) {
-      if (typeof data.tags === 'string') {
-        tags = data.tags.split(',').map((tag: string) => tag.trim());
-      } else if (Array.isArray(data.tags)) {
-        tags = data.tags;
-      }
-    }
-    
-    // Process podcast platforms
-    let podcastPlatforms = undefined;
-    if (data.podcastPlatforms) {
-      podcastPlatforms = {
-        spotify: data.podcastPlatforms.spotify || undefined,
-        apple: data.podcastPlatforms.apple || undefined,
-        google: data.podcastPlatforms.google || undefined,
-        rss: data.podcastPlatforms.rss || undefined
-      };
-    }
-    
-    // Create post data object with fallbacks for missing fields
-    const postData: PostData = {
-      slug,
-      content,
-      title: data.title || 'Untitled Post',
-      date: data.date ? new Date(data.date).toISOString() : new Date().toISOString(),
-      excerpt: data.excerpt || 'No excerpt available',
-      author: data.author || undefined,
-      image: data.image || undefined,
-      audioUrl: data.audioUrl || undefined,
-      tags: tags.length > 0 ? tags : undefined,
-      // Podcast-related fields
-      isPodcast: data.isPodcast || (data.audioUrl ? true : false),
-      podcastEpisodeNumber: data.podcastEpisodeNumber || undefined,
-      podcastDuration: data.podcastDuration || undefined,
-      podcastHost: data.podcastHost || undefined,
-      podcastGuest: data.podcastGuest || undefined,
-      podcastPlatforms: podcastPlatforms
-    };
-    
-    return postData;
-  } catch (error) {
-    console.error(`Unexpected error processing ${slug}.md:`, error);
-    return null;
+
+    return null; // Return null if file doesn't exist or fails to parse
   }
+
+  // Ensure frontmatter data is accessed safely
+  const frontmatter = matterResult.data || {};
+
+  // Combine the data with the slug and content
+  // Ensure all required fields are present or provide defaults
+  const postData: PostData = {
+    slug,
+    title: frontmatter.title ?? 'Untitled Post',
+    date: frontmatter.date ?? new Date().toISOString(),
+    excerpt: frontmatter.excerpt ?? '',
+    content: matterResult.content,
+    author: frontmatter.author,
+    image: frontmatter.image,
+    // audioUrl: frontmatter.audioUrl, // Keep commented out as it's deprecated
+    tags: frontmatter.tags ?? [],
+    readingTime: frontmatter.readingTime, // Let caller handle undefined
+    // Podcast fields - ensure they exist or are undefined
+    isPodcast: frontmatter.isPodcast ?? false,
+    podcastEpisodeNumber: frontmatter.podcastEpisodeNumber,
+    podcastDuration: frontmatter.podcastDuration,
+    podcastHost: frontmatter.podcastHost,
+    podcastGuest: frontmatter.podcastGuest,
+    // Add the new platform URL fields
+    podcastSpotifyUrl: frontmatter.podcastSpotifyUrl,
+    podcastAppleUrl: frontmatter.podcastAppleUrl,
+    podcastGoogleUrl: frontmatter.podcastGoogleUrl, // Read even if not used in UI yet
+    podcastRssUrl: frontmatter.podcastRssUrl, // Read even if not used in UI yet
+  };
+
+  return postData;
 }
 
 // Helper function to get sorted data for all posts
@@ -173,7 +120,7 @@ export async function getSortedPostsData(): Promise<PostData[]> {
       }
       return -1;
     });
-  } catch (error) {
+  } catch (error: unknown) {
     console.error('Error getting sorted posts data:', error);
     return [];
   }
@@ -194,7 +141,7 @@ export async function getAllTags(): Promise<string[]> {
     const tags = Array.from(tagSet).sort();
     console.log('All tags found:', tags);
     return tags;
-  } catch (error) {
+  } catch (error: unknown) {
     console.error('Error getting all tags:', error);
     return [];
   }
@@ -209,7 +156,7 @@ export async function getPostsByTag(tag: string): Promise<PostData[]> {
     );
     console.log(`Found ${filteredPosts.length} posts with tag: ${tag}`);
     return filteredPosts;
-  } catch (error) {
+  } catch (error: unknown) {
     console.error(`Error getting posts by tag ${tag}:`, error);
     return [];
   }

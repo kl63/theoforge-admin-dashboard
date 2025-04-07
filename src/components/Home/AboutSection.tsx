@@ -14,13 +14,20 @@ const AboutSection: React.FC = () => {
 
   return (
     // Add id="about" for header link navigation
-    <Box id="about" sx={{ bgcolor: 'background.paper', py: 8 }}>
+    <Box 
+      id="about" 
+      sx={{
+        bgcolor: 'background.paper', 
+        py: 8,
+        // Add scroll margin to account for the sticky header height
+        scrollMarginTop: '80px', // Adjust value as needed based on actual header height
+      }}
+    >
       <Container maxWidth="lg">
         <Typography 
           variant="h3" 
           component="h2" 
           textAlign="center" 
-          gutterBottom 
           sx={{ mb: 6, fontWeight: 'medium' }}
         >
           About TheoForge
@@ -35,20 +42,20 @@ const AboutSection: React.FC = () => {
         }}>
           {/* Company info section */}
           <Box sx={{ flex: 1 }}>
-            <Typography variant="body1" paragraph>
-              TheoForge is an AI consulting company founded in Newark, NJ with a singular mission: helping businesses and educational institutions successfully navigate the AI transformation through expert guidance, strategic implementation, and tailored education.
+            <Typography variant="body1" sx={{ mb: 2 }}>
+              TheoForge is dedicated to **transforming AI complexity into strategic confidence** for businesses and educational institutions. Based in Newark, NJ, we provide expert guidance, pragmatic implementation, and tailored education to ensure you successfully navigate the AI landscape.
             </Typography>
             
-            <Typography variant="body1" paragraph>
-              Our focus is delivering practical, impactful AI solutions and strategies that align with your core business goals. We believe successful AI adoption requires both deep technical expertise and a nuanced understanding of organizational change, instructional design, and strategic alignment.
+            <Typography variant="body1" sx={{ mb: 2 }}>
+              We focus on delivering practical, high-impact AI solutions and strategies precisely aligned with your core objectives. We believe mastering AI requires more than just technology; it demands integrated expertise spanning strategy, engineering, organizational dynamics, and effective knowledge transfer.
             </Typography>
             
             <Typography variant="h5" component="h3" sx={{ mt: 4, mb: 2, fontWeight: 'medium' }}>
-              Our Approach
+              Our Approach: Clarity, Capability, Confidence
             </Typography>
             
-            <Typography variant="body1" paragraph>
-              We bridge the gap between cutting-edge AI technology and practical business application. Whether you're exploring your first AI initiative or scaling existing efforts, TheoForge provides the guidance, education, and implementation support to ensure your success.
+            <Typography variant="body1" sx={{ mb: 2 }}>
+              We bridge the gap between the potential of advanced AI and its practical, valuable application within your context. Whether charting your initial AI course or scaling sophisticated systems, TheoForge provides the strategic insight, technical skill, and educational support to build lasting AI capability and confidence.
             </Typography>
           </Box>
           
@@ -65,8 +72,8 @@ const AboutSection: React.FC = () => {
           }}>
             <Box sx={{ 
               position: 'relative',
-              width: 180,
-              height: 180,
+              width: 176,
+              height: 176,
               mb: 2,
               borderRadius: '50%',
               overflow: 'hidden',
@@ -76,16 +83,16 @@ const AboutSection: React.FC = () => {
                 src="/theo_keith.png"
                 alt="Keith Williams"
                 fill
-                style={{ objectFit: 'cover' }}
-                sizes="180px"
+                style={{ objectFit: 'cover', objectPosition: 'center 20%' }}
+                sizes="176px"
               />
             </Box>
             
-            <Typography variant="h5" component="h3" gutterBottom sx={{ fontWeight: 'medium' }}>
+            <Typography variant="h5" component="h3" sx={{ fontWeight: 'medium', mb: 1 }}>
               Keith {lastName}
             </Typography>
             
-            <Typography variant="subtitle1" color="text.secondary" gutterBottom>
+            <Typography variant="subtitle1" color="text.secondary" sx={{ mb: 2 }}>
               Founder & Principal AI Strategist
             </Typography>
             
@@ -118,24 +125,16 @@ const AboutSection: React.FC = () => {
         }}>
           {[
             {
-              title: 'Technical Depth & Breadth',
-              content: 'From practical implementation (RAG, Vector Embeddings, Knowledge Graphs) to cutting-edge research (LLM Alignment, LoRA adapters), we bring comprehensive AI expertise.'
+              title: 'Integrated Expertise for Holistic Solutions',
+              content: 'We combine deep AI technical skill (RAG, LLMs, Graphs) with strategic vision and user-centric design. This holistic approach moves beyond isolated features to deliver cohesive, high-impact AI systems you can trust.',
             },
             {
-              title: 'Enterprise & Startup Experience',
-              content: 'With experience as a CTO for a seed-stage fund and leading a funded startup, we understand technology\'s role in driving business growth.'
+              title: 'From Complexity to Confident Adoption',
+              content: 'Leveraging decades of CTO leadership and instructional design mastery, we translate complex AI concepts into practical strategies and build internal capabilities, ensuring your team adopts and leverages AI effectively and confidently.',
             },
-            {
-              title: 'Education & Adoption Focus',
-              content: 'Our background in instructional design and psychology enhances talent development and speeds effective AI adoption across your organization.'
-            },
-            {
-              title: 'Holistic 360° Approach',
-              content: 'We consider the entire ecosystem - from user experience and product design to implementation and strategic alignment.'
-            }
           ].map((point, index) => (
             <Box key={index} sx={{ p: 3, bgcolor: 'background.default', borderRadius: 2 }}>
-              <Typography variant="h6" component="h4" gutterBottom sx={{ fontWeight: 'medium' }}>
+              <Typography variant="h6" component="h4" sx={{ fontWeight: 'medium', mb: 1 }}>
                 {point.title}
               </Typography>
               <Typography variant="body1">

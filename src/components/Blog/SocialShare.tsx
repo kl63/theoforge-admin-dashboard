@@ -105,7 +105,7 @@ export default function SocialShare({ title, url, description, hashtags = [] }: 
           </IconButton>
         </DialogTitle>
         <DialogContent dividers>
-          <Typography variant="subtitle1" gutterBottom>
+          <Typography variant="subtitle1" sx={{ mb: 1 }}>
             Share directly to:
           </Typography>
           <Box sx={{ display: 'flex', gap: 2, mb: 4 }}>
@@ -166,7 +166,7 @@ export default function SocialShare({ title, url, description, hashtags = [] }: 
             </Tooltip>
           </Box>
 
-          <Typography variant="subtitle1" gutterBottom>
+          <Typography variant="subtitle1" sx={{ mb: 1 }}>
             Copy Article Link:
           </Typography>
           <Box sx={{ display: 'flex', mb: 4 }}>
@@ -189,7 +189,7 @@ export default function SocialShare({ title, url, description, hashtags = [] }: 
             </Button>
           </Box>
 
-          <Typography variant="subtitle1" gutterBottom>
+          <Typography variant="subtitle1" sx={{ mb: 1 }}>
             LinkedIn Post Template:
           </Typography>
           <TextField
