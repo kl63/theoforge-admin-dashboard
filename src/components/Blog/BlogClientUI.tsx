@@ -8,91 +8,54 @@ import {
   useRouter, useSearchParams, usePathname
 } from 'next/navigation'; // Import navigation hooks
 
-import { PostData } from '@/lib/posts';
+import { PostData } from '@/types/post'; // Corrected import path for type
 import BlogCard from './BlogCard'; // Assuming BlogCard is in the same directory now
 import NewsletterSignup from '@/components/Blog/NewsletterSignup';
 
 // Icons (add SearchIcon)
-import HeadphonesIcon from '@mui/icons-material/Headphones';
 import LightbulbOutlinedIcon from '@mui/icons-material/LightbulbOutlined';
+import GridViewIcon from '@mui/icons-material/GridView'; // Add Grid icon
+import ViewListIcon from '@mui/icons-material/ViewList'; // Add List icon
 import SearchIcon from '@mui/icons-material/Search';
 
+// Import types used in props
+import { ContentType, ViewMode } from './BlogInteractivityWrapper'; // Adjust path if necessary
+
 interface BlogClientUIProps {
-  allPosts: PostData[];
   allTags: string[];
+  // Add props passed from the wrapper
+  activeContentType: ContentType;
+  activeTags: string[];
+  viewMode: ViewMode;
+  postsToDisplay: PostData[];
+  handleContentTypeChange: (type: ContentType) => void;
+  handleTagToggle: (tag: string) => void;
+  handleResetFilters: () => void;
+  handleViewModeChange: (mode: ViewMode) => void;
 }
 
-const POSTS_PER_PAGE = 9;
-
-export default function BlogClientUI({ allPosts, allTags }: BlogClientUIProps) {
+export default function BlogClientUI({
+  allTags,
+  // Destructure new props
+  activeContentType,
+  activeTags,
+  viewMode,
+  postsToDisplay,
+  handleContentTypeChange,
+  handleTagToggle,
+  handleResetFilters,
+  handleViewModeChange,
+}: BlogClientUIProps) {
   const router = useRouter();
   const pathname = usePathname();
   const searchParams = useSearchParams();
 
   // State derived from URL
   const currentPage = parseInt(searchParams.get('page') || '1', 10);
-  const selectedTag = searchParams.get('tag') || null;
-  const filterType = searchParams.get('type') || 'all'; // 'all', 'articles', 'podcasts'
   const searchQuery = searchParams.get('q') || '';
 
   // Local state only for the controlled search input
   const [localSearchQuery, setLocalSearchQuery] = useState(searchQuery);
-
-  // Update local search query if URL changes
-  useEffect(() => {
-    setLocalSearchQuery(searchQuery);
-  }, [searchQuery]);
-
-  // Debounce search input (optional but recommended)
-  useEffect(() => {
-    const handler = setTimeout(() => {
-      if (localSearchQuery !== searchQuery) {
-        updateSearchParams({ q: localSearchQuery, page: '1' }); // Reset to page 1 on new search
-      }
-    }, 500); // 500ms debounce
-
-    return () => {
-      clearTimeout(handler);
-    };
-  }, [localSearchQuery, searchQuery, updateSearchParams]); // Re-run when local query changes
-
-  // Memoized filtering and searching logic based on URL params
-  const processedPosts = useCallback(() => {
-    let filtered = allPosts;
-
-    // Filter by content type
-    if (filterType === 'articles') {
-      filtered = filtered.filter(post => !post.isPodcast);
-    } else if (filterType === 'podcasts') {
-      filtered = filtered.filter(post => post.isPodcast);
-    }
-
-    // Filter by tag
-    if (selectedTag) {
-      filtered = filtered.filter(post =>
-        post.tags && post.tags.includes(selectedTag)
-      );
-    }
-
-    // Filter by search query (case-insensitive)
-    if (searchQuery) {
-      const lowerCaseQuery = searchQuery.toLowerCase();
-      filtered = filtered.filter(post =>
-        post.title.toLowerCase().includes(lowerCaseQuery) ||
-        (post.excerpt && post.excerpt.toLowerCase().includes(lowerCaseQuery)) ||
-        (post.tags && post.tags.some(tag => tag.toLowerCase().includes(lowerCaseQuery)))
-      );
-    }
-
-    return filtered;
-  }, [allPosts, filterType, selectedTag, searchQuery]);
-
-  // Pagination Calculations
-  const totalPosts = processedPosts().length;
-  const totalPages = Math.ceil(totalPosts / POSTS_PER_PAGE);
-  const startIndex = (currentPage - 1) * POSTS_PER_PAGE;
-  const endIndex = startIndex + POSTS_PER_PAGE;
-  const postsToDisplay = processedPosts().slice(startIndex, endIndex);
 
   // Helper function to update URL search parameters
   const updateSearchParams = useCallback((paramsToUpdate: { [key: string]: string | null }) => {
@@ -116,25 +79,44 @@ export default function BlogClientUI({ allPosts, allTags }: BlogClientUIProps) {
     router.push(`${pathname}${query}`);
   }, [pathname, router, searchParams]);
 
+  // Update local search query if URL changes
+  useEffect(() => {
+    setLocalSearchQuery(searchQuery);
+  }, [searchQuery]);
+
+  // Debounce search input (optional but recommended)
+  useEffect(() => {
+    const handler = setTimeout(() => {
+      if (localSearchQuery !== searchQuery) {
+        updateSearchParams({ q: localSearchQuery, page: '1' }); // Reset to page 1 on new search
+      }
+    }, 500); // 500ms debounce
+
+    return () => {
+      clearTimeout(handler);
+    };
+  }, [localSearchQuery, searchQuery, updateSearchParams]); // Re-run when local query changes
+
+  // Pagination Calculations
+  const totalPosts = postsToDisplay.length;
+  const totalPages = Math.ceil(totalPosts / 9);
+  const startIndex = (currentPage - 1) * 9;
+  const endIndex = startIndex + 9;
+  const paginatedPostsToDisplay = postsToDisplay.slice(startIndex, endIndex); // Paginate the filtered posts
+
   // Event Handlers
   const handlePageChange = (event: React.ChangeEvent<unknown>, value: number) => {
     updateSearchParams({ page: value.toString() });
-  };
-
-  const handleTagClick = useCallback((tag: string) => {
-    const newTag = selectedTag === tag ? null : tag;
-    updateSearchParams({ tag: newTag, page: '1' }); // Reset page on filter change
-  }, [selectedTag, updateSearchParams]);
-
-  const handleTypeClick = (type: string) => {
-    updateSearchParams({ type: type, page: '1' }); // Reset page on filter change
   };
 
   const handleSearchInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setLocalSearchQuery(event.target.value);
   };
 
-  // --- RENDERING --- (Will replace old rendering logic)
+  const handleSearchSubmit = (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    updateSearchParams({ q: localSearchQuery, page: '1' }); // Reset to page 1 on new search
+  };
 
   return (
     <Box sx={{ py: { xs: 6, md: 10 }, bgcolor: 'background.default' }}>
@@ -159,99 +141,143 @@ export default function BlogClientUI({ allPosts, allTags }: BlogClientUIProps) {
         {/* Search and Filter Section */}
         <Box sx={{ mb: 5, display: 'flex', flexDirection: { xs: 'column', md: 'row' }, gap: 3 }}>
           {/* Search Bar */}
-          <TextField
-            fullWidth
-            variant="outlined"
-            placeholder="Search articles & podcasts..."
-            value={localSearchQuery}
-            onChange={handleSearchInputChange}
-            InputProps={{
-              startAdornment: (
-                <InputAdornment position="start">
-                  <SearchIcon />
-                </InputAdornment>
-              ),
-            }}
-            sx={{ flexGrow: 1, maxWidth: { md: '400px' } }} // Limit width on larger screens
-          />
+          <form onSubmit={handleSearchSubmit}>
+            <TextField
+              fullWidth
+              variant="outlined"
+              placeholder="Search articles & podcasts..."
+              value={localSearchQuery}
+              onChange={handleSearchInputChange}
+              InputProps={{
+                startAdornment: (
+                  <InputAdornment position="start">
+                    <SearchIcon />
+                  </InputAdornment>
+                ),
+              }}
+              sx={{ flexGrow: 1, maxWidth: { md: '400px' } }} // Limit width on larger screens
+            />
+          </form>
 
           {/* Filter Controls */}
           <Box sx={{ display: 'flex', flexDirection: { xs: 'column', sm: 'row' }, gap: 2, alignItems: 'center' }}>
-             {/* Content Type Filter */}
+            {/* Content Type Filter */}
             <Box sx={{ display: 'flex', justifyContent: 'center', gap: 1 }}>
-              <Button
-                variant={filterType === 'all' ? 'contained' : 'outlined'}
-                onClick={() => handleTypeClick('all')}
-                size="small" sx={{ borderRadius: 8 }}
-              >
-                All
-              </Button>
-              <Button
-                variant={filterType === 'articles' ? 'contained' : 'outlined'}
-                onClick={() => handleTypeClick('articles')}
-                size="small" sx={{ borderRadius: 8 }}
-              >
-                Articles
-              </Button>
-              <Button
-                variant={filterType === 'podcasts' ? 'contained' : 'outlined'}
-                onClick={() => handleTypeClick('podcasts')}
-                size="small" startIcon={<HeadphonesIcon />} sx={{ borderRadius: 8 }}
-              >
-                Podcasts
-              </Button>
+              <Chip
+                label="All Content"
+                size="small"
+                color={activeContentType === 'all' ? 'primary' : 'default'}
+                variant={activeContentType === 'all' ? 'filled' : 'outlined'}
+                clickable
+                onClick={() => handleContentTypeChange('all')}
+              />
+              <Chip
+                label="Articles"
+                size="small"
+                color={activeContentType === 'article' ? 'primary' : 'default'}
+                variant={activeContentType === 'article' ? 'filled' : 'outlined'}
+                clickable
+                onClick={() => handleContentTypeChange('article')}
+              />
+              <Chip
+                label="Podcasts"
+                size="small"
+                color={activeContentType === 'podcast' ? 'primary' : 'default'}
+                variant={activeContentType === 'podcast' ? 'filled' : 'outlined'}
+                clickable
+                onClick={() => handleContentTypeChange('podcast')}
+              />
             </Box>
 
             <Divider orientation="vertical" flexItem sx={{ display: { xs: 'none', sm: 'block' }, mx: 1 }} />
 
-             {/* Tag Filter (Simplified for now - consider dropdown for many tags) */}
+            {/* Tag Filter (Simplified for now - consider dropdown for many tags) */}
             <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 1, alignItems: 'center' }}>
               <Chip
-                  label="All Tags"
-                  clickable
-                  onClick={() => handleTagClick('')}
-                  color={!selectedTag ? 'primary' : 'default'}
-                  variant={!selectedTag ? 'filled' : 'outlined'}
-                  size="small"
-                  sx={{ borderRadius: 1 }}
+                label="All Tags"
+                clickable
+                onClick={handleResetFilters}
+                color={!activeTags.length ? 'primary' : 'default'}
+                variant={!activeTags.length ? 'filled' : 'outlined'}
+                size="small"
+                sx={{ borderRadius: 1 }}
               />
-              {allTags.slice(0, 5).map((tag) => ( // Limit visible tags initially
+              {allTags.slice(0, 5).map((tag) => (
                 <Chip
                   key={tag}
                   label={tag}
                   clickable
-                  onClick={() => handleTagClick(tag)}
-                  color={selectedTag === tag ? 'primary' : 'default'}
-                  variant={selectedTag === tag ? 'filled' : 'outlined'}
+                  onClick={() => handleTagToggle(tag)}
+                  color={activeTags.includes(tag) ? 'primary' : 'default'}
+                  variant={activeTags.includes(tag) ? 'filled' : 'outlined'}
                   size="small"
                   sx={{ borderRadius: 1 }}
                 />
               ))}
-              {/* Add a "More Tags" button/dropdown if needed */} 
+              {/* Add a "More Tags" button/dropdown if needed */}
+            </Box>
+
+            {/* View Mode Toggle */}
+            <Box sx={{ display: 'flex', gap: 1, ml: { sm: 2 } }}>
+              <Button
+                size="small"
+                variant={viewMode === 'grid' ? 'contained' : 'outlined'}
+                onClick={() => handleViewModeChange('grid')}
+                sx={{ minWidth: 0, p: 1 }}
+                aria-label="Grid view"
+              >
+                <GridViewIcon fontSize="small" />
+              </Button>
+              <Button
+                size="small"
+                variant={viewMode === 'list' ? 'contained' : 'outlined'}
+                onClick={() => handleViewModeChange('list')}
+                sx={{ minWidth: 0, p: 1 }}
+                aria-label="List view"
+              >
+                <ViewListIcon fontSize="small" />
+              </Button>
             </Box>
           </Box>
         </Box>
 
         {/* Results Count and Grid */}
         <Box sx={{ mb: 4 }}>
-            <Typography variant="body2" color="text.secondary">
-                Showing {postsToDisplay.length} of {totalPosts} results.
-            </Typography>
+          <Typography variant="body2" color="text.secondary">
+            Showing {postsToDisplay.length} of {totalPosts} results.
+          </Typography>
         </Box>
 
-        <Grid container spacing={3}>
-          {postsToDisplay.length > 0 ? (
-            postsToDisplay.map((post) => (
-              <Grid size={{ xs: 12, sm: 6, md: 4 }} key={post.slug}>
+        <Grid 
+          container 
+          spacing={viewMode === 'grid' ? 4 : 2} // Adjust spacing based on view
+          sx={{ mb: { xs: 6, md: 8 } }}
+        >
+          {paginatedPostsToDisplay.length > 0 ? (
+            paginatedPostsToDisplay.map((post) => (
+              <Box
+                key={post.slug}
+                sx={{
+                  padding: viewMode === 'grid' ? 2 : 1, // Simulate spacing
+                  width: '100%', // xs
+                  '@media (min-width:600px)': { // sm
+                    width: viewMode === 'grid' ? '50%' : '100%',
+                  },
+                  '@media (min-width:900px)': { // md
+                    width: viewMode === 'grid' ? '33.33%' : '100%',
+                  },
+                }}
+              >
                 <BlogCard post={post} />
-              </Grid>
+              </Box>
             ))
           ) : (
-            <Grid size={12}>
-                <Typography sx={{ textAlign: 'center', py: 5, color: 'text.secondary' }}>
-                    No posts found matching your criteria.
-                </Typography>
-            </Grid>
+            // No results message
+            <Box sx={{ width: '100%', padding: 2 }}> 
+              <Typography sx={{ textAlign: 'center', py: 5, color: 'text.secondary' }}>
+                No posts found matching your criteria.
+              </Typography>
+            </Box>
           )}
         </Grid>
 

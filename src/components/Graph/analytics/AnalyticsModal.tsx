@@ -22,7 +22,7 @@ import {
   LinearProgress
 } from '@mui/material';
 import FiberManualRecordIcon from '@mui/icons-material/FiberManualRecord';
-import { PhilosopherData, GraphNode } from '@/components/Graph/EnterprisePhilosopherGraph';
+import { PhilosopherData, GraphNode } from '@/types/graph';
 
 interface TabPanelProps {
   children?: React.ReactNode;
@@ -66,6 +66,18 @@ interface AnalyticsModalProps {
 const AnalyticsModal: React.FC<AnalyticsModalProps> = ({ open, onClose, data }) => {
   const [tabValue, setTabValue] = React.useState(0);
 
+  // Helper function to safely get a color index based on community
+  const getCommunityColorIndex = (community: number | string | undefined): number => {
+    const communityStr = String(community ?? '0'); // Default undefined/null to '0'
+    const communityNum = parseInt(communityStr, 10);
+    const index = isNaN(communityNum) ? 0 : communityNum; // Default NaN to 0
+    // Ensure the index is non-negative before modulo
+    const nonNegativeIndex = Math.max(0, index);
+    // Prevent division by zero if communityColors is empty
+    const communityColors = ["#00796B", "#1976D2", "#FFA000", "#7B1FA2", "#C62828", "#795548"];
+    return communityColors.length > 0 ? nonNegativeIndex % communityColors.length : 0;
+  };
+
   const handleTabChange = (event: React.SyntheticEvent, newValue: number) => {
     setTabValue(newValue);
   };
@@ -73,7 +85,7 @@ const AnalyticsModal: React.FC<AnalyticsModalProps> = ({ open, onClose, data }) 
   // Calculate analytics data
   const calculateInfluenceRanking = () => {
     return [...data.nodes]
-      .sort((a, b) => b.influenceScore - a.influenceScore)
+      .sort((a, b) => (b.influenceScore ?? 0) - (a.influenceScore ?? 0))
       .slice(0, 10);
   };
 
@@ -107,10 +119,12 @@ const AnalyticsModal: React.FC<AnalyticsModalProps> = ({ open, onClose, data }) 
   };
 
   const calculateEraCounts = () => {
-    const eraCounts: Record<string, number> = {};
+    const eraCounts: { [key: string]: number } = {};
     
     data.nodes.forEach(node => {
-      eraCounts[node.era] = (eraCounts[node.era] || 0) + 1;
+      if (node.era) { // Only increment if era is defined
+        eraCounts[node.era] = (eraCounts[node.era] || 0) + 1;
+      }
     });
     
     return Object.entries(eraCounts)
@@ -169,26 +183,26 @@ const AnalyticsModal: React.FC<AnalyticsModalProps> = ({ open, onClose, data }) 
             </Typography>
             <List>
               {influenceRanking.slice(0, 5).map((philosopher, index) => (
-                <ListItem key={philosopher.id}>
+                <ListItem key={philosopher.id} disablePadding>
                   <ListItemIcon>
-                    <Avatar sx={{ bgcolor: communityColors[philosopher.community % communityColors.length] }}>
+                    <Avatar sx={{ bgcolor: communityColors[getCommunityColorIndex(philosopher.community)] }}>
                       {index + 1}
                     </Avatar>
                   </ListItemIcon>
                   <ListItemText 
                     primary={philosopher.name} 
-                    secondary={`Influence Score: ${philosopher.influenceScore}`} 
+                    secondary={`Influence Score: ${philosopher.influenceScore?.toFixed(2)}`} 
                   />
-                  <Box sx={{ width: '40%', mr: 2 }}>
+                  <Box sx={{ width: '50%' }}>
                     <LinearProgress 
                       variant="determinate" 
-                      value={(philosopher.influenceScore / 10) * 100} 
+                      value={((philosopher.influenceScore ?? 0) / (influenceRanking[0]?.influenceScore ?? 1)) * 100} 
                       sx={{ 
                         height: 8, 
                         borderRadius: 5,
                         backgroundColor: 'rgba(0,0,0,0.1)',
                         '& .MuiLinearProgress-bar': {
-                          backgroundColor: communityColors[philosopher.community % communityColors.length]
+                          backgroundColor: communityColors[getCommunityColorIndex(philosopher.community)]
                         }
                       }} 
                     />
@@ -252,7 +266,7 @@ const AnalyticsModal: React.FC<AnalyticsModalProps> = ({ open, onClose, data }) 
                     <Box sx={{ display: 'flex', alignItems: 'center' }}>
                       <FiberManualRecordIcon 
                         fontSize="small" 
-                        sx={{ color: communityColors[philosopher.community % communityColors.length], mr: 1 }} 
+                        sx={{ color: communityColors[getCommunityColorIndex(philosopher.community)], mr: 1 }} 
                       />
                       {philosopher.community}
                     </Box>
@@ -262,20 +276,20 @@ const AnalyticsModal: React.FC<AnalyticsModalProps> = ({ open, onClose, data }) 
                       <Box sx={{ width: '100%', mr: 1 }}>
                         <LinearProgress 
                           variant="determinate" 
-                          value={(philosopher.influenceScore / 10) * 100} 
+                          value={((philosopher.influenceScore ?? 0) / (influenceRanking[0]?.influenceScore ?? 1)) * 100} 
                           sx={{ 
                             height: 8, 
                             borderRadius: 5,
                             backgroundColor: 'rgba(0,0,0,0.1)',
                             '& .MuiLinearProgress-bar': {
-                              backgroundColor: communityColors[philosopher.community % communityColors.length]
+                              backgroundColor: communityColors[getCommunityColorIndex(philosopher.community)]
                             }
                           }} 
                         />
                       </Box>
                       <Box sx={{ minWidth: 35 }}>
                         <Typography variant="body2" color="text.secondary">
-                          {philosopher.influenceScore.toFixed(1)}
+                          {philosopher.influenceScore?.toFixed(1)}
                         </Typography>
                       </Box>
                     </Box>

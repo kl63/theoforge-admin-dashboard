@@ -1,39 +1,26 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
-import { Box, Chip, Stack, Typography, Button } from '@mui/material';
-import GridViewIcon from '@mui/icons-material/GridView';
-import ViewListIcon from '@mui/icons-material/ViewList';
-import FilterListIcon from '@mui/icons-material/FilterList';
-import { PostData } from '@/lib/posts';
+import { PostData } from '@/types/post';
+import BlogClientUI from './BlogClientUI';
 
-type ContentType = 'all' | 'article' | 'podcast';
-type ViewMode = 'grid' | 'list';
+// Export types so they can be imported by BlogClientUI
+export type ContentType = 'all' | 'article' | 'podcast';
+export type ViewMode = 'grid' | 'list';
 
 interface BlogInteractivityWrapperProps {
   allPosts: PostData[];
-  children: React.ReactNode;
 }
 
 const BlogInteractivityWrapper: React.FC<BlogInteractivityWrapperProps> = ({ 
-  allPosts,
-  children 
+  allPosts 
 }) => {
   const [activeContentType, setActiveContentType] = useState<ContentType>('all');
   const [activeTags, setActiveTags] = useState<string[]>([]);
   const [viewMode, setViewMode] = useState<ViewMode>('grid');
   const [filteredPosts, setFilteredPosts] = useState<PostData[]>(allPosts);
-  const [featuredPost, setFeaturedPost] = useState<PostData | null>(allPosts[0] || null);
-  const [regularPosts, setRegularPosts] = useState<PostData[]>(allPosts.slice(1));
 
-  // Get unique tags from all posts
-  const uniqueTags: string[] = Array.from(
-    new Set(
-      allPosts.flatMap(post => post.tags || [])
-    )
-  ).sort();
-
-  // Filter posts based on active filters
+  // Effect to filter posts when content type or tags change
   useEffect(() => {
     let filtered = [...allPosts];
     
@@ -54,15 +41,6 @@ const BlogInteractivityWrapper: React.FC<BlogInteractivityWrapperProps> = ({
     }
     
     setFilteredPosts(filtered);
-    
-    // Update featured post and regular posts
-    if (filtered.length > 0) {
-      setFeaturedPost(filtered[0]);
-      setRegularPosts(filtered.slice(1));
-    } else {
-      setFeaturedPost(null);
-      setRegularPosts([]);
-    }
   }, [activeContentType, activeTags, allPosts]);
 
   // Handle content type selection
@@ -90,123 +68,26 @@ const BlogInteractivityWrapper: React.FC<BlogInteractivityWrapperProps> = ({
     setViewMode(mode);
   };
 
-  // Replace child props with our interactive props
-  const childrenWithProps = React.Children.map(children, child => {
-    if (React.isValidElement(child)) {
-      return React.cloneElement(child, {
-        // Only override the Content Filter Controls, Tag Navigation, and Content Grid
-        contentFilterControls: (
-          <Box sx={{ 
-            display: 'flex', 
-            justifyContent: 'space-between', 
-            alignItems: 'center', 
-            mb: 4,
-            flexDirection: { xs: 'column', sm: 'row' },
-            gap: 2
-          }}>
-            <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-              <FilterListIcon />
-              <Typography variant="subtitle1" sx={{ fontWeight: 'medium' }}>
-                Filter Content
-              </Typography>
-            </Box>
-            
-            <Stack direction="row" spacing={1} sx={{ flexWrap: 'wrap', justifyContent: 'center' }}>
-              <Chip 
-                label="All Content" 
-                color={activeContentType === 'all' ? 'primary' : 'default'}
-                variant={activeContentType === 'all' ? 'filled' : 'outlined'}
-                clickable
-                onClick={() => handleContentTypeChange('all')}
-              />
-              <Chip 
-                label="Articles" 
-                color={activeContentType === 'article' ? 'primary' : 'default'}
-                variant={activeContentType === 'article' ? 'filled' : 'outlined'}
-                clickable
-                onClick={() => handleContentTypeChange('article')}
-              />
-              <Chip 
-                label="Podcasts" 
-                color={activeContentType === 'podcast' ? 'primary' : 'default'}
-                variant={activeContentType === 'podcast' ? 'filled' : 'outlined'}
-                clickable
-                onClick={() => handleContentTypeChange('podcast')}
-              />
-            </Stack>
-            
-            <Box sx={{ display: 'flex', gap: 1 }}>
-              <Button 
-                size="small" 
-                variant={viewMode === 'grid' ? 'contained' : 'outlined'}
-                sx={{ minWidth: 0, p: 1 }}
-                aria-label="Grid view"
-                onClick={() => handleViewModeChange('grid')}
-              >
-                <GridViewIcon fontSize="small" />
-              </Button>
-              <Button 
-                size="small" 
-                variant={viewMode === 'list' ? 'contained' : 'outlined'}
-                sx={{ minWidth: 0, p: 1 }}
-                aria-label="List view"
-                onClick={() => handleViewModeChange('list')}
-              >
-                <ViewListIcon fontSize="small" />
-              </Button>
-            </Box>
-          </Box>
-        ),
-        tagNavigation: (
-          <Box sx={{ mb: 5, overflow: 'auto', pb: 1 }}>
-            <Stack 
-              direction="row" 
-              spacing={1} 
-              sx={{ 
-                flexWrap: { xs: 'nowrap', md: 'wrap' },
-                justifyContent: { xs: 'flex-start', md: 'center' }
-              }}
-            >
-              <Chip 
-                label="All Tags" 
-                color={activeTags.length === 0 ? 'primary' : 'default'}
-                variant={activeTags.length === 0 ? 'filled' : 'outlined'}
-                clickable
-                onClick={handleResetFilters}
-              />
-              {uniqueTags.map((tag: string) => (
-                <Chip 
-                  key={tag} 
-                  label={tag}
-                  color={activeTags.includes(tag) ? 'primary' : 'default'}
-                  variant={activeTags.includes(tag) ? 'filled' : 'outlined'}
-                  clickable
-                  onClick={() => handleTagToggle(tag)}
-                />
-              ))}
-            </Stack>
-          </Box>
-        ),
-        featuredPost,
-        regularPosts,
-        viewMode,
-        // Show no results message if needed
-        noResults: filteredPosts.length === 0 && (
-          <Box sx={{ textAlign: 'center', py: 8 }}>
-            <Typography variant="h5" component="h3" gutterBottom>
-              No matching content found
-            </Typography>
-            <Typography variant="body1" color="text.secondary" sx={{ mb: 4 }}>
-              Try adjusting your filters or selecting different tags
-            </Typography>
-          </Box>
-        )
-      });
-    }
-    return child;
-  });
+  // Determine the posts to display based on filtering logic
+  const postsToDisplay = filteredPosts; // Use the filtered state
 
-  return <>{childrenWithProps}</>;
+  // Extract all unique tags from the original allPosts for tag navigation
+  const allTags = Array.from(new Set(allPosts.flatMap(post => post.tags || [])));
+
+  // Render BlogClientUI directly, passing state and handlers as props
+  return (
+    <BlogClientUI
+      allTags={allTags}   // Pass all unique tags
+      activeContentType={activeContentType}
+      activeTags={activeTags}
+      viewMode={viewMode}
+      postsToDisplay={postsToDisplay} // Pass the filtered posts
+      handleContentTypeChange={handleContentTypeChange}
+      handleTagToggle={handleTagToggle}
+      handleResetFilters={handleResetFilters}
+      handleViewModeChange={handleViewModeChange}
+    />
+  );
 };
 
 export default BlogInteractivityWrapper;

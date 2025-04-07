@@ -10,7 +10,7 @@ import {
   styled
 } from '@mui/material';
 import SearchIcon from '@mui/icons-material/Search';
-import { GraphNode } from '@/components/Graph/EnterprisePhilosopherGraph';
+import { GraphNode } from '@/types/graph';
 
 interface SearchBarProps {
   data: GraphNode[];
@@ -65,10 +65,10 @@ const SearchBar: React.FC<SearchBarProps> = ({ data, onSelect, onSearchChange })
 
     // Filter based on input value
     const filtered = data.filter(
-      (option) => 
-        (option as GraphNode).name.toLowerCase().includes(inputValue.toLowerCase()) ||
-        ((option as GraphNode).era && (option as GraphNode).era.toLowerCase().includes(inputValue.toLowerCase())) ||
-        ((option as GraphNode).community !== undefined && (option as GraphNode).community.toString().includes(inputValue))
+      (option) =>
+        (option.name?.toLowerCase() ?? '').includes(inputValue.toLowerCase()) ||
+        (option.era?.toLowerCase() ?? '').includes(inputValue.toLowerCase()) ||
+        (option.community !== undefined && String(option.community).toLowerCase().includes(inputValue.toLowerCase()))
     );
     
     setOptions(filtered.slice(0, 15)); // Limit to 15 results for performance
@@ -93,7 +93,7 @@ const SearchBar: React.FC<SearchBarProps> = ({ data, onSelect, onSearchChange })
       }}
       options={options}
       loading={loading}
-      getOptionLabel={(option) => (option as GraphNode).name || ''}
+      getOptionLabel={(option) => (option as GraphNode)?.name || ''}
       filterOptions={(x) => x} // We handle filtering ourselves
       noOptionsText="No philosophers found"
       renderInput={(params) => (
@@ -117,31 +117,43 @@ const SearchBar: React.FC<SearchBarProps> = ({ data, onSelect, onSearchChange })
           }}
         />
       )}
-      renderOption={(props, option) => (
-        <li {...props} key={(option as GraphNode).id}>
-          <Box display="flex" alignItems="center" width="100%" py={0.5}>
-            <Avatar 
-              sx={{ 
-                width: 36, 
-                height: 36, 
-                bgcolor: (option as GraphNode).community ? `hsl(${parseInt((option as GraphNode).community.toString()) * 137.5 % 360}, 70%, 65%)` : 'gray',
-                mr: 1.5,
-                fontSize: '0.875rem'
-              }}
-            >
-              {(option as GraphNode).name.charAt(0)}
-            </Avatar>
-            <Box>
-              <Typography variant="body1" fontWeight={500}>
-                {(option as GraphNode).name}
-              </Typography>
-              <Typography variant="caption" color="text.secondary">
-                {(option as GraphNode).era} • {(option as GraphNode).community ? `Community ${(option as GraphNode).community}` : 'Unknown community'}
-              </Typography>
+      renderOption={(props, option) => {
+        // Assert option type once for safer access within the render logic
+        const node = option as GraphNode;
+        if (!node) return null; // Handle potential null/undefined cases if needed
+
+        // Calculate color using a safe approach (consider moving to a helper if complex)
+        const communityValue = node.community?.toString() ?? '0';
+        const communityNumber = parseInt(communityValue, 10);
+        const colorHue = isNaN(communityNumber) ? 0 : communityNumber * 137.5 % 360;
+        const avatarColor = node.community !== undefined ? `hsl(${colorHue}, 70%, 65%)` : 'gray';
+
+        return (
+          <li {...props} key={node.id}>
+            <Box display="flex" alignItems="center" width="100%" py={0.5}>
+              <Avatar 
+                sx={{ 
+                  width: 36, 
+                  height: 36, 
+                  bgcolor: avatarColor,
+                  mr: 1.5,
+                  fontSize: '0.875rem'
+                }}
+              >
+                {node.name?.charAt(0) ?? '-'} {/* Safe access to name */}
+              </Avatar>
+              <Box>
+                <Typography variant="body1" fontWeight={500}>
+                  {node.name ?? 'Unnamed Node'} {/* Safe access to name */}
+                </Typography>
+                <Typography variant="caption" color="text.secondary">
+                  {node.era ?? 'Unknown Era'} • {node.community !== undefined ? `Community ${node.community}` : 'Unknown community'}
+                </Typography>
+              </Box>
             </Box>
-          </Box>
-        </li>
-      )}
+          </li>
+        );
+      }}
     />
   );
 };

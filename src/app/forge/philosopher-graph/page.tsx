@@ -4,7 +4,7 @@ import React, { useState, useEffect, useRef, useMemo } from 'react';
 import { Box, Typography, useTheme, Paper, Chip, FormControlLabel, Switch, Button } from '@mui/material';
 import RefreshIcon from '@mui/icons-material/Refresh';
 import BarChartIcon from '@mui/icons-material/BarChart';
-import { PhilosopherData, GraphNode } from '@/components/Graph/EnterprisePhilosopherGraph';
+import { PhilosopherData, GraphNode } from '@/types/graph';
 import { NodeObject, ForceGraphMethods } from 'react-force-graph-2d';
 import { GraphControls } from '@/components/Graph/controls/GraphControls';
 import SearchBar from '@/components/Graph/controls/SearchBar';
@@ -102,8 +102,10 @@ const PhilosopherGraphPage: React.FC = () => {
   
   // Filter graph data based on active eras and search query
   const filteredData = useMemo(() => {
+    if (!graphData) return { nodes: [], links: [] };
+    
     // If no data yet, return empty structure
-    if (!graphData || !graphData.nodes || graphData.nodes.length === 0) {
+    if (!graphData.nodes || graphData.nodes.length === 0) {
       console.log("No graph data available for filtering");
       return { nodes: [], links: [] };
     }
@@ -117,9 +119,9 @@ const PhilosopherGraphPage: React.FC = () => {
     }
     
     // Filter nodes by era and search query
-    const filteredNodes = graphData.nodes.filter(node => 
-      (activeEras.length === 0 || activeEras.includes(node.era)) && 
-      (searchQuery === '' || node.name.toLowerCase().includes(searchQuery.toLowerCase()))
+    const filteredNodes = graphData.nodes.filter(node =>
+      (activeEras.length === 0 || (node.era && activeEras.includes(node.era))) &&
+      (searchQuery === '' || (node.name && node.name.toLowerCase().includes(searchQuery.toLowerCase())))
     );
     
     console.log(`Filtered to ${filteredNodes.length} nodes`);

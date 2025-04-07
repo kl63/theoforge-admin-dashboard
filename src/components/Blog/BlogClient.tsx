@@ -5,7 +5,7 @@ import { Box, Typography, Container, Chip, Stack, Button } from '@mui/material';
 import Image from 'next/image';
 import Link from 'next/link';
 import TagOutlinedIcon from '@mui/icons-material/TagOutlined';
-import { PostData } from '@/lib/posts';
+import { PostData } from '@/types/post';
 import BlogContentControls from './BlogContentControls';
 
 interface BlogClientProps {

@@ -2,6 +2,7 @@
 
 import React from 'react';
 import { Box, Paper, Typography } from '@mui/material';
+import { Theme } from '@mui/material/styles';
 import { CommunityInfo, RelationInfo } from '../../../types/graph';
 
 export interface GraphLegendsProps {

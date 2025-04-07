@@ -5,7 +5,7 @@ import { Box, Chip, Stack, Typography, Button } from '@mui/material';
 import GridViewIcon from '@mui/icons-material/GridView';
 import ViewListIcon from '@mui/icons-material/ViewList';
 import FilterListIcon from '@mui/icons-material/FilterList';
-import { PostData } from '@/lib/posts';
+import { PostData } from '@/types/post';
 
 type ContentType = 'all' | 'article' | 'podcast';
 type ViewMode = 'grid' | 'list';

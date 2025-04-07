@@ -1,6 +1,6 @@
 import React from 'react';
 import { Container, Typography, Box } from '@mui/material';
-import { getSortedPostsData, getAllTags } from '@/lib/posts';
+import { getSortedPostsData } from '@/lib/posts';
 import { PostData } from '@/types/post';
 import { Metadata } from 'next';
 import NewsletterFooter from '@/components/Blog/NewsletterFooter';
@@ -14,7 +14,6 @@ export const metadata: Metadata = {
 
 export default async function BlogPage() {
   const allPostsData: PostData[] = await getSortedPostsData();
-  const uniqueTags: string[] = await getAllTags();
   const allContentTypes: string[] = Array.from(new Set(allPostsData.map(p => p.isPodcast ? 'Podcast' : 'Article'))).sort();
   
   return (
@@ -33,7 +32,6 @@ export default async function BlogPage() {
         {/* Filters and Post Grid managed by Enhancer */}
         <BlogPageEnhancer 
           posts={allPostsData} 
-          allTags={uniqueTags} 
           allContentTypes={allContentTypes} 
         />
       </Container>

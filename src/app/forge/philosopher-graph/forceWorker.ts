@@ -155,14 +155,18 @@ self.onmessage = (event: MessageEvent<WorkerMessage>) => {
       
     case 'update':
       if (!simulation || !messageData.nodes) return; // Add guard for undefined nodes
-      // Update node positions in the simulation
-      simulation.nodes().forEach((simNode) => {
-        const updatedNode = messageData.nodes.find(n => n.id === simNode.id);
-        if (updatedNode && (updatedNode.fx !== undefined || updatedNode.fy !== undefined)) {
-          simNode.fx = updatedNode.fx;
-          simNode.fy = updatedNode.fy;
-        }
-      });
+      // Safely update node positions if nodes are provided
+      if (messageData.nodes) { // Check if nodes array exists
+        // Update node positions in the simulation
+        simulation.nodes().forEach((simNode) => {
+          // Use optional chaining to safely call .find()
+          const updatedNode = messageData.nodes?.find(n => n.id === simNode.id);
+          if (updatedNode && (updatedNode.fx !== undefined || updatedNode.fy !== undefined)) {
+            simNode.fx = updatedNode.fx;
+            simNode.fy = updatedNode.fy;
+          }
+        });
+      }
       // Reheat slightly to adjust to new constraints
       simulation.alpha(0.3).restart();
       break;

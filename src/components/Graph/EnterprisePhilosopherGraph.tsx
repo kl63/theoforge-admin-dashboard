@@ -27,11 +27,14 @@ interface EnterprisePhilosopherGraphProps {
 
 // Define the component using React.forwardRef to access the ref
 const EnterprisePhilosopherGraph = forwardRef<ForceGraphMethods, EnterprisePhilosopherGraphProps>(
-  ({ data, width, height, physicsEnabled, selectedLayout, zoomLevel, onNodeClick, onNodeHover }, ref) => {
+  ({ data, width, height, physicsEnabled: physicsEnabledProp, selectedLayout, zoomLevel, onNodeClick, onNodeHover }, ref) => {
   // Theme and graph state
-  const graphRef = useRef<ForceGraphMethods>();
+  const theme = useTheme();
+  const graphRef = useRef<ForceGraphMethods | undefined>(undefined); // Initialize useRef with undefined
   const workerRef = useRef<Worker | null>(null);
   const [processedData, setProcessedData] = useState<PhilosopherData | null>(null);
+  const [layoutComplete, setLayoutComplete] = useState<boolean>(false);
+  const [physicsEnabled, setPhysicsEnabled] = useState<boolean>(physicsEnabledProp); // State for physics engine
   const [isLoading, setIsLoading] = useState<boolean>(true); // Initialize isLoading correctly
   // Highlight state
   const highlightNodes = useRef(new Set<string>());
@@ -39,22 +42,32 @@ const EnterprisePhilosopherGraph = forwardRef<ForceGraphMethods, EnterprisePhilo
   const [hoveredNode] = useState<GraphNode | null>(null);
   const [selectedNode, setSelectedNode] = useState<GraphNode | null>(null);
   // Layout calculation state
-  const [layoutComplete, setLayoutComplete] = useState(false);
-
-  // Get theme for styling
-  const theme = useTheme();
 
   // Expose graphRef methods via the forwarded ref
   React.useImperativeHandle(ref, () => ({ 
-    // Expose only the methods strictly needed by the parent component
-    zoom: (level: number, durationMs?: number) => graphRef.current?.zoom(level, durationMs),
-    // Overload zoom getter signature - Parent component page.tsx calls zoom() with no args to get level
-    getZoom: () => graphRef.current?.zoom(), // Expose getter separately if needed
-    centerAt: (x?: number, y?: number, durationMs?: number) => graphRef.current?.centerAt(x, y, durationMs),
-    zoomToFit: (durationMs?: number, padding?: number) => graphRef.current?.zoomToFit(durationMs, padding),
-    // getGraphData: () => graphRef.current?.graphData(), // Expose if needed
-    // IMPORTANT: Ensure the parent component (page.tsx) calls these methods correctly!
-  }), []); // Removed 'as any'
+    // Define wrapper functions matching ForceGraphMethods signatures
+    zoom: (...args: [] | [scale: number, durationMs?: number]) => {
+      if (!graphRef.current) return 0; // Return default zoom level if ref is not ready
+      // Check arguments to determine getter or setter call
+      if (args.length === 0) {
+        return graphRef.current.zoom(); // Getter
+      } else {
+        const [scale, durationMs] = args;
+        return graphRef.current.zoom(scale, durationMs); // Setter
+      }
+    },
+    centerAt: (x?: number, y?: number, durationMs?: number) => {
+      if (!graphRef.current) return undefined;
+      return graphRef.current.centerAt(x, y, durationMs);
+    },
+    zoomToFit: (durationMs?: number, padding?: number) => {
+      if (!graphRef.current) return undefined;
+      return graphRef.current.zoomToFit(durationMs, padding);
+    }
+    // Cast the return type of the handle to satisfy the forwardRef type, 
+    // even though methods might return undefined if ref isn't ready.
+    // Parent component still needs null checks.
+  } as ForceGraphMethods), []); // Remove graphRef.current from deps, it's not a valid dependency
 
   // Initialize Web Worker for physics simulation
   useEffect(() => {
@@ -70,27 +83,46 @@ const EnterprisePhilosopherGraph = forwardRef<ForceGraphMethods, EnterprisePhilo
         // Handle physics tick updates - might need specific logic
       } else if (messageData.type === 'end') {
         console.log("Worker simulation finished.");
-        // Potentially update state or ref here
+        const finalNodes = event.data.nodes as GraphNode[];
+        setProcessedData(prevData => {
+          if (!prevData) {
+            // If previous data was null, just return the final nodes and empty links
+            return {
+              nodes: finalNodes.map(node => ({ ...node, fx: undefined, fy: undefined })),
+              links: []
+            };
+          }
+          // If previous data exists, update nodes and preserve links
+          return {
+            ...prevData,
+            nodes: finalNodes.map(node => ({ ...node, fx: undefined, fy: undefined })), // Update nodes, clearing fixed positions
+            links: prevData.links // Explicitly keep existing links
+          };
+        });
+        setLayoutComplete(true);
       } else if (messageData.type === 'layoutUpdate') {
         const layoutNodes = event.data.nodes as GraphNode[];
         // Update positions directly in the graph instance if possible
         if (graphRef.current) {
           // graphRef.current.graphData({ nodes: layoutNodes, links: processedData.links }); // Update graph data
         }
-        setProcessedData(prevData => ({
-          ...prevData,
-          nodes: layoutNodes.map(node => ({ // Map to ensure correct structure
-            ...node, 
-            // Ensure existing non-position properties are kept if worker only sends positions
-            ...(prevData.nodes.find(n => n.id === node.id) || {}),
-            x: node.x,
-            y: node.y,
-            vx: node.vx,
-            vy: node.vy,
-            fx: physicsEnabled ? undefined : node.fx, // Only fix if physics is off
-            fy: physicsEnabled ? undefined : node.fy
-          }))
-        }));
+        if (layoutNodes) {
+          setProcessedData(prevData => {
+            if (!prevData) {
+              // If previous data was null, just return the new nodes and empty links
+              return { nodes: layoutNodes, links: [] };
+            }
+            // If previous data exists, update nodes and preserve links
+            return {
+              ...prevData, // Spread existing data
+              nodes: layoutNodes.map((node: { id: string | number; x?: number; y?: number; vx?: number; vy?: number; fx?: number; fy?: number }) => ({ 
+                ...prevData.nodes.find(n => n.id === node.id), // Preserve existing node data
+                ...node // Overwrite with layout properties (x, y, vx, vy, etc.)
+              })),
+              links: prevData.links // Explicitly keep existing links (guaranteed non-null by the 'if' check)
+            };
+          });
+        }
         if (!layoutComplete) setLayoutComplete(true); // Mark layout as complete after first update
       }
     };
@@ -117,8 +149,10 @@ const EnterprisePhilosopherGraph = forwardRef<ForceGraphMethods, EnterprisePhilo
         if (link.source === nodeId || link.target === nodeId) {
           highlightLinks.current.add(link);
           // Also highlight the connected node
-          highlightNodes.current.add(typeof link.source === 'string' ? link.source : (link.source as GraphNode).id);
-          highlightNodes.current.add(typeof link.target === 'string' ? link.target : (link.target as GraphNode).id);
+          const sourceId = typeof link.source === 'string' ? link.source : (link.source as GraphNode).id;
+          const targetId = typeof link.target === 'string' ? link.target : (link.target as GraphNode).id;
+          highlightNodes.current.add(sourceId.toString());
+          highlightNodes.current.add(targetId.toString());
         }
       });
     }
@@ -146,8 +180,8 @@ const EnterprisePhilosopherGraph = forwardRef<ForceGraphMethods, EnterprisePhilo
       nodesWithPositions = data.nodes
         .slice() // Create a copy before sorting
         .sort((a, b) => {
-          const eraAIndex = eraOrder.indexOf(a.era);
-          const eraBIndex = eraOrder.indexOf(b.era);
+          const eraAIndex = eraOrder.indexOf(a.era ?? '');
+          const eraBIndex = eraOrder.indexOf(b.era ?? '');
           return eraAIndex - eraBIndex; // Sort by era order
         })
         .map((node, index) => ({
@@ -224,35 +258,45 @@ const EnterprisePhilosopherGraph = forwardRef<ForceGraphMethods, EnterprisePhilo
       } else if (event.data.type === 'end') {
         console.log("Worker simulation finished.");
         const finalNodes = event.data.nodes as GraphNode[];
-        setProcessedData(prevData => ({
-          ...prevData,
-          nodes: finalNodes.map(node => ({
-            ...node,
-            fx: node.x, // Fix positions after simulation
-            fy: node.y
-          }))
-        }));
-        setLayoutComplete(true);
+        setProcessedData(prevData => {
+          if (!prevData) {
+            // If previous data was null, just return the final nodes and empty links
+            return {
+              nodes: finalNodes.map(node => ({ ...node, fx: undefined, fy: undefined })),
+              links: []
+            };
+          }
+          // If previous data exists, update nodes and preserve links
+          return {
+            ...prevData,
+            nodes: finalNodes.map(node => ({ ...node, fx: undefined, fy: undefined })), // Update nodes, clearing fixed positions
+            links: prevData.links // Explicitly keep existing links
+          };
+        });
+        setPhysicsEnabled(false); // Disable physics after simulation ends
       } else if (event.data.type === 'layoutUpdate') {
         const layoutNodes = event.data.nodes as GraphNode[];
         // Update positions directly in the graph instance if possible
         if (graphRef.current) {
           // graphRef.current.graphData({ nodes: layoutNodes, links: processedData.links }); // Update graph data
         }
-        setProcessedData(prevData => ({
-          ...prevData,
-          nodes: layoutNodes.map(node => ({ // Map to ensure correct structure
-            ...node, 
-            // Ensure existing non-position properties are kept if worker only sends positions
-            ...(prevData.nodes.find(n => n.id === node.id) || {}),
-            x: node.x,
-            y: node.y,
-            vx: node.vx,
-            vy: node.vy,
-            fx: physicsEnabled ? undefined : node.fx, // Only fix if physics is off
-            fy: physicsEnabled ? undefined : node.fy
-          }))
-        }));
+        if (layoutNodes) {
+          setProcessedData(prevData => {
+            if (!prevData) {
+              // If previous data was null, just return the new nodes and empty links
+              return { nodes: layoutNodes, links: [] };
+            }
+            // If previous data exists, update nodes and preserve links
+            return {
+              ...prevData, // Spread existing data
+              nodes: layoutNodes.map((node: { id: string | number; x?: number; y?: number; vx?: number; vy?: number; fx?: number; fy?: number }) => ({ 
+                ...prevData.nodes.find(n => n.id === node.id), // Preserve existing node data
+                ...node // Overwrite with layout properties (x, y, vx, vy, etc.)
+              })),
+              links: prevData.links // Explicitly keep existing links (guaranteed non-null by the 'if' check)
+            };
+          });
+        }
         if (!layoutComplete) setLayoutComplete(true); // Mark layout as complete after first update
       }
     };
@@ -376,7 +420,7 @@ const EnterprisePhilosopherGraph = forwardRef<ForceGraphMethods, EnterprisePhilo
             ref={graphRef}
             width={width}
             height={height}
-            graphData={processedData} // Use processed data
+            graphData={processedData ?? undefined} // Use processed data, providing undefined if null
             nodeId="id"
             linkSource="source"
             linkTarget="target"
@@ -395,11 +439,11 @@ const EnterprisePhilosopherGraph = forwardRef<ForceGraphMethods, EnterprisePhilo
             linkDirectionalParticleWidth={2}
             // Interactions
             onNodeHover={handleNodeHoverInternal} // Use internal hover handler
-            onNodeClick={(node: NodeObject) => {
+            onNodeClick={(node, event) => { // Capture the event object
               console.log("Internal graph node clicked:", node);
               const graphNode = node as GraphNode;
               setSelectedNode(graphNode); // Update selected node state
-              onNodeClick(graphNode); // Call parent handler
+              onNodeClick(graphNode, event); // Call parent handler with both arguments
             }}
             // Zoom/Pan controls if needed
             // onZoom={handleZoom}

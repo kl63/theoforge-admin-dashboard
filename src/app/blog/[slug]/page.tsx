@@ -21,12 +21,6 @@ import SocialShare from '@/components/Blog/SocialShare';
 import NewsletterSignup from '@/components/Blog/NewsletterSignup';
 import LinkedInPreview from '@/components/Blog/LinkedInPreview';
 
-interface BlogPostPageProps {
-  params: {
-    slug: string;
-  };
-}
-
 export async function generateStaticParams() {
   const slugs = await getAllPostSlugs();
   return slugs.map((slug) => ({
@@ -34,8 +28,9 @@ export async function generateStaticParams() {
   }));
 }
 
-export async function generateMetadata({ params }: BlogPostPageProps) {
-  const slug = params.slug;
+export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }) {
+  const resolvedParams = await params;
+  const slug = resolvedParams.slug;
   const post = await getPostData(slug);
 
   if (!post) {
@@ -56,8 +51,9 @@ export async function generateMetadata({ params }: BlogPostPageProps) {
   };
 }
 
-export default async function BlogPostPage({ params }: BlogPostPageProps) {
-  const slug = params.slug;
+export default async function BlogPostPage({ params }: { params: Promise<{ slug: string }> }) {
+  const resolvedParams = await params;
+  const slug = resolvedParams.slug;
   const post = await getPostData(slug);
 
   if (!post) {

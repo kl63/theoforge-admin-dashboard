@@ -6,10 +6,13 @@ export interface GraphNode {
   name?: string;
   era?: string;
   schools?: string[];
+  description?: string; // Explicitly add description
   born?: string | number;
+  wikipediaUrl?: string; // Explicitly add wikipediaUrl
   died?: string | number;
   image?: string;
   community?: number | string; // Added by community detection
+  color?: string; // Explicitly add color for node styling
   influenceScore?: number; // Explicitly add influenceScore
   // D3 simulation properties (added dynamically)
   x?: number;

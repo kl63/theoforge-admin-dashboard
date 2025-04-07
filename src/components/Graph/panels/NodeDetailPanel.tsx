@@ -8,9 +8,15 @@ import {
   IconButton, 
   Divider, 
   Chip,
+  Link,
+  LinearProgress,
+  List,
+  ListItem,
+  ListItemText,
   useTheme 
 } from '@mui/material';
 import CloseIcon from '@mui/icons-material/Close';
+import LaunchIcon from '@mui/icons-material/Launch';
 import { GraphNode } from '../../../types/graph';
 
 export interface NodeDetailPanelProps {
@@ -33,6 +39,21 @@ export interface NodeDetailPanelProps {
    * Width of the panel
    */
   width?: number | string;
+  
+  /**
+   * All nodes for connection lookup
+   */
+  allNodes?: GraphNode[];
+  
+  /**
+   * All links for connection lookup
+   */
+  links?: Array<{ source: string | number; target: string | number; type?: string }>;
+  
+  /**
+   * Top score for normalization
+   */
+  topScore?: number;
 }
 
 /**
@@ -42,7 +63,10 @@ export function NodeDetailPanel({
   node,
   onClose,
   position = 'right',
-  width = 350
+  width = 350,
+  allNodes = [],
+  links = [],
+  topScore
 }: NodeDetailPanelProps) {
   const theme = useTheme();
   
@@ -52,68 +76,33 @@ export function NodeDetailPanel({
     'right': { right: 16 }
   };
 
-  // Helper function to render different types of node properties
-  const renderNodeProperty = (key: string, value: unknown) => {
-    // Skip rendering certain properties
-    const skipProperties = ['id', 'name', 'x', 'y', 'size', 'description', 'color', 'index', 'vx', 'vy', 'fx', 'fy'];
-    if (skipProperties.includes(key)) return null;
-    
-    // Handle different value types
-    if (value === null || value === undefined) return null;
-    
-    if (Array.isArray(value)) {
-      return (
-        <Box key={key} sx={{ mb: 2 }}>
-          <Typography variant="subtitle2" gutterBottom>
-            {key.charAt(0).toUpperCase() + key.slice(1).replace(/([A-Z])/g, ' $1')}
-          </Typography>
-          {value.length === 0 ? (
-            <Typography variant="body2" color="text.secondary">None</Typography>
-          ) : (
-            <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5 }}>
-              {value.map((item, index) => (
-                <Chip 
-                  key={index} 
-                  label={typeof item === 'object' ? JSON.stringify(item) : String(item)} 
-                  size="small" 
-                  variant="outlined"
-                />
-              ))}
-            </Box>
-          )}
-        </Box>
-      );
+  // Define type for connections
+  interface Connection {
+    node: GraphNode;
+    type: string;
+  }
+
+  // Calculate connections for the selected node
+  const connections: Connection[] = React.useMemo(() => {
+    if (!node || !links || !allNodes) {
+      console.log("Node, links, or allNodes not available for connections calculation.");
+      return [];
     }
     
-    if (typeof value === 'object') {
-      return (
-        <Box key={key} sx={{ mb: 2 }}>
-          <Typography variant="subtitle2" gutterBottom>
-            {key.charAt(0).toUpperCase() + key.slice(1).replace(/([A-Z])/g, ' $1')}
-          </Typography>
-          <Box sx={{ pl: 2 }}>
-            {Object.entries(value).map(([subKey, subValue]) => (
-              <Typography key={subKey} variant="body2">
-                <strong>{subKey}:</strong> {String(subValue)}
-              </Typography>
-            ))}
-          </Box>
-        </Box>
-      );
-    }
-    
-    return (
-      <Box key={key} sx={{ mb: 1 }}>
-        <Typography variant="subtitle2" component="span">
-          {key.charAt(0).toUpperCase() + key.slice(1).replace(/([A-Z])/g, ' $1')}:
-        </Typography>{' '}
-        <Typography variant="body2" component="span">
-          {String(value)}
-        </Typography>
-      </Box>
-    );
-  };
-  
+    const relatedLinks = links
+      .filter(link => link.source === node.id || link.target === node.id)
+
+    const connectionData = relatedLinks.map(link => {
+        const connectedNodeId = link.source === node.id ? link.target : link.source;
+        const connectedNode = allNodes.find(n => n.id === connectedNodeId);
+        return { node: connectedNode, type: link.type ?? 'unknown' }; // Provide default type
+      })
+      .filter((conn): conn is Connection => conn.node !== undefined); // Type guard to filter out undefined nodes
+
+    // console.log("Calculated Connections:", connectionData);
+    return connectionData;
+  }, [node, links, allNodes]);
+
   return (
     <Paper
       elevation={4}
@@ -139,10 +128,10 @@ export function NodeDetailPanel({
         p: 2,
         borderBottom: `1px solid ${theme.palette.divider}`
       }}>
-        <Typography variant="h6" component="h2">
-          {node?.name || node?.id}
+        <Typography variant="h6" gutterBottom>
+          {node?.name || 'Details'}
         </Typography>
-        <IconButton onClick={onClose} size="small" edge="end">
+        <IconButton onClick={onClose} size="small" sx={{ position: 'absolute', right: 8, top: 8 }}>
           <CloseIcon />
         </IconButton>
       </Box>
@@ -150,37 +139,116 @@ export function NodeDetailPanel({
       <Box sx={{ p: 2 }}>
         {/* Description */}
         {node?.description && (
-          <Box sx={{ mb: 2 }}>
-            <Typography variant="body1">
-              {node.description}
-            </Typography>
-          </Box>
+          <>
+            <Box sx={{ mb: 2 }}>
+              <Typography variant="body1">{node.description ?? ''}</Typography>
+            </Box>
+            <Divider sx={{ my: 2 }} />
+          </>
         )}
-        
-        <Divider sx={{ my: 2 }} />
-        
+
+        {/* Wikipedia Link */}
+        {node?.wikipediaUrl ? (
+          <>
+            <Link href={node.wikipediaUrl} target="_blank" rel="noopener noreferrer" sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
+              <LaunchIcon fontSize="small" sx={{ mr: 1 }} /> Wikipedia
+            </Link>
+            <Divider sx={{ my: 2 }} />
+          </>
+        ) : null}
+
+        {/* Influence Score */}
+        {node?.influenceScore !== undefined ? (
+          <>
+            <Box sx={{ mb: 2 }}>
+              <Typography variant="subtitle2" gutterBottom>Influence Score:</Typography>
+              <LinearProgress variant="determinate" value={(node.influenceScore / (topScore || 1)) * 100} />
+              <Typography variant="caption" display="block" gutterBottom>
+                {node.influenceScore.toFixed(2)} (Normalized)
+              </Typography>
+            </Box>
+            <Divider sx={{ my: 2 }} />
+          </>
+        ) : null}
+
+        {/* Era */}
+        {node?.era ? (
+          <>
+            <Box sx={{ mb: 2 }}>
+              <Typography variant="subtitle2">Era:</Typography>
+              <Typography variant="body2">{node.era}</Typography>
+            </Box>
+            <Divider sx={{ my: 2 }} />
+          </>
+        ) : null}
+
+        {/* Born/Died */}
+        {node?.born || node?.died ? (
+          <>
+            <Box sx={{ mb: 2 }}>
+              <Typography variant="subtitle2">Life:</Typography>
+              <Typography variant="body2">
+                {node.born || 'N/A'} - {node.died || 'N/A'}
+              </Typography>
+            </Box>
+            <Divider sx={{ my: 2 }} />
+          </>
+        ) : null}
+
+        {/* Schools */}
+        {node?.schools && node.schools.length > 0 ? (
+          <>
+            <Box sx={{ mb: 2 }}>
+              <Typography variant="subtitle2">Schools/Affiliations:</Typography>
+              <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5 }}>
+                {node.schools.map((school) => (
+                  <Chip key={school} label={school} size="small" />
+                ))}
+              </Box>
+            </Box>
+            <Divider sx={{ my: 2 }} />
+          </>
+        ) : null}
+
+        {/* Connections List */}
+        {connections.length > 0 ? (
+          <Box sx={{ mb: 2 }}>
+            <Typography variant="subtitle2" gutterBottom>Connections ({connections.length}):</Typography>
+            <List dense disablePadding>
+              {connections.map(({ node: connectedNode, type }: Connection) => (
+                <ListItem key={connectedNode.id} disableGutters>
+                  <ListItemText
+                    primary={connectedNode.name}
+                    secondary={`Relation: ${type}`}
+                  />
+                </ListItem>
+              ))}
+            </List>
+          </Box>
+        ) : null}
+
         {/* Dynamic Properties */}
         <Box>
           {Object.entries(node || {})
-            .map(([key, value]) => renderNodeProperty(key, value))
+            .filter(([key, value]) => 
+                !['id', 'name', 'description', 'wikipediaUrl', 'influenceScore', 'era', 'born', 'died', 'schools', 'x', 'y', 'vx', 'vy', 'fx', 'fy', 'community', 'index', '__indexColor', '__viz'].includes(key) &&
+                value !== undefined && value !== null && value !== '' && !(Array.isArray(value) && value.length === 0)
+            )
+            .map(([key, value]) => {
+              const displayValue = typeof value === 'object' ? JSON.stringify(value) : String(value);
+              return (
+                <Box key={key} sx={{ mb: 1 }}>
+                  <Typography variant="caption" display="block" sx={{ fontWeight: 'bold', color: 'text.secondary' }}>
+                    {key.replace(/([A-Z])/g, ' $1').replace(/^./, (str) => str.toUpperCase())}: {/* Format key */}
+                  </Typography>
+                  <Typography variant="body2" sx={{ wordBreak: 'break-word' }}>
+                    {displayValue} {/* Render stringified or original value */}
+                  </Typography>
+                </Box>
+              );
+            })
             .filter(Boolean)}
         </Box>
-        
-        {/* Contributions */}
-        {node?.contributions && Array.isArray(node.contributions) ? (
-          <Box sx={{ mt: 2 }}>
-            <Typography variant="subtitle2" gutterBottom>
-              Contributions:
-            </Typography>
-            <Box component="ul" sx={{ pl: 2, mt: 0 }}>
-              {node.contributions.map((contribution: string, index: number) => (
-                <Typography component="li" variant="body2" key={index}>
-                  {contribution}
-                </Typography>
-              ))}
-            </Box>
-          </Box>
-        ) : null}
       </Box>
     </Paper>
   );

@@ -9,11 +9,14 @@ import NextLink from 'next/link'; // Use NextLink for navigation
 import { getAllServiceSlugs, getServiceData } from '@/lib/services';
 import MarkdownRenderer from '@/components/Common/MarkdownRenderer'; // Import the common component
 
-// Define the expected params structure
+// Define the expected structure of resolved params
+interface ResolvedServiceParams {
+  slug: string;
+}
+
+// Type for the props received by the page component and generateMetadata
 interface ServicePageProps {
-  params: {
-    slug: string;
-  };
+  params: Promise<ResolvedServiceParams>;
 }
 
 // Function to generate static paths for pre-rendering
@@ -26,8 +29,9 @@ export async function generateStaticParams() {
 
 // Function to generate metadata dynamically
 export async function generateMetadata({ params }: ServicePageProps) {
-  const slug = params.slug;
-  const service = getServiceData(slug);
+  const resolvedParams = await params; // Await the promise
+  const slug = resolvedParams.slug;
+  const service = await getServiceData(slug);
 
   if (!service) {
     return {
@@ -43,11 +47,12 @@ export async function generateMetadata({ params }: ServicePageProps) {
 }
 
 // The main page component
-export default function ServicePage({ params }: ServicePageProps) {
-  const slug = params.slug;
+export default async function ServicePage({ params }: ServicePageProps) {
+  const resolvedParams = await params; // Await the promise
+  const slug = resolvedParams.slug;
 
   // Fetch the full service data
-  const service = getServiceData(slug);
+  const service = await getServiceData(slug);
 
   if (!service) {
     notFound();

@@ -1,3 +1,9 @@
+import fs from 'fs';
+import path from 'path';
+import matter from 'gray-matter';
+import { remark } from 'remark';
+import html from 'remark-html';
+
 // Define the structure for a link item
 export interface LinkItem {
   name: string;
@@ -26,11 +32,33 @@ export interface AboutData {
   items?: AboutItem[];  // Optional array of about items/sections
 }
 
-// Function to return the about data
-// TODO: Update this function to fetch/generate data matching the AboutData interface
-// The current static data or markdown processing needs adjustment.
-export const getAboutData = (): AboutData | null => {
-  // Returning null as a placeholder - requires actual data fetching/generation
-  console.warn("getAboutData in src/lib/about.ts needs implementation matching the updated AboutData interface.");
-  return null;
+// Function to return the about data for a specific user
+export const getAboutData = async (userId: string): Promise<AboutData | null> => {
+  const aboutDirectory = path.join(process.cwd(), 'src', 'content', 'about');
+  const fullPath = path.join(aboutDirectory, `${userId}.md`);
+
+  try {
+    const fileContents = fs.readFileSync(fullPath, 'utf8');
+
+    // Use gray-matter to parse the post metadata section
+    const matterResult = matter(fileContents);
+
+    // Use remark to convert markdown into HTML string
+    const processedContent = await remark()
+      .use(html)
+      .process(matterResult.content);
+    const contentHtml = processedContent.toString();
+
+    // Combine the data with the id and contentHtml
+    // Assuming frontmatter directly maps to AboutData fields
+    // We might need more specific mapping later based on the MD structure
+    return {
+      ...(matterResult.data as Omit<AboutData, 'contentHtml'>), // Cast frontmatter
+      contentHtml,
+    };
+  } catch (error) {
+    console.error(`Error reading or processing about file for ${userId}:`, error);
+    // If the file doesn't exist or there's an error, return null
+    return null;
+  }
 };

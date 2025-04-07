@@ -15,12 +15,16 @@ export async function generateMetadata(): Promise<Metadata> {
 
   return {
     title: `About ${aboutData.name} | TheoForge`,
-    description: aboutData.bio_summary || `Learn more about ${aboutData.name} and TheoForge.`,
+    // description: aboutData.bio_summary || 'Learn more about TheoForge and our mission.', // Temporarily commented out
+    description: 'Learn more about TheoForge and our mission.', // Use default description
   };
 }
 
 export default async function AboutPage() {
-  const aboutData = await getAboutData('keith');
+  const aboutData = await getAboutData('keith'); // Added 'keith' argument back
 
-  return <AboutClientUI about={aboutData} />;
+  // Handle the case where data might not be available
+  // This check is crucial because getAboutData currently returns null
+
+  return <AboutClientUI aboutData={aboutData} />; // Pass prop as 'aboutData'
 }

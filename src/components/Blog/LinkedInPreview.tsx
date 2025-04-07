@@ -18,7 +18,7 @@ import ContentCopyIcon from '@mui/icons-material/ContentCopy';
 import LinkedInIcon from '@mui/icons-material/LinkedIn';
 import CloseIcon from '@mui/icons-material/Close';
 import OpenInNewIcon from '@mui/icons-material/OpenInNew';
-import { PostData } from '@/lib/posts';
+import { PostData } from '@/types/post';
 
 interface LinkedInPreviewProps {
   post: PostData;
