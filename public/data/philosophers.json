@@ -292,19 +292,89 @@
         "Logos concept",
         "Cosmic fire as primary element"
       ]
+    },
+
+    {
+      "id": "theophrastus",
+      "name": "Theophrastus",
+      "era": "Ancient",
+      "community": 0,
+      "influenceScore": 7.4,
+      "description": "Successor to Aristotle as the head of the Lyceum, known for foundational work in botany, ethics, and character studies.",
+      "contributions": [
+        "Foundations of botany",
+        "Character studies (The Characters)",
+        "Successor to Aristotle at the Lyceum"
+      ]
+    },
+    {
+      "id": "avicenna",
+      "name": "Avicenna",
+      "era": "Medieval",
+      "community": 1,
+      "influenceScore": 8.1,
+      "description": "Persian polymath of the Islamic Golden Age who wrote extensively on philosophy and medicine. His works had a strong influence on medieval scholasticism.",
+      "contributions": [
+        "Avicennian logic",
+        "The Canon of Medicine",
+        "Philosophical theology",
+        "Metaphysics"
+      ]
+    },
+    {
+      "id": "mill",
+      "name": "John Stuart Mill",
+      "era": "19th Century",
+      "community": 3,
+      "influenceScore": 8.2,
+      "description": "English philosopher, political economist, and civil servant. One of the most influential thinkers in liberalism, contributing to social theory, political theory, and political economy.",
+      "contributions": [
+        "Utilitarianism",
+        "On Liberty",
+        "Concept of individuality",
+        "Principles of Political Economy"
+      ]
+    },
+    {
+      "id": "wollstonecraft",
+      "name": "Mary Wollstonecraft",
+      "era": "Enlightenment",
+      "community": 2,
+      "influenceScore": 7.9,
+      "description": "English writer, philosopher, and advocate of women's rights. Considered one of the first feminist philosophers, famous for 'A Vindication of the Rights of Woman'.",
+      "contributions": [
+        "A Vindication of the Rights of Woman",
+        "Early feminist philosophy",
+        "Critique of patriarchal institutions",
+        "Enlightenment liberalism"
+      ]
+    },
+    {
+      "id": "kierkegaard",
+      "name": "Søren Kierkegaard",
+      "era": "19th Century",
+      "community": 3,
+      "influenceScore": 8.5,
+      "description": "Danish philosopher, theologian, and poet widely considered the first existentialist philosopher, known for his exploration of faith, subjectivity, and individual existence.",
+      "contributions": [
+        "Leap of faith",
+        "Subjective truth",
+        "Critique of Hegelianism",
+        "Foundations of existentialism"
+      ]
     }
   ],
   "links": [
     {
       "source": "plato",
       "target": "socrates",
-      "relation": "Influenced by",
+      "relation": "Student of",
       "strength": 1.0
     },
     {
       "source": "aristotle",
       "target": "plato",
-      "relation": "Influenced by",
+      "relation": "Student of",
       "strength": 1.0
     },
     {
@@ -388,7 +458,13 @@
     {
       "source": "beauvoir",
       "target": "sartre",
-      "relation": "Influenced by",
+      "relation": "Intellectual Partner",
+      "strength": 0.9
+    },
+    {
+      "source": "sartre",
+      "target": "beauvoir",
+      "relation": "Intellectual Partner",
       "strength": 0.9
     },
     {
@@ -466,6 +542,55 @@
     {
       "source": "nietzsche",
       "target": "heraclitus",
+      "relation": "Influenced by",
+      "strength": 0.6
+    },
+
+    {
+      "source": "theophrastus",
+      "target": "aristotle",
+      "relation": "Influenced by",
+      "strength": 0.9
+    },
+    {
+      "source": "avicenna",
+      "target": "aristotle",
+      "relation": "Influenced by",
+      "strength": 0.8
+    },
+    {
+      "source": "aquinas",
+      "target": "avicenna",
+      "relation": "Influenced by",
+      "strength": 0.6
+    },
+    {
+      "source": "mill",
+      "target": "hume",
+      "relation": "Influenced by",
+      "strength": 0.7
+    },
+    {
+      "source": "mill",
+      "target": "locke",
+      "relation": "Influenced by",
+      "strength": 0.6
+    },
+    {
+      "source": "wollstonecraft",
+      "target": "locke",
+      "relation": "Influenced by",
+      "strength": 0.6
+    },
+    {
+      "source": "kierkegaard",
+      "target": "hegel",
+      "relation": "Influenced by",
+      "strength": 0.8
+    },
+    {
+      "source": "kierkegaard",
+      "target": "kant",
       "relation": "Influenced by",
       "strength": 0.6
     }

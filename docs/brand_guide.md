@@ -1,76 +1,73 @@
-# Theoforge - Preliminary Brand Guide (v0.3)
+# Theoforge Brand Guide (v0.3)
 
 ## 1. Overview
 
-*   **Brand Name:** Theoforge
-*   **Mission:** Help businesses and educational institutions adapt to the AI transformation through strategic consulting, training, and implementation support.
-*   **Target Audience:** Private sector companies and educational institutions seeking expert guidance on AI adoption.
-*   **Goal:** To provide clarity, understanding, and expertise in the complex field of AI.
-*   **Attributes:** Knowledgeable, trustworthy, expert, guiding, objective, insightful, structured, clear, methodical.
-*   **Shadow (to avoid):** Dogmatism, detachment, unnecessary complexity, condescension. Mitigate by emphasizing practical application, collaboration, and clear communication.
-
-*See the full [Integrated Brand & Content Strategy](./theoforge_integrated_brand_strategy.md) for the Core Narrative and Strategic Content Pillars.*
+Theoforge positions itself as a premier technology consultancy specializing in bespoke digital transformation solutions for large enterprises (Fortune 100). Our brand is built on **expertise, trust, clarity, and strategic guidance**.
 
 ## 2. Brand Archetype: The Sage
 
-*   **Core Motivation:** To use intelligence, analysis, and wisdom to understand the world and help others make informed decisions. Seeker of truth and knowledge.
-*   **Goal:** To provide clarity, understanding, and expertise in the complex field of AI.
-*   **Attributes:** Knowledgeable, trustworthy, expert, guiding, objective, insightful, structured, clear, methodical.
-*   **Shadow (to avoid):** Dogmatism, detachment, unnecessary complexity, condescension. Mitigate by emphasizing practical application, collaboration, and clear communication.
+*   **Core Desire:** To use intelligence and analysis to understand the world.
+*   **Goal:** To find truth and provide expertise.
+*   **Attributes:** Knowledgeable, trustworthy, guiding, calm, analytical, clear, structured, reliable, sophisticated.
+*   **Communication Style:** Authoritative yet approachable, clear, concise, insightful, focuses on strategic value and long-term solutions.
+*   **Target Audience Resonance:** Appeals to C-suite executives (CEO, CIO, CTO) seeking proven expertise, reliable partners, and clear pathways through complex technological challenges.
 
-## 3. Tone of Voice
+## 3. Brand Personality & Voice
 
-*   **Primary:** Authoritative, Knowledgeable, Trustworthy
-*   **Secondary:** Clear, Accessible, Guiding, Objective
-*   **Overall Feel:** Like a trusted expert advisor or professor – insightful, clear, and focused on educating and empowering the audience. Avoid jargon where possible, explain complex topics clearly.
+*   **Professional & Polished:** Reflects the high standards and quality of our work.
+*   **Confident & Assured:** Demonstrates belief in our capabilities and solutions.
+*   **Insightful & Strategic:** Goes beyond technical details to focus on business outcomes.
+*   **Clear & Direct:** Avoids jargon and communicates complex ideas simply.
+*   **Trustworthy & Reliable:** Consistent in messaging and delivery.
 
 ## 4. Visual Identity
 
 ### 4.1. Logo
 
-*   **Description:** Wordmark "THEOFORGE" in uppercase, using a clean, modern sans-serif font.
-*   **Icon:** The 'O' in 'FORGE' is replaced by a stylized gear/cog icon, vertically split and slightly offset.
-*   **Colors:** Text ("THE", "F RGE") uses Dark Gray. Gear icon uses Deep Teal.
-*   **Impression:** Modern, technical, structured, intelligent, trustworthy, transformative.
-*   **Usage:** *Clear space, minimum size, variations TBD.*
+*   *Primary Logo:* [Link or description of the main Theoforge logo]
+*   *Variations:* [Link or description of any alternative logos (e.g., monochrome, icon-only)]
+*   *Usage Guidelines:* Minimum size, clear space requirements, proper background usage.
 
 ### 4.2. Color Palette
 
-*   **Core Palette Overview:**
-    *   Primary: Deep Teal (`#00695C`) - Trust, Stability, Intelligence.
-    *   Secondary: Muted Gold (`#B8860B`) - Quality, Wisdom (Subtle Use).
-    *   Accent: Bright Orange (`#F57C00`) - Focused Action (Sparse Use).
-    *   Neutrals: Dark Gray, Light Gray, White - Clarity, Structure.
-*   **Detailed Guide:** The complete color palette definitions, strategic rationale, usage guidelines, and accessibility requirements are documented in the dedicated **[Color Guide](./color_guide.md)**.
-*   **Source Code:** The palette is implemented in `/src/theme/theme.ts`.
+*   **Philosophy:** Conveys trust (Primary Teal), sophistication (Secondary Gold), clarity (Neutrals), and focused action (Accent Orange).
+*   **Implementation:** Defined in the **[Color Guide](./color_guide.md)**. Usage must strictly adhere to the guidelines specified there, primarily through the defined **Tailwind CSS configuration** (`tailwind.config.js`).
 
 ### 4.3. Typography
 
-*   **Primary Fonts:**
-    *   Headings: **Poppins** (Geometric Sans-serif)
-    *   Body & UI: **Public Sans** (Humanist Sans-serif)
-*   **Overview:** A clear and consistent typographic hierarchy enhances readability and professionalism. We use Public Sans for body text and Poppins for headings.
-*   **Detailed Guide:** The complete typography definitions, font weights, sizes, line heights, and usage guidelines are documented in the dedicated **[Typography Guide](./typography_guide.md)**.
-*   **Source Code:** Typography is implemented in `/src/theme/theme.ts`.
+*   **Philosophy:** Balances modern professionalism (Poppins for headings) with high readability and trustworthiness (Public Sans for body/UI).
+*   **Implementation:** Defined in the **[Typography Guide](./typography_guide.md)**. Usage must strictly adhere to the specified font families, weights, sizes, and line heights, applied via the defined **Tailwind CSS configuration** and utility classes.
 
-### 4.4. Spacing & Layout
+### 4.4. Iconography
 
-*   **Overview:** Intentional spacing creates visual structure, hierarchy, and rhythm. We adhere to an **8-point grid system** for all spatial values (padding, margins, gaps).
-*   **Detailed Guide:** The complete spacing system definition, standard scale, and implementation guidelines are documented in the dedicated **[Spacing Guide](./spacing_guide.md)**.
-*   **Source Code:** Spacing is implemented using `theme.spacing()` via the `sx` prop and MUI layout components (Stack, Grid).
+*   *Style:* [Describe icon style - e.g., Line icons, solid icons, specific library like Material Symbols Outline/Feather Icons]
+*   *Consistency:* Use a single icon set consistently.
+*   *Color:* Icons should typically use `text-neutral-700` or `text-primary`, adapting as needed for context but adhering to the **[Color Guide](./color_guide.md)**.
 
-### 4.5. Imagery Style
+### 4.5. Imagery & Photography
 
-*   **Goal:** Visually reinforce the Sage archetype: clarity, structure, insight, and guided transformation.
-*   **Motifs:**
-    *   **Structured Knowledge:** Clean network graphs, orderly geometric patterns, simplified knowledge graphs, clear data visualizations (abstracted, not literal charts unless essential).
-    *   **Guided Pathways:** Luminous lines or pathways suggesting a clear route through complexity, potentially leading towards a point of insight (subtle gold accent).
-    *   **Transformation/Integration:** Abstract visuals suggesting the merging of data/technology with business processes in an orderly way (e.g., stylized gears integrating smoothly, abstract patterns evolving).
-*   **Style:** Modern, professional, clean digital art. Focus on ample white space and structured composition. Use the brand palette strategically (Teal dominant, Gold for insight, Orange for focus points if needed).
-*   **Avoid:** Clichés (robots, brains, circuits), generic stock photos, overly complex or chaotic visuals, dark/dystopian themes.
-*   **Source:** Aim for custom generation or carefully curated abstract graphics.
-*   *See specific generation guidance in [Prompts](./prompts.md).*
+*   *Style:* Professional, high-quality, potentially abstract or conceptual imagery related to technology, strategy, and collaboration. Avoid generic stock photos.
+*   *Tone:* Reflects competence, innovation, and strategic thinking.
+*   *Usage:* Should complement the content and visual design, not dominate.
 
-## 5. Guiding Principle
+### 4.6. Spacing & Layout
 
-All brand communication and visual expression should reinforce Theoforge's position as a knowledgeable, trustworthy guide (The Sage) helping clients navigate the complexities of AI with clarity and confidence.
+*   **Philosophy:** Structured, clean, and consistent layout using the 8-Point Grid system.
+*   **Implementation:** Defined in the **[Spacing Guide](./spacing_guide.md)**. All spacing must use the defined **Tailwind CSS spacing scale** via utility classes.
+
+## 5. Guiding Principles for Application
+
+*   **Consistency is Paramount:** Every touchpoint (website, presentations, documents) must reflect the brand identity consistently.
+*   **Target Audience First:** Design and communication choices must resonate with senior enterprise leaders.
+*   **Clarity Over Complexity:** Prioritize clear communication in both visuals and text.
+*   **Quality in Execution:** Ensure all outputs are polished and professional.
+*   **Accessibility:** Adhere to WCAG AA guidelines as a minimum standard.
+
+## 6. Document Version
+
+*   v0.3 - Updated implementation notes to reference Tailwind CSS guides.
+*   v0.2 - Added detailed Brand Archetype and Personality sections.
+*   v0.1 - Initial Draft.
+
+---
+*This guide provides the strategic foundation. Refer to specific guides (Color, Typography, Spacing) for detailed implementation instructions using Tailwind CSS.*

@@ -5,12 +5,16 @@
 :root {
   --background: #ffffff;
   --foreground: #171717;
+  --background-rgb: 255, 255, 255;
+  --foreground-rgb: 23, 23, 23;
 }
 
 @media (prefers-color-scheme: dark) {
   :root {
     --background: #0a0a0a;
     --foreground: #ededed;
+    --background-rgb: 10, 10, 10;
+    --foreground-rgb: 237, 237, 237;
   }
 }
 
@@ -21,10 +25,22 @@ body {
 }
 
 body {
-  color: var(--foreground);
-  background: var(--background);
+  /* Remove potentially conflicting font-family rule */
+  /* font-family: var(--font-public-sans), sans-serif; */
+  /* Use direct font-family names now */
+  font-family: 'Public Sans', sans-serif;
+  /* Ensure background and text colors are set for default - REMOVE @apply */
+  /* @apply bg-background text-foreground; */
+  /* Rely on :root variables set earlier */
+  color: rgb(var(--foreground-rgb));
+  background: rgb(var(--background-rgb));
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  /* Use direct font-family names now */
+  font-family: 'Poppins', sans-serif;
 }
 
 * {

@@ -1,56 +1,59 @@
 'use client';
 
 import React from 'react';
-import Card from '@mui/material/Card';
-import CardContent from '@mui/material/CardContent';
-import CardMedia from '@mui/material/CardMedia';
-import Typography from '@mui/material/Typography';
-import Button from '@mui/material/Button';
 import Link from 'next/link';
-import Box from '@mui/material/Box';
-import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
+import Image from 'next/image';
+import BaseCard from './BaseCard';
 
 interface InfoCardProps {
   title: string;
   excerpt: string;
-  image?: string; 
+  image?: string;
   link: string;
+  priorityImage?: boolean;
 }
 
-const InfoCard: React.FC<InfoCardProps> = ({ title, excerpt, image, link }) => {
+const InfoCard: React.FC<InfoCardProps> = ({ title, excerpt, image, link, priorityImage }) => {
   return (
-    <Card component="article" sx={{ display: 'flex', flexDirection: 'column', height: '100%', boxShadow: 3 }}> 
-      {image && ( 
-        <CardMedia
-          component="img"
-          height="200"
-          image={image}
-          alt={title} 
-          sx={{ objectFit: 'cover' }}
-        />
+    <BaseCard>
+      {image && (
+        // Explicit height added to potentially fix Next/Image fill warning
+        <div 
+          className="relative w-full overflow-hidden"
+          style={{ height: '12rem' }}
+        >
+          <Image
+            src={image}
+            alt={title}
+            fill
+            style={{ objectFit: 'cover' }}
+            sizes="(max-width: 640px) 100vw, 50vw"
+            priority={priorityImage}
+          />
+        </div>
       )}
-      <CardContent sx={{ flexGrow: 1 }}>
-        <Typography variant="h5" component="div" sx={{ mb: 1 }}>
+      {/* Add fixed height, allow overflow scrolling */}
+      <div className="p-4 flex-grow flex flex-col h-48 overflow-y-auto"> 
+        <h3 className="text-xl font-semibold mb-2 text-gray-900 dark:text-white">
           {title}
-        </Typography>
-        <Typography variant="body2" color="text.secondary">
+        </h3>
+        {/* Remove flex-grow from paragraph */}
+        <p className="text-gray-600 dark:text-gray-300">
           {excerpt}
-        </Typography>
-      </CardContent>
-      <Box sx={{ p: 2, mt: 'auto' }}> 
-        <Link href={link} passHref>
-          <Button 
-            size="small" 
-            variant="contained" 
-            color="primary" 
-            endIcon={<ArrowForwardIcon />}
-            sx={{ textTransform: 'none' }} 
-          >
-            Learn More
-          </Button>
-        </Link>
-      </Box>
-    </Card>
+        </p>
+        {/* Add sticky positioning or ensure button is always visible */}
+        <div className="mt-auto pt-4"> {/* Use mt-auto to push button down */} 
+          <Link href={link} legacyBehavior passHref>
+            <a
+              className="inline-flex items-center px-4 py-2 bg-blue-600 text-white text-sm font-medium rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition ease-in-out duration-150"
+            >
+              Learn More
+              <span className="ml-1">→</span>
+            </a>
+          </Link>
+        </div>
+      </div>
+    </BaseCard>
   );
 };
 

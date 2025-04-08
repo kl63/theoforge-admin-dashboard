@@ -1,38 +1,32 @@
 import React from 'react';
-import Box from '@mui/material/Box';
-import Container from '@mui/material/Container';
-import Typography from '@mui/material/Typography';
-import Button from '@mui/material/Button';
-import Link from 'next/link'; // For the button link
+import SectionContainer from '../Layout/SectionContainer';
+import Button from '../Common/Button'; // Corrected import path
 
 const CallToActionSection = () => (
-  <Box sx={{ py: 8, backgroundColor: 'primary.main', color: 'primary.contrastText' }}> {/* Use primary color */}
-    <Container maxWidth="md" sx={{ textAlign: 'center' }}>
-      <Typography variant="h4" component="h2" sx={{ fontWeight: 'bold', mb: 2 }}>
+  // Use SectionContainer with specific background/text colors
+  <SectionContainer className="bg-blue-600 text-white">
+    {/* Center content within the container */}
+    <div className="max-w-3xl mx-auto text-center"> {/* Kept max-w-3xl for narrower focus */}
+      {/* Heading - Use standard text/font utilities */}
+      <h2 className="text-3xl md:text-4xl font-bold mb-4">
         Ready to Transform AI Complexity into Strategic Advantage?
-      </Typography>
-      <Typography variant="body1" sx={{ mb: 4 }}>
+      </h2>
+      {/* Paragraph */}
+      <p className="text-lg mb-8">
         Schedule a strategic consultation to explore how our integrated expertise can transform AI complexity into confident action, accelerating your initiatives and delivering measurable value.
-      </Typography>
-      {/* Link to contact page */}
-      <Link href="/contact" passHref> 
-        <Button 
-          variant="contained" 
-          color="secondary" // Use secondary color for contrast
-          size="large" 
-          sx={{ 
-            color: 'secondary.contrastText', // Ensure text contrasts with button
-            // Add hover effect if needed
-            '&:hover': {
-              backgroundColor: 'secondary.dark', // Darken on hover
-            },
-          }}
-        >
-          Schedule Your Strategy Session
-        </Button>
-      </Link>
-    </Container>
-  </Box>
+      </p>
+      {/* Button - Use Button component */}
+      {/* Inferring a contrasting style - secondary or custom? Let's try secondary with overrides */}
+      <Button 
+        href="/contact" 
+        variant="secondary" 
+        size="lg" 
+        className="bg-white text-blue-700 hover:bg-gray-100 focus:ring-offset-blue-600 focus:ring-white"
+      >
+        Schedule Your Strategy Session
+      </Button>
+    </div>
+  </SectionContainer>
 );
 
 export default CallToActionSection;

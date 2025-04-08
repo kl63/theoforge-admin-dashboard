@@ -1,59 +1,78 @@
 'use client';
 
 import React, { useState, useEffect, useRef, useCallback, forwardRef } from 'react';
-import { useTheme } from '@mui/material/styles';
-import { Box, Typography } from '@mui/material'; // Add Box and Typography imports
 import { ForceGraphMethods, NodeObject, LinkObject } from 'react-force-graph-2d';
 
-// Import custom types and utility functions
 import { GraphNode, GraphLink, PhilosopherData } from '@/types/graph';
 import { paintStandardNode } from '@/utils/canvasUtils';
 
-// Dynamically import ForceGraph2D to avoid SSR issues
+// Function to add alpha channel to hex color
+const addAlpha = (color: string, opacity: number): string => {
+  if (!color || !color.startsWith('#')) {
+    console.warn(`Invalid color format for addAlpha: ${color}. Using fallback.`);
+    return `rgba(128, 128, 128, ${opacity})`; // Fallback grey
+  }
+  const _opacity = Math.round(Math.min(Math.max(opacity || 1, 0), 1) * 255);
+  return color + _opacity.toString(16).toUpperCase().padStart(2, '0');
+};
+
+// Function to paint the highlight effect behind a selected node
+const paintSelectedHighlight = (node: NodeObject, ctx: CanvasRenderingContext2D, color: string, baseRadius: number = 5) => {
+  if (!node.x || !node.y) return;
+
+  const highlightRadius = baseRadius * 1.8;
+  ctx.beginPath();
+  ctx.arc(node.x, node.y, highlightRadius, 0, 2 * Math.PI, false);
+  ctx.fillStyle = addAlpha(color, 0.4); // Use addAlpha here
+  ctx.fill();
+};
+
+// Function to paint the invisible pointer interaction area for a node
+const paintStandardNodePointerArea = (node: NodeObject, color: string, ctx: CanvasRenderingContext2D) => {
+  const radius = ((node as GraphNode).size || 5) * 1.5; 
+  const nodeX = node.x ?? 0;
+  const nodeY = node.y ?? 0;
+
+  ctx.fillStyle = color; 
+  ctx.beginPath();
+  ctx.arc(nodeX, nodeY, radius, 0, 2 * Math.PI, false);
+  ctx.fill();
+};
+
 const ForceGraph = React.lazy(() => import('react-force-graph-2d'));
 
-// Props for the EnterprisePhilosopherGraph component
 interface EnterprisePhilosopherGraphProps {
   data: PhilosopherData;
   width: number;
   height: number;
   physicsEnabled: boolean;
   selectedLayout: string;
-  zoomLevel?: number; // Optional prop for zoom level
-  // Adjust types to match library expectations - node is likely just NodeObject here
+  zoomLevel?: number; 
   onNodeClick: (node: NodeObject, event: MouseEvent) => void; 
-  onNodeHover: (node: NodeObject | null) => void; // Callback for hover
+  onNodeHover: (node: NodeObject | null) => void; 
 }
 
-// Define the component using React.forwardRef to access the ref
 const EnterprisePhilosopherGraph = forwardRef<ForceGraphMethods, EnterprisePhilosopherGraphProps>(
   ({ data, width, height, physicsEnabled: physicsEnabledProp, selectedLayout, zoomLevel, onNodeClick, onNodeHover }, ref) => {
-  // Theme and graph state
-  const theme = useTheme();
-  const graphRef = useRef<ForceGraphMethods | undefined>(undefined); // Initialize useRef with undefined
+  const graphRef = useRef<ForceGraphMethods | undefined>(undefined); 
   const workerRef = useRef<Worker | null>(null);
   const [processedData, setProcessedData] = useState<PhilosopherData | null>(null);
   const [layoutComplete, setLayoutComplete] = useState<boolean>(false);
-  const [physicsEnabled, setPhysicsEnabled] = useState<boolean>(physicsEnabledProp); // State for physics engine
-  const [isLoading, setIsLoading] = useState<boolean>(true); // Initialize isLoading correctly
-  // Highlight state
+  const [physicsEnabled, setPhysicsEnabled] = useState<boolean>(physicsEnabledProp); 
+  const [isLoading, setIsLoading] = useState<boolean>(true); 
   const highlightNodes = useRef(new Set<string>());
   const highlightLinks = useRef(new Set<GraphLink>());
   const [hoveredNode] = useState<GraphNode | null>(null);
-  const [selectedNode, setSelectedNode] = useState<GraphNode | null>(null);
-  // Layout calculation state
+  const [selectedNode] = useState<GraphNode | null>(null);
 
-  // Expose graphRef methods via the forwarded ref
   React.useImperativeHandle(ref, () => ({ 
-    // Define wrapper functions matching ForceGraphMethods signatures
     zoom: (...args: [] | [scale: number, durationMs?: number]) => {
-      if (!graphRef.current) return 0; // Return default zoom level if ref is not ready
-      // Check arguments to determine getter or setter call
+      if (!graphRef.current) return 0; 
       if (args.length === 0) {
-        return graphRef.current.zoom(); // Getter
+        return graphRef.current.zoom(); 
       } else {
         const [scale, durationMs] = args;
-        return graphRef.current.zoom(scale, durationMs); // Setter
+        return graphRef.current.zoom(scale, durationMs); 
       }
     },
     centerAt: (x?: number, y?: number, durationMs?: number) => {
@@ -64,70 +83,55 @@ const EnterprisePhilosopherGraph = forwardRef<ForceGraphMethods, EnterprisePhilo
       if (!graphRef.current) return undefined;
       return graphRef.current.zoomToFit(durationMs, padding);
     }
-    // Cast the return type of the handle to satisfy the forwardRef type, 
-    // even though methods might return undefined if ref isn't ready.
-    // Parent component still needs null checks.
-  } as ForceGraphMethods), []); // Remove graphRef.current from deps, it's not a valid dependency
+  } as ForceGraphMethods), []);
 
-  // Initialize Web Worker for physics simulation
   useEffect(() => {
-    // Initialize worker
     const worker = new Worker(new URL('../../app/forge/philosopher-graph/forceWorker.ts', import.meta.url));
     workerRef.current = worker;
 
-    // Handle worker messages
     worker.onmessage = (event: MessageEvent) => {
       const messageData: { type: string; nodes?: GraphNode[]; links?: GraphLink[] } = event.data;
-      // Handle messages from worker based on type
       if (messageData.type === 'tick') {
-        // Handle physics tick updates - might need specific logic
       } else if (messageData.type === 'end') {
         console.log("Worker simulation finished.");
         const finalNodes = event.data.nodes as GraphNode[];
         setProcessedData(prevData => {
           if (!prevData) {
-            // If previous data was null, just return the final nodes and empty links
             return {
               nodes: finalNodes.map(node => ({ ...node, fx: undefined, fy: undefined })),
               links: []
             };
           }
-          // If previous data exists, update nodes and preserve links
           return {
             ...prevData,
-            nodes: finalNodes.map(node => ({ ...node, fx: undefined, fy: undefined })), // Update nodes, clearing fixed positions
-            links: prevData.links // Explicitly keep existing links
+            nodes: finalNodes.map(node => ({ ...node, fx: undefined, fy: undefined })), 
+            links: prevData.links 
           };
         });
         setLayoutComplete(true);
       } else if (messageData.type === 'layoutUpdate') {
         const layoutNodes = event.data.nodes as GraphNode[];
-        // Update positions directly in the graph instance if possible
         if (graphRef.current) {
-          // graphRef.current.graphData({ nodes: layoutNodes, links: processedData.links }); // Update graph data
         }
         if (layoutNodes) {
           setProcessedData(prevData => {
             if (!prevData) {
-              // If previous data was null, just return the new nodes and empty links
               return { nodes: layoutNodes, links: [] };
             }
-            // If previous data exists, update nodes and preserve links
             return {
-              ...prevData, // Spread existing data
+              ...prevData, 
               nodes: layoutNodes.map((node: { id: string | number; x?: number; y?: number; vx?: number; vy?: number; fx?: number; fy?: number }) => ({ 
-                ...prevData.nodes.find(n => n.id === node.id), // Preserve existing node data
-                ...node // Overwrite with layout properties (x, y, vx, vy, etc.)
+                ...prevData.nodes.find(n => n.id === node.id), 
+                ...node 
               })),
-              links: prevData.links // Explicitly keep existing links (guaranteed non-null by the 'if' check)
+              links: prevData.links 
             };
           });
         }
-        if (!layoutComplete) setLayoutComplete(true); // Mark layout as complete after first update
+        if (!layoutComplete) setLayoutComplete(true); 
       }
     };
 
-    // Clean up worker on unmount
     return () => {
       workerRef.current?.terminate();
       console.log("Terminating worker");
@@ -135,20 +139,16 @@ const EnterprisePhilosopherGraph = forwardRef<ForceGraphMethods, EnterprisePhilo
     };
   }, [layoutComplete, physicsEnabled]);
 
-  // Define reusable interaction handlers
   const handleNodeHoverInternal = useCallback((node: NodeObject | null) => {
     highlightNodes.current.clear();
     highlightLinks.current.clear();
  
-    // Ensure node, processedData, and processedData.links exist before proceeding
     if (node && node.id && processedData && processedData.links) { 
-      const nodeId = node.id as string; // Cast id to string
+      const nodeId = node.id as string; 
       highlightNodes.current.add(nodeId);
-      // Find links connected to the hovered node
-      processedData.links.forEach(link => { // Use processedData links
+      processedData.links.forEach(link => { 
         if (link.source === nodeId || link.target === nodeId) {
           highlightLinks.current.add(link);
-          // Also highlight the connected node
           const sourceId = typeof link.source === 'string' ? link.source : (link.source as GraphNode).id;
           const targetId = typeof link.target === 'string' ? link.target : (link.target as GraphNode).id;
           highlightNodes.current.add(sourceId.toString());
@@ -156,65 +156,52 @@ const EnterprisePhilosopherGraph = forwardRef<ForceGraphMethods, EnterprisePhilo
         }
       });
     }
-    onNodeHover(node); // Call parent hover handler
-  }, [processedData, onNodeHover]); // Check processedData object itself
+    onNodeHover(node); 
+  }, [processedData, onNodeHover]); 
 
-  // Process graph data for rendering
   const processGraphData = useCallback(() => {
-    // Prepare data for rendering
-    // Assign initial positions based on layout type
     let nodesWithPositions = data.nodes;
     let linksForLayout = data.links;
 
     if (selectedLayout === 'radial') {
-      // Calculate positions for radial layout
       const centerX = width / 2;
       const centerY = height / 2;
       const radius = Math.min(width, height) / 2.5;
       const angleStep = (2 * Math.PI) / data.nodes.length;
 
-      // Simple era ordering for radial sort
       const eraOrder = ['Ancient', 'Medieval', 'Renaissance', 'Early Modern', 'Modern', 'Contemporary'];
-      // const eraOrderMap = new Map(eraOrder.map((era, index) => [era, index]));
-
       nodesWithPositions = data.nodes
-        .slice() // Create a copy before sorting
+        .slice() 
         .sort((a, b) => {
           const eraAIndex = eraOrder.indexOf(a.era ?? '');
           const eraBIndex = eraOrder.indexOf(b.era ?? '');
-          return eraAIndex - eraBIndex; // Sort by era order
+          return eraAIndex - eraBIndex; 
         })
         .map((node, index) => ({
           ...node,
           fx: centerX + radius * Math.cos(angleStep * index),
           fy: centerY + radius * Math.sin(angleStep * index),
         }));
-      // Use original links, D3 handles node references
       linksForLayout = data.links;
       
-      setLayoutComplete(true); // Radial layout is immediate
+      setLayoutComplete(true); 
     } else if (selectedLayout === 'hierarchical') {
-      // Hierarchical layout logic would go here (e.g., using d3.tree or d3.cluster)
-      // This requires defining parent-child relationships or using d3.stratify
       console.warn("Hierarchical layout not fully implemented.");
-      setLayoutComplete(true); // Mark as complete for now
+      setLayoutComplete(true); 
     }
 
     setProcessedData({ nodes: nodesWithPositions, links: linksForLayout });
     setIsLoading(false);
-  }, [data, width, height, selectedLayout]); // Added data dependency
+  }, [data, width, height, selectedLayout]); 
 
-  // Helper function to find a node by its ID in the processed data
   const findNodeById = useCallback((nodeId: string | number | undefined): GraphNode | undefined => {
     if (!processedData || !processedData.nodes || nodeId === undefined) {
       return undefined;
     }
-    // Ensure nodeId is treated as a string for comparison, matching how IDs are often used
     const idString = String(nodeId);
     return processedData.nodes.find(node => String(node.id) === idString);
-  }, [processedData]); // Depends on processedData
+  }, [processedData]); 
 
-  // Control physics engine based on prop
   useEffect(() => {
     if (graphRef.current) {
       if (physicsEnabled) {
@@ -225,79 +212,67 @@ const EnterprisePhilosopherGraph = forwardRef<ForceGraphMethods, EnterprisePhilo
     }
   }, [physicsEnabled, graphRef]);
 
-  // Control zoom level
   useEffect(() => {
     if (graphRef.current && zoomLevel !== undefined) {
-      graphRef.current.zoom(zoomLevel, 500); // Zoom with 500ms transition
+      graphRef.current.zoom(zoomLevel, 500); 
     }
-  }, [zoomLevel, graphRef]); // Include graphRef if its current value matters
+  }, [zoomLevel, graphRef]); 
 
-  // Reset physics and layout when data or layout type changes
   useEffect(() => {
     console.log("Data or layout changed, re-processing...");
     setIsLoading(true);
     setLayoutComplete(false);
-    processGraphData(); // Re-run layout and processing
-  }, [data, selectedLayout, processGraphData]); // Added processGraphData
+    processGraphData(); 
+  }, [data, selectedLayout, processGraphData]); 
 
-  // Initial data processing call
   useEffect(() => {
     if (data && data.nodes.length > 0) {
       processGraphData();
     }
-  }, [data, processGraphData]); // Added processGraphData
+  }, [data, processGraphData]); 
   
-  // Worker message handler for updated positions
   useEffect(() => {
     if (!workerRef.current) return;
 
     const handleMessage = (event: MessageEvent) => {
       if (event.data.type === 'tick') {
-        // Update node positions without triggering full re-render if possible
-        // This is tricky with react-force-graph; might need internal updates
       } else if (event.data.type === 'end') {
         console.log("Worker simulation finished.");
         const finalNodes = event.data.nodes as GraphNode[];
         setProcessedData(prevData => {
           if (!prevData) {
-            // If previous data was null, just return the final nodes and empty links
             return {
               nodes: finalNodes.map(node => ({ ...node, fx: undefined, fy: undefined })),
               links: []
             };
           }
-          // If previous data exists, update nodes and preserve links
           return {
             ...prevData,
-            nodes: finalNodes.map(node => ({ ...node, fx: undefined, fy: undefined })), // Update nodes, clearing fixed positions
-            links: prevData.links // Explicitly keep existing links
+            nodes: finalNodes.map(node => ({ ...node, fx: undefined, fy: undefined })), 
+            links: prevData.links 
           };
         });
-        setPhysicsEnabled(false); // Disable physics after simulation ends
+        setPhysicsEnabled(false); 
       } else if (event.data.type === 'layoutUpdate') {
         const layoutNodes = event.data.nodes as GraphNode[];
-        // Update positions directly in the graph instance if possible
         if (graphRef.current) {
-          // graphRef.current.graphData({ nodes: layoutNodes, links: processedData.links }); // Update graph data
         }
         if (layoutNodes) {
           setProcessedData(prevData => {
             if (!prevData) {
-              // If previous data was null, just return the new nodes and empty links
               return { nodes: layoutNodes, links: [] };
             }
-            // If previous data exists, update nodes and preserve links
             return {
-              ...prevData, // Spread existing data
+              ...prevData, 
               nodes: layoutNodes.map((node: { id: string | number; x?: number; y?: number; vx?: number; vy?: number; fx?: number; fy?: number }) => ({ 
-                ...prevData.nodes.find(n => n.id === node.id), // Preserve existing node data
-                ...node // Overwrite with layout properties (x, y, vx, vy, etc.)
+                ...prevData.nodes.find(n => n.id === node.id), 
+                ...node 
               })),
-              links: prevData.links // Explicitly keep existing links (guaranteed non-null by the 'if' check)
+              links: prevData.links 
             };
           });
         }
-        if (!layoutComplete) setLayoutComplete(true); // Mark layout as complete after first update
+        if (!layoutComplete) setLayoutComplete(true); 
       }
     };
 
@@ -306,72 +281,92 @@ const EnterprisePhilosopherGraph = forwardRef<ForceGraphMethods, EnterprisePhilo
     return () => {
       workerRef.current?.removeEventListener('message', handleMessage);
     };
-  }, [layoutComplete, physicsEnabled]); // Added physicsEnabled dependency
+  }, [layoutComplete, physicsEnabled]); 
 
-  // Function to determine link color (simple placeholder)
-  const getLinkColor = useCallback((link: GraphLink) => {
-    // Example: Make links dimmer or based on a property
-    // Ensure properties exist before accessing
-    const relation = link?.relation;
-    const sourceCommunity = (link?.source as GraphNode)?.community;
-    const targetCommunity = (link?.target as GraphNode)?.community;
+  const getLinkColor = useCallback((link: LinkObject): string => {
+    const baseOpacity = 0.6; // Increased opacity
+    const relation = (link as GraphLink).relation;
 
-    if (relation === 'influenced') return 'rgba(0, 255, 0, 0.3)'; 
-    if (sourceCommunity !== undefined && targetCommunity !== undefined && sourceCommunity === targetCommunity) {
-      // Slightly emphasize intra-community links
-      return 'rgba(150, 150, 150, 0.3)';
+    switch (relation) {
+      case 'Influenced by':
+        return addAlpha('#81c784', baseOpacity); // success.light approximation
+      case 'Student of':
+        return addAlpha('#64b5f6', baseOpacity); // info.light approximation
+      case 'Intellectual Partner':
+        return addAlpha('#ffb74d', baseOpacity); // warning.light approximation
+      default:
+        return addAlpha('#9e9e9e', baseOpacity * 0.8); // grey[500]
     }
-    return 'rgba(100, 100, 100, 0.2)'; // Default dim color
-  }, []);
+  }, []); // Removed theme dependency
 
-  // Placeholder functions for missing drawing/color logic
-  const paintNode = useCallback(
-    (
-      nodeObject: NodeObject, 
-      ctx: CanvasRenderingContext2D, 
-      globalScale: number
-    ) => {
-      // Cast to GraphNode for our utility function
-      const node = nodeObject as GraphNode; 
-      paintStandardNode(node, ctx, globalScale, theme, hoveredNode, selectedNode); // Pass actual hovered/selected
-    },
-    [theme, hoveredNode, selectedNode] // Add hoveredNode and selectedNode dependencies
-  );
+  const getLinkWidth = useCallback((link: LinkObject): number => {
+    const sourceId = getNodeId(link.source);
+    const targetId = getNodeId(link.target);
+    const isHighlighted = sourceId === hoveredNode?.id ||
+                          targetId === hoveredNode?.id ||
+                          sourceId === selectedNode?.id ||
+                          targetId === selectedNode?.id;
+    return isHighlighted ? 3 : 1;
+  }, [hoveredNode, selectedNode]);
 
-  const paintNodePointerArea = useCallback((node: NodeObject, color: string, ctx: CanvasRenderingContext2D) => {
-    // Define hit area for node interaction
-    const radius = 6; // Slightly larger than visual radius
-    ctx.fillStyle = color;
-    ctx.beginPath();
-    ctx.arc(node.x!, node.y!, radius, 0, 2 * Math.PI, false);
-    ctx.fill();
-  }, []);
+  const getLinkParticleWidth = useCallback((link: LinkObject): number => {
+    const sourceId = getNodeId(link.source);
+    const targetId = getNodeId(link.target);
+    const isHighlighted = sourceId === hoveredNode?.id ||
+                          targetId === hoveredNode?.id ||
+                          sourceId === selectedNode?.id ||
+                          targetId === selectedNode?.id;
+    return isHighlighted ? 4 : 1.5; // Increased base particle width
+  }, [hoveredNode, selectedNode]);
 
-  const paintLink = useCallback(
-    (
-      linkObject: LinkObject, // Accept LinkObject from react-force-graph
-      ctx: CanvasRenderingContext2D,
-      globalScale: number
-    ) => {
-      const link = linkObject as GraphLink; // Cast to GraphLink
-      // Get source/target IDs, handling both direct IDs and node objects
-      const sourceId = typeof link.source === 'object' ? link.source.id : link.source;
-      const targetId = typeof link.target === 'object' ? link.target.id : link.target;
+  const getNodeId = (node: string | number | NodeObject | undefined): string | number | undefined => {
+    if (typeof node === 'object' && node !== null && node.id !== undefined) {
+      return node.id;
+    }
+    if (typeof node === 'string' || typeof node === 'number') {
+      return node;
+    }
+    return undefined;
+  };
 
-      // Use the helper function to find the nodes
+  const handleNodeCanvasObject = useCallback((node: NodeObject, ctx: CanvasRenderingContext2D, globalScale: number) => {
+    const isSelected = node.id === selectedNode?.id;
+    const isHovered = node.id === hoveredNode?.id;
+
+    // Draw highlight effect *if* selected
+    if (isSelected) {
+        paintSelectedHighlight(node, ctx, '#B8860B', (node as GraphNode).size || 5); // secondary.main
+    }
+
+    // Draw the standard node - Removed the placeholder {} theme argument
+    paintStandardNode(node as GraphNode, ctx, globalScale, isHovered ? node as GraphNode : null, isSelected ? node as GraphNode : null);
+
+  }, [selectedNode, hoveredNode]); // Removed theme dependency
+
+  const handleNodeClickInternal = useCallback((node: NodeObject, event: MouseEvent) => {
+    console.log("Internal graph node clicked:", node);
+    if (node.x !== undefined && node.y !== undefined && graphRef.current) {
+      graphRef.current.centerAt(node.x, node.y, 600); 
+      graphRef.current.zoom(2, 600); 
+    }
+    onNodeClick(node, event); // Forward to parent handler
+  }, [onNodeClick, graphRef]);
+
+  const handleLinkCanvasObject = useCallback(
+    (linkObject: LinkObject, ctx: CanvasRenderingContext2D) => {
+      const link = linkObject as GraphLink; 
+      const sourceId = getNodeId(link.source);
+      const targetId = getNodeId(link.target);
       const sourceNode = findNodeById(sourceId);
       const targetNode = findNodeById(targetId);
 
-      // If nodes aren't found, we can't draw the link
       if (!sourceNode || !targetNode) {
         console.warn("Could not find source or target node for link", link);
         return; 
       }
       
-      // Basic link drawing
-      ctx.strokeStyle = getLinkColor(link); // Use getLinkColor with the casted link
-      // Use weight for link width if available, default to 1
-      ctx.lineWidth = (link?.weight || 1) / globalScale; 
+      ctx.strokeStyle = getLinkColor(link); 
+      ctx.lineWidth = (link?.weight || 1); 
       ctx.beginPath();
       if (sourceNode?.x !== undefined && sourceNode?.y !== undefined && targetNode?.x !== undefined && targetNode?.y !== undefined) {
           ctx.moveTo(sourceNode.x, sourceNode.y);
@@ -386,76 +381,67 @@ const EnterprisePhilosopherGraph = forwardRef<ForceGraphMethods, EnterprisePhilo
 
   useEffect(() => {
     console.log("Data prop received:", data);
-    if (data?.nodes && data?.links) { // Use optional chaining for safety
-      // Basic validation or transformation if needed
-      const validatedNodes = data.nodes.map((n: GraphNode) => ({ // Type 'n' as GraphNode
+    if (data?.nodes && data?.links) { 
+      const validatedNodes = data.nodes.map((n: GraphNode) => ({ 
         ...n,
-        id: n.id ?? `node-${Math.random()}`, // Ensure ID exists
+        id: n.id ?? `node-${Math.random()}`, 
       }));
-      const validatedLinks = data.links.map((l: GraphLink) => ({ // Type 'l' as GraphLink
+      const validatedLinks = data.links.map((l: GraphLink) => ({ 
         ...l,
-        // Ensure source/target are valid IDs present in nodes
-        // Add validation logic here if needed
       }));
       setProcessedData({ nodes: validatedNodes, links: validatedLinks });
       setIsLoading(false);
-      setLayoutComplete(false); // Reset layout on new data
+      setLayoutComplete(false); 
     } else {
       console.warn("Invalid or empty data received");
-      setProcessedData({ nodes: [], links: [] }); // Clear data
-      setIsLoading(true); // Set loading state
+      setProcessedData({ nodes: [], links: [] }); 
+      setIsLoading(true); 
     }
   }, [data]);
 
   if (isLoading) {
-    return <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100%' }}><Typography>Loading graph...</Typography></Box>;
+    return (
+      <div className="flex justify-center items-center h-full w-full">
+        <p className="text-gray-500">Loading graph...</p>
+      </div>
+    );
   }
 
   return (
-    <Box sx={{ position: 'relative', width, height }}>
-      {/* Conditional rendering to ensure window is defined for lazy loading */}
+    <div className="relative" style={{ width: `${width}px`, height: `${height}px` }}>
       {typeof window !== 'undefined' && (
-        <React.Suspense fallback={<Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100%' }}><Typography>Loading Graph...</Typography></Box>}>
-          <ForceGraph // Use the lazy-loaded component
+        <React.Suspense 
+          fallback={
+            <div className="flex justify-center items-center h-full w-full">
+              <p className="text-gray-500">Loading Graph...</p>
+            </div>
+          }
+        >
+          <ForceGraph 
             ref={graphRef}
             width={width}
             height={height}
-            graphData={processedData ?? undefined} // Use processed data, providing undefined if null
+            graphData={processedData ?? undefined} 
             nodeId="id"
             linkSource="source"
             linkTarget="target"
-            // Performance settings
-            cooldownTicks={physicsEnabled ? 100 : 0} // Stop simulation if physics is off
-            // nodeRelSize={4} // Adjust node size relative to scale
-            // Rendering & Styling
-            nodeCanvasObject={paintNode} // Use custom node painting
-            nodePointerAreaPaint={paintNodePointerArea}
-            // Link styling & behavior
-            linkCanvasObjectMode={() => 'after'} // Draw links after nodes
-            linkCanvasObject={paintLink} // Use custom link painting
-            // linkColor={getLinkColor} // Set link color dynamically via paintLink strokeStyle
-            linkWidth={(link: LinkObject) => (link as GraphLink)?.weight || 1} // Example using weight
+            cooldownTicks={physicsEnabled ? 100 : 0} 
+            nodeCanvasObject={handleNodeCanvasObject} 
+            nodePointerAreaPaint={paintStandardNodePointerArea}
+            onNodeHover={handleNodeHoverInternal} 
+            onNodeClick={handleNodeClickInternal}
+            linkColor={getLinkColor}
+            linkWidth={getLinkWidth}
             linkDirectionalParticles={2}
-            linkDirectionalParticleWidth={2}
-            // Interactions
-            onNodeHover={handleNodeHoverInternal} // Use internal hover handler
-            onNodeClick={(node, event) => { // Capture the event object
-              console.log("Internal graph node clicked:", node);
-              const graphNode = node as GraphNode;
-              setSelectedNode(graphNode); // Update selected node state
-              onNodeClick(graphNode, event); // Call parent handler with both arguments
-            }}
-            // Zoom/Pan controls if needed
-            // onZoom={handleZoom}
-            // onBackgroundClick={handleBackgroundClick}
-            // Physics engine configuration (can be adjusted)
-            // d3Force={...}
-            // d3AlphaDecay={0.0228}
-            // d3VelocityDecay={0.4}
+            linkDirectionalParticleWidth={getLinkParticleWidth}
+            linkDirectionalParticleSpeed={0.006}
+            linkDirectionalParticleColor={getLinkColor}
+            linkCanvasObject={handleLinkCanvasObject}
+            onEngineStop={() => graphRef.current?.zoomToFit(400, 60)} // Added padding to zoomToFit
           />
         </React.Suspense>
       )}
-    </Box>
+    </div>
   );
 });
 

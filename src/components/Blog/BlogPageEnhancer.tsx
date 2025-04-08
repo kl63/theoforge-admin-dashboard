@@ -2,19 +2,7 @@
 
 import React, { useState, useMemo, useCallback } from 'react';
 import { PostData } from '@/types/post';
-import { 
-  Box, 
-  Typography, 
-  Stack, 
-  FormControl, 
-  InputLabel, 
-  Select, 
-  MenuItem, 
-  Chip, 
-  SelectChangeEvent, 
-  Button 
-} from '@mui/material';
-import BlogCard from './BlogCard'; // Corrected to default import based on lint error
+import BlogCard from './BlogCard'; 
 
 // Define type for content filtering
 type ContentType = 'all' | 'article' | 'podcast';
@@ -22,17 +10,13 @@ type SortOrder = 'newest' | 'oldest';
 
 interface BlogPageEnhancerProps {
   posts: PostData[];
-  allContentTypes: string[]; // e.g., ['article', 'podcast']
 }
 
-const BlogPageEnhancer: React.FC<BlogPageEnhancerProps> = ({ posts, allContentTypes }) => {
+const BlogPageEnhancer: React.FC<BlogPageEnhancerProps> = ({ posts }) => {
   // State for content filtering
-  const [selectedContentType, setSelectedContentType] = useState<ContentType>('all');
+  const [selectedContentType] = useState<ContentType>('all');
   const [selectedTags, setSelectedTags] = useState<string[]>([]);
   const [sortOrder, setSortOrder] = useState<SortOrder>('newest');
-
-  // Combine content types for the dropdown
-  const contentTypeOptions: ContentType[] = ['all', ...(allContentTypes as ContentType[])];
 
   // --- Data Processing & Filtering --- //
 
@@ -84,11 +68,7 @@ const BlogPageEnhancer: React.FC<BlogPageEnhancerProps> = ({ posts, allContentTy
   }, [posts, selectedContentType, selectedTags, sortOrder]);
 
   // --- Event Handlers --- //
-  const handleContentTypeChange = useCallback((event: SelectChangeEvent<string>) => {
-    setSelectedContentType(event.target.value as ContentType);
-  }, []);
-
-  const handleSortChange = useCallback((event: SelectChangeEvent<string>) => {
+  const handleSortChange = useCallback((event: React.ChangeEvent<HTMLSelectElement>) => {
     setSortOrder(event.target.value as SortOrder);
   }, []);
 
@@ -107,108 +87,76 @@ const BlogPageEnhancer: React.FC<BlogPageEnhancerProps> = ({ posts, allContentTy
 
   // --- Render Logic --- //
   return (
-    <Box sx={{ width: '100%', py: 4 }}>
-      {/* Filter and Sort Controls */}
-      <Box 
-        sx={{
-          display: 'flex',
-          flexWrap: 'wrap', // Allow controls to wrap on smaller screens
-          gap: 2,            // Spacing between control groups
-          mb: 4,             // Margin below the controls section
-          alignItems: 'center' // Align items vertically
-        }}
+    // Replaced Box with div
+    <div className="w-full py-4">
+      {/* Filter and Sort Controls - Replaced Box with div using flex */}
+      <div 
+        className="flex flex-wrap gap-4 mb-6 items-center" // Increased gap and mb
       >
-        {/* Content Type Filter - Takes available space, shrinks if needed */}
-        <Box sx={{ flex: '1 1 200px' }}> {/* Flex basis 200px */}
-          <FormControl fullWidth variant="outlined" size="small">
-            <InputLabel id="content-type-select-label">Content Type</InputLabel>
-            <Select
-              labelId="content-type-select-label"
-              value={selectedContentType}
-              onChange={handleContentTypeChange}
-              label="Content Type"
-            >
-              {contentTypeOptions.map(type => (
-                <MenuItem key={type} value={type}>
-                  {type.charAt(0).toUpperCase() + type.slice(1)} {/* Capitalize */}
-                </MenuItem>
-              ))}
-            </Select>
-          </FormControl>
-        </Box>
-
-        {/* Sorting Options - Takes available space, shrinks if needed */}
-        <Box sx={{ flex: '1 1 200px' }}> {/* Flex basis 200px */}
-          <FormControl fullWidth variant="outlined" size="small">
-            <InputLabel id="sort-by-select-label">Sort By</InputLabel>
-            <Select
-              labelId="sort-by-select-label"
-              value={sortOrder}
-              onChange={handleSortChange}
-              label="Sort By"
-            >
-              <MenuItem value="newest">Newest First</MenuItem>
-              <MenuItem value="oldest">Oldest First</MenuItem>
-            </Select>
-          </FormControl>
-        </Box>
-
-        {/* Tag Filters Section - Takes more space, allows wrapping */}
-        <Box sx={{ flex: '2 1 300px', display: 'flex', flexWrap: 'wrap', gap: 1, alignItems: 'center' }}> {/* Flex basis 300px, allows growth */}
-          <Typography variant="body2" sx={{ mr: 1, fontWeight: 'medium', flexShrink: 0 }}>Filter by Tag:</Typography>
-          <Stack direction="row" spacing={1} useFlexGap flexWrap="wrap">
+        {/* Tag Filters Section - Replaced Box with div using flex */}
+        <div className="flex-grow-[2] min-w-[300px] flex flex-wrap gap-2 items-center"> 
+          {/* Replaced Typography with span */}
+          <span className="mr-1 font-medium text-sm text-gray-700 shrink-0">Filter by Tag:</span>
+          {/* Replaced Stack with div using flex */}
+          <div className="flex flex-row gap-2 flex-wrap">
             {topTags.map((tag) => (
-              <Chip
+              // Replaced Chip with button for clickability and styling
+              <button
                 key={tag}
-                label={tag}
-                clickable
+                type="button"
                 onClick={() => handleTagToggle(tag)}
-                color={selectedTags.includes(tag) ? 'primary' : 'default'}
-                variant={selectedTags.includes(tag) ? 'filled' : 'outlined'}
-                size="small"
-              />
+                className={`px-2.5 py-0.5 rounded text-xs border transition-colors duration-150 ease-in-out 
+                  ${selectedTags.includes(tag) 
+                    ? 'bg-indigo-600 text-white border-indigo-600 hover:bg-indigo-700' 
+                    : 'bg-white text-gray-700 border-gray-300 hover:bg-gray-50'}`}
+              >
+                {tag}
+              </button>
             ))}
-          </Stack>
+          </div>
           {selectedTags.length > 0 && (
-            <Button
-              size="small"
+            // Replaced Button with button
+            <button
+              type="button"
               onClick={handleClearTags}
-              sx={{ ml: 1, textTransform: 'none', flexShrink: 0 }}
+              className="ml-1 px-2 py-1 text-xs text-indigo-600 hover:text-indigo-800 shrink-0 focus:outline-none"
             >
               Clear Tags
-            </Button>
+            </button>
           )}
-        </Box>
-      </Box>
+        </div>
 
-      {/* Blog Post Grid */}
-      <Box 
-        sx={{
-          display: 'grid',
-          // Responsive grid columns: 1 on xs, 2 on sm, 3 on md+
-          // Using minmax for flexible card width
-          gridTemplateColumns: {
-            xs: 'repeat(1, 1fr)', // 1 column on extra-small screens
-            sm: 'repeat(2, 1fr)', // 2 columns on small screens
-            md: 'repeat(3, 1fr)', // 3 columns on medium screens and up
-          },
-          // A simpler alternative using auto-fill:
-          // gridTemplateColumns: 'repeat(auto-fill, minmax(300px, 1fr))',
-          gap: 3, // Spacing between grid items (theme aware)
-          mb: 4
-        }}
+        {/* Sorting Options - Replaced Box and FormControl with div/label/select */}
+        <div className="flex-grow min-w-[200px]"> 
+          <label htmlFor="sort-by-select" className="block text-sm font-medium text-gray-700 mb-1">Sort By</label>
+          <select
+            id="sort-by-select"
+            value={sortOrder}
+            onChange={handleSortChange}
+            className="block w-full pl-3 pr-10 py-2 text-base border border-gray-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md bg-white"
+          >
+            <option value="newest">Newest First</option>
+            <option value="oldest">Oldest First</option>
+          </select>
+        </div>
+      </div>
+
+      {/* Blog Post Grid - Replaced Box with div using grid */}
+      <div 
+        className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 mb-4" // Adjusted gap
       >
         {filteredPosts.length > 0 ? (
           filteredPosts.map((post) => (
             <BlogCard key={post.slug} post={post} />
           ))
         ) : (
-          <Typography sx={{ gridColumn: '1 / -1' }}> {/* Span full grid width */}
+          // Replaced Typography with p, added grid-column span
+          <p className="col-span-1 sm:col-span-2 md:col-span-3 text-gray-500">
             No posts match the current filters.
-          </Typography>
+          </p>
         )}
-      </Box>
-    </Box>
+      </div>
+    </div>
   );
 };
 

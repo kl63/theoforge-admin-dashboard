@@ -2,20 +2,20 @@
 
 import React from 'react';
 import Link from 'next/link';
+import Image from 'next/image';
 import { PostData } from '@/types/post';
-import { 
-  Card, CardActionArea, CardContent, CardMedia, Typography, Chip, Box, Stack
-} from '@mui/material';
-import { useTheme } from '@mui/material/styles';
+import { ViewMode } from './BlogInteractivityWrapper';
+import BaseCard from '../Common/BaseCard';
 
 interface BlogCardProps {
   post: PostData;
+  viewMode?: ViewMode; // Made optional
+  index?: number;      // Add index prop
+  currentPage?: number; // Add currentPage prop
 }
 
-const BlogCard: React.FC<BlogCardProps> = ({ post }) => {
-  const theme = useTheme();
-  const linkHref = `/blog/${post.slug}`; 
-  const cardImageHeight = 200; // Consistent height
+const BlogCard: React.FC<BlogCardProps> = ({ post, index, currentPage /*, viewMode*/ }) => { // Accept index and currentPage
+  const linkHref = `/blog/${post.slug}`;
 
   // --- "New" Badge Logic ---
   const isNew = (() => {
@@ -34,131 +34,93 @@ const BlogCard: React.FC<BlogCardProps> = ({ post }) => {
   // ------------------------
 
   return (
-    // Ensure card takes full height of its container and uses flex column layout
-    <Card 
-      sx={{ 
-        position: 'relative', // Add relative positioning for the absolute chip
-        display: 'flex', 
-        flexDirection: 'column', 
-        height: '100%', 
-        width: '100%', // Ensure card takes full width of its grid container
-        borderRadius: theme.spacing(2), // Use 16px borderRadius from theme
-        boxShadow: 'none', // Start with no shadow
-        border: `1px solid ${theme.palette.divider}`,
-        transition: 'box-shadow 0.2s ease-in-out', // Add transition for shadow
-        '&:hover': {
-          boxShadow: theme.shadows[4], // Apply shadow to Card on hover
-          // Target the CardMedia within the hovered Card
-          '& .MuiCardActionArea-root .MuiCardMedia-root': {
-            transform: 'scale(1.05)', // Scale the image
-          }
-        }
-      }}
-    >
-      {/* "New" Badge - Positioned bottom-right */}
+    // Use BaseCard, pass specific classes via className prop
+    <BaseCard className="relative group hover:shadow-lg w-full"> 
       {isNew && (
-        <Chip 
-          label="New"
-          color="secondary" // Use secondary color for highlight
-          size="small"
-          sx={{ 
-            position: 'absolute', 
-            bottom: 8, 
-            right: 8, 
-            zIndex: 1, // Ensure it's above the image
-            fontWeight: 'bold',
-          }} 
-        />
+        // Replaced Chip with span
+        <span 
+          className="absolute bottom-2 right-2 z-10 bg-pink-600 text-white text-xs font-bold px-2 py-0.5 rounded"
+        >
+          New
+        </span>
       )}
-      <CardActionArea 
-        component={Link} 
+      {/* Replaced CardActionArea with Link (a tag) */}
+      <Link 
         href={linkHref}
-        sx={{
-          textDecoration: 'none', 
-          color: 'inherit', 
-          display: 'flex', 
-          flexDirection: 'column', 
-          flexGrow: 1, // Let ActionArea fill the Card
-          // Remove hover styles from ActionArea
-        }}
+        className="no-underline text-inherit flex flex-col flex-grow"
       >
-        {/* Image container: Ensure it has overflow hidden and defined height */}
-        <Box sx={{ 
-          overflow: 'hidden', 
-          width: '100%', 
-          height: cardImageHeight // Use defined height for the container
-        }}> 
+        {/* Image container: Replaced Box with div */}
+        <div 
+          className={`relative overflow-hidden w-full`}
+          style={{ height: '12rem' }}
+        > 
           {post.image ? (
-            <CardMedia
-              component="img"
-              className="MuiCardMedia-root" // Add class for targeting
-              image={post.image || '/images/default-blog-banner.jpg'} // Ensure default
+            // Replaced CardMedia with Image, added group-hover for scale effect
+            <Image
+              src={post.image || '/images/default-blog-banner.jpg'} // Ensure default
               alt={post.title}
-              sx={{
-                width: '100%', // Ensure media fills Box width
-                height: '100%', // Ensure media fills Box height
-                objectFit: 'cover', 
-                transition: 'transform 0.3s ease-in-out', // Keep image transition
-              }}
+              fill
+              style={{ objectFit: 'cover' }} // Use style prop for objectFit with fill
+              sizes="(max-width: 640px) 100vw, 50vw" // Adjust sizes as needed
+              className="transition-transform duration-300 ease-in-out group-hover:scale-105"
+              priority={index === 0 && currentPage === 1} // Update priority condition
             />
           ) : (
-            // Placeholder when no image is available
-            <Box sx={{
-              height: cardImageHeight, // Use defined height
-              bgcolor: theme.palette.grey[100], // Subtle background
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center'
-            }}>
-              {/* Optional: Add an icon or text */}
-              <Typography variant="caption" color="text.secondary">
+            // Placeholder: Replaced Box with div
+            <div className={`12rem bg-gray-100 flex items-center justify-center`}>
+              {/* Replaced Typography with p */}
+              <p className="text-xs text-gray-500">
                 Image Coming Soon
-              </Typography>
-            </Box>
+              </p>
+            </div>
           )}
-        </Box>
-        <CardContent sx={{ flexGrow: 1, width: '100%', p: 2 }}> {/* Consistent padding */}
-          <Typography gutterBottom variant="h6" component="div" sx={{ fontWeight: 'bold', mb: 1 }}>
+        </div>
+        {/* Replaced CardContent with div */}
+        <div className="flex-grow w-full p-4 flex flex-col"> 
+          {/* Replaced Typography with h2 */}
+          <h2 className="text-lg font-bold mb-1">
             {post.title}
-          </Typography>
-          <Typography variant="body2" color="text.secondary" sx={{ mb: 2 }}>
+          </h2>
+          {/* Replaced Typography with p */}
+          <p className="text-sm text-gray-600 mb-4 line-clamp-3">
             {post.excerpt}
-          </Typography>
+          </p>
 
           {/* Tags Section */}
           {post.tags && Array.isArray(post.tags) && post.tags.length > 0 && (
-            <Box sx={{ mt: 'auto', mb: 2 }}> {/* Use 16px margin */} 
-              <Stack direction="row" spacing={0.5} flexWrap="wrap" useFlexGap>
+            // Replaced Box with div, mt-auto to push to bottom within flex container
+            <div className="mt-auto mb-4"> 
+              {/* Replaced Stack with div using flex */}
+              <div className="flex flex-row flex-wrap gap-1">
                 {post.tags.slice(0, 3).map((tag) => ( 
-                  <Chip key={tag} label={tag} size="small" variant="outlined" sx={{ borderRadius: 1, fontSize: '0.7rem' }} />
+                  // Replaced Chip with span
+                  <span key={tag} className="px-2 py-0.5 border border-gray-300 rounded text-xs text-gray-700 bg-gray-50">
+                    {tag}
+                  </span>
                 ))}
-              </Stack>
-            </Box>
+              </div>
+            </div>
           )}
-        </CardContent>
-      </CardActionArea>
-
-      {/* Metadata Footer (outside CardActionArea content, inside Card) */}
-      <Box sx={{ 
-          p: 2, // Consistent padding with CardContent sides
-          pt: 0, // No top padding, rely on CardContent bottom padding
-          mt: 'auto', // Ensure it's at the bottom
-          borderTop: `1px solid ${theme.palette.divider}`,
-          backgroundColor: theme.palette.mode === 'light' ? 'grey.50' : 'grey.900', // Subtle background
-        }}
+        </div>
+      </Link> 
+      {/* Metadata Footer: Replaced Box with div */}
+      <div 
+        className="p-4 pt-0 mt-auto border-t border-gray-200 bg-gray-50"
       >
-        <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-          <Typography variant="caption" color="text.secondary" sx={{ flexGrow: 1 }}> 
+        {/* Replaced Box with div */}
+        <div className="flex items-center gap-1">
+          {/* Replaced Typography with p */}
+          <p className="text-xs text-gray-500 flex-grow"> 
             {new Date(post.date).toLocaleDateString('en-US', {
               year: 'numeric',
               month: 'short',
               day: 'numeric'
             })} 
             {post.readingTime ? ` • ${post.readingTime}` : ''} 
-          </Typography>
-        </Box>
-      </Box>
-    </Card>
+          </p>
+        </div>
+      </div>
+    </BaseCard>
   );
 };
 

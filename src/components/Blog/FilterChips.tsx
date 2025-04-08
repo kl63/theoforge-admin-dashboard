@@ -1,5 +1,4 @@
 import React from 'react';
-import { Chip, Stack, Typography, Box, useTheme } from '@mui/material';
 
 interface FilterChipsProps {
   title: string;
@@ -9,42 +8,35 @@ interface FilterChipsProps {
 }
 
 const FilterChips: React.FC<FilterChipsProps> = ({ title, items, selectedItems, onToggle }) => {
-  const theme = useTheme();
 
   if (!items || items.length === 0) {
     return null;
   }
 
   return (
-    <Box mb={2}>
-      <Typography variant="overline" display="block" gutterBottom sx={{ color: theme.palette.text.secondary }}>
+    <div className="mb-4">
+      <span className="block mb-1 text-xs font-semibold tracking-wider uppercase text-gray-500 dark:text-gray-400">
         {title}
-      </Typography>
-      <Stack direction="row" spacing={1} flexWrap="wrap" useFlexGap>
+      </span>
+      <div className="flex flex-row flex-wrap gap-2">
         {items.map((item) => {
           const isSelected = selectedItems.includes(item);
+          const baseClasses = "px-3 py-1 rounded-full text-sm font-medium cursor-pointer transition-colors duration-150 ease-in-out";
+          const selectedClasses = "bg-blue-600 text-white hover:bg-blue-700 dark:bg-blue-500 dark:hover:bg-blue-600";
+          const defaultClasses = "bg-transparent border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700";
+
           return (
-            <Chip
+            <button
               key={item}
-              label={item}
-              clickable
               onClick={() => onToggle(item)}
-              variant={isSelected ? 'filled' : 'outlined'}
-              color={isSelected ? 'primary' : 'default'}
-              sx={{
-                // Example of using theme if needed:
-                // backgroundColor: isSelected ? theme.palette.primary.main : 'transparent',
-                // color: isSelected ? theme.palette.primary.contrastText : theme.palette.text.primary,
-                // borderColor: isSelected ? theme.palette.primary.main : theme.palette.divider,
-                // '&:hover': {
-                //   backgroundColor: isSelected ? theme.palette.primary.dark : theme.palette.action.hover,
-                // },
-              }}
-            />
+              className={`${baseClasses} ${isSelected ? selectedClasses : defaultClasses}`}
+            >
+              {item}
+            </button>
           );
         })}
-      </Stack>
-    </Box>
+      </div>
+    </div>
   );
 };
 

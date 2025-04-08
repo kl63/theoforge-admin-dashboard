@@ -1,4 +1,3 @@
-import { Theme } from '@mui/material/styles';
 import { GraphNode } from '@/types/graph'; // Adjust path as needed
 
 /**
@@ -8,7 +7,6 @@ import { GraphNode } from '@/types/graph'; // Adjust path as needed
  * @param node The node object (expected to conform to GraphNode).
  * @param ctx The canvas rendering context.
  * @param globalScale The current global scale of the graph.
- * @param theme The MUI theme object for colors.
  * @param hoveredNode The currently hovered node, if any.
  * @param selectedNode The currently selected node, if any.
  */
@@ -16,7 +14,6 @@ export const paintStandardNode = (
     node: GraphNode, 
     ctx: CanvasRenderingContext2D, 
     globalScale: number,
-    theme: Theme,
     hoveredNode: GraphNode | null,
     selectedNode: GraphNode | null
 ) => {
@@ -27,15 +24,17 @@ export const paintStandardNode = (
     const nodeX = node.x ?? 0;
     const nodeY = node.y ?? 0;
 
-    // Determine node color
-    let color = node.color || theme.palette.primary.main; // Default to theme primary
+    // Determine node color - Use direct hex codes
+    let color = node.color || '#00695C'; // Default to former primary.main
     if (node === selectedNode) {
-        color = theme.palette.secondary.main; // Highlight selected node
+        color = '#B8860B'; // Former secondary.main
     } else if (node === hoveredNode) {
-        color = theme.palette.action.hover; // Highlight hovered node
+        // Use a slightly lighter grey for hover or primary with alpha
+        color = '#bdbdbd'; // Grey 400 as hover approximation
     }
     
-    const outlineColor = theme.palette.mode === 'dark' ? 'rgba(255, 255, 255, 0.7)' : 'rgba(0, 0, 0, 0.7)';
+    // Use a fixed outline color
+    const outlineColor = 'rgba(0, 0, 0, 0.7)';
 
     // --- Draw Node Circle ---
     ctx.beginPath();
@@ -55,8 +54,8 @@ export const paintStandardNode = (
     if (globalScale > 0.5) { 
         ctx.textAlign = 'center';
         ctx.textBaseline = 'middle';
-        ctx.fillStyle = theme.palette.text.primary; // Use theme text color
-        ctx.font = `${fontSize}px Sans-Serif`; // Set font size and type
+        ctx.fillStyle = '#212121'; // Use former text.primary (grey[900])
+        ctx.font = `${fontSize}px 'Public Sans', Roboto, "Helvetica Neue", Arial, sans-serif`; // Use specific font stack
         // Position label below the node circle
         ctx.fillText(label, nodeX, nodeY + nodeSize + (fontSize / 2)); 
     }

@@ -2,12 +2,6 @@
 "use client";
 
 import React, { useState, useRef } from 'react';
-import Box from '@mui/material/Box';
-import IconButton from '@mui/material/IconButton';
-import PlayArrowIcon from '@mui/icons-material/PlayArrow';
-import PauseIcon from '@mui/icons-material/Pause';
-import ReplayIcon from '@mui/icons-material/Replay'; // For replay/restart
-import { CircularProgress } from '@mui/material';
 import Image from 'next/image';
 
 interface AudioPlayerOverlayProps {
@@ -61,16 +55,8 @@ export default function AudioPlayerOverlay({ audioUrl, imageUrl }: AudioPlayerOv
   }
 
   return (
-    <Box
-      sx={{
-        position: 'absolute',
-        top: 0,
-        left: 0,
-        right: 0,
-        bottom: 0,
-        zIndex: 1,
-        overflow: 'hidden'
-      }}
+    <div 
+      className="absolute top-0 left-0 right-0 bottom-0 z-10 overflow-hidden"
     >
       {/* Background Image */}
       <Image 
@@ -86,16 +72,8 @@ export default function AudioPlayerOverlay({ audioUrl, imageUrl }: AudioPlayerOv
       />
 
       {/* Dark overlay for better button visibility */}
-      <Box 
-        sx={{
-          position: 'absolute',
-          top: 0,
-          left: 0,
-          right: 0,
-          bottom: 0,
-          backgroundColor: 'rgba(0, 0, 0, 0.4)',
-          zIndex: 1,
-        }}
+      <div 
+        className="absolute top-0 left-0 right-0 bottom-0 bg-black/40 z-10"
       />
 
       <audio
@@ -111,42 +89,39 @@ export default function AudioPlayerOverlay({ audioUrl, imageUrl }: AudioPlayerOv
         style={{ display: 'none' }} // Hide the default audio controls
       />
       
-      <Box
-        sx={{
-          position: 'absolute',
-          top: '50%',
-          left: '50%',
-          transform: 'translate(-50%, -50%)',
-          zIndex: 2, // Above the dark overlay
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
-        }}
+      <div
+        className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 z-20 flex items-center justify-center"
       >
-        <IconButton
+        <button
           onClick={togglePlayPause}
-          sx={{
-            backgroundColor: 'rgba(255, 255, 255, 0.9)',
-            '&:hover': {
-              backgroundColor: 'rgba(255, 255, 255, 1)',
-            },
-            boxShadow: 3,
-            p: { xs: 2, sm: 3 }, // Larger touch target
-          }}
+          className="bg-white/90 hover:bg-white shadow-lg rounded-full p-4 sm:p-6 disabled:opacity-50 disabled:cursor-not-allowed transition-opacity"
           aria-label={isPlaying ? 'Pause' : isEnded ? 'Replay' : 'Play'}
           disabled={isLoading}
         >
           {isLoading ? (
-            <CircularProgress size={24} color="primary" />
+            // Tailwind Loading Spinner SVG
+            <svg className="animate-spin h-8 w-8 text-blue-600" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+              <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+              <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+            </svg>
           ) : isPlaying ? (
-            <PauseIcon fontSize="large" />
+            // Pause SVG Icon
+            <svg className="h-8 w-8 text-gray-800" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+              <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zM7 8a1 1 0 00-1 1v2a1 1 0 102 0V9a1 1 0 00-1-1zm5 0a1 1 0 00-1 1v2a1 1 0 102 0V9a1 1 0 00-1-1z" clipRule="evenodd" />
+            </svg>
           ) : isEnded ? (
-            <ReplayIcon fontSize="large" />
+            // Replay SVG Icon
+            <svg className="h-8 w-8 text-gray-800" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+              <path fillRule="evenodd" d="M4 2a1 1 0 011 1v2.101a7.002 7.002 0 0111.601 2.566 1 1 0 11-1.885.666A5.002 5.002 0 005.999 7H9a1 1 0 110 2H4a1 1 0 01-1-1V3a1 1 0 011-1zm1 14a1 1 0 011-1h5.001a5.002 5.002 0 004.088-2.301 1 1 0 111.885.666A7.002 7.002 0 015 17.899V20a1 1 0 11-2 0v-5a1 1 0 011-1z" clipRule="evenodd" />
+            </svg>
           ) : (
-            <PlayArrowIcon fontSize="large" />
+            // Play SVG Icon
+            <svg className="h-8 w-8 text-gray-800" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+              <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM9.555 7.168A1 1 0 008 8v4a1 1 0 001.555.832l3-2a1 1 0 000-1.664l-3-2z" clipRule="evenodd" />
+            </svg>
           )}
-        </IconButton>
-      </Box>
-    </Box>
+        </button>
+      </div>
+    </div>
   );
 }

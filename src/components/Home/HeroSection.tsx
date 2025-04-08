@@ -1,91 +1,49 @@
 'use client';
 
 import React from 'react';
-import Box from '@mui/material/Box';
-import Container from '@mui/material/Container';
-import Typography from '@mui/material/Typography';
-import Button from '@mui/material/Button';
-import Link from 'next/link'; // Import Link component from next/link
+import Link from 'next/link';
+import Button from '../Common/Button'; // Import the Button component
 
 const HeroSection = () => (
-  <Box
-    sx={{
-      height: '70vh', // Adjust height as needed
-      display: 'flex',
-      flexDirection: 'column',
-      alignItems: 'center',
-      justifyContent: 'center',
-      color: 'common.white', // Default text color for contrast
-      textAlign: 'center',
-      backgroundImage: 'url(/hero_bg.png)', // Use the new background image
-      backgroundSize: 'cover',
-      backgroundPosition: 'center center',
-      backgroundRepeat: 'no-repeat',
-      position: 'relative', // Needed for z-index layering
-      overflow: 'hidden', // Prevent content spillover
-    }}
+  // Replaced outer Box with section, added Tailwind classes
+  <section
+    className="h-[70vh] flex flex-col items-center justify-center text-white text-center bg-[url('/hero_bg.png')] bg-cover bg-center bg-no-repeat relative overflow-hidden"
   >
-    {/* Explicit Overlay Box */}
-    <Box
-      sx={{
-        position: 'absolute',
-        top: 0,
-        left: 0,
-        right: 0,
-        bottom: 0,
-        backgroundColor: 'rgba(0, 0, 0, 0.65)', // Overlay opacity
-        zIndex: 1, // Overlay sits below content
-      }}
+    {/* Replaced Overlay Box with div, added Tailwind classes */}
+    <div
+      className="absolute inset-0 bg-black/65 z-10" // Using Tailwind color/opacity format
     />
-    {/* Content Container - Must have relative position and higher z-index */}
-    <Container maxWidth="md" sx={{ position: 'relative', zIndex: 2 }}>
-      <Box 
-        sx={{
-          display: 'flex', 
-          flexDirection: 'column', 
-          alignItems: 'flex-start', 
-          textAlign: 'left',
-          p: { xs: 2, sm: 3 } 
-        }}
+    {/* Replaced Content Container with div, added Tailwind classes */}
+    <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 relative z-20">
+      {/* Replaced inner content Box with div, added Tailwind classes */}
+      <div 
+        className="flex flex-col items-start text-left p-4 sm:p-6"
       >
-        <Typography
-          variant="h1"
-          component="h1"
-          sx={{ 
-            fontWeight: 'bold', 
-            color: 'inherit', // Explicitly inherit color from parent Box 
-            fontSize: { xs: '1.8rem', sm: '2.25rem', md: '2.75rem' }, // Responsive font size 
-            mb: 3, // Increased margin bottom (was 2) 
-          }} 
+        {/* Replaced Typography H1 with h1, added Tailwind classes */}
+        <h1
+          className="font-bold text-white text-3xl sm:text-4xl md:text-5xl mb-6" // Adjusted font sizes and margin
         >
           Transform AI Complexity into Strategic Confidence
-        </Typography>
-        {/* Revised Sub-headline: Focus on expertise, not name */}
-        <Typography
-          variant="h5"
-          component="p"
-          sx={{
-            color: 'inherit', // Explicitly inherit color from parent Box
-            fontSize: { xs: '1rem', sm: '1.1rem', md: '1.125rem' }, // Responsive font size
-            mb: 4, // Adjusted margin bottom
-          }}
+        </h1>
+        {/* Replaced Typography H5 with p, added Tailwind classes */}
+        <p
+          className="text-white text-base sm:text-lg md:text-xl mb-8" // Adjusted font sizes and margin
         >
           Partner with Theoforge to navigate the AI landscape. Leverage integrated expertise in strategy, engineering, and education to build reliable, high-impact AI solutions that drive measurable business value.
-        </Typography>
-        {/* Link the Button to the Contact page */}
+        </p>
+        {/* Use Button component */}
         <Button 
-          variant="contained" 
-          color="accent" 
-          size="large"
-          component={Link} // Use Link component for navigation
-          href="/contact" // Set the target path
-          sx={{ mt: 2 }} // Added margin top
+          href="/contact" 
+          variant="primary" // Or a custom variant if needed, but primary seems suitable
+          size="lg" 
+          // Keeping the orange accent style
+          className="mt-4 bg-orange-500 hover:bg-orange-600 focus:ring-orange-400 focus:ring-offset-black/50 border-transparent"
         >
           Begin Your AI Transformation
         </Button>
-      </Box>
-    </Container> 
-  </Box>
+      </div>
+    </div> 
+  </section>
 );
 
 export default HeroSection;

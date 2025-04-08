@@ -14,6 +14,7 @@ export interface GraphNode {
   community?: number | string; // Added by community detection
   color?: string; // Explicitly add color for node styling
   influenceScore?: number; // Explicitly add influenceScore
+  contributions?: string[]; // Explicitly add contributions as an optional array of strings
   // D3 simulation properties (added dynamically)
   x?: number;
   y?: number;

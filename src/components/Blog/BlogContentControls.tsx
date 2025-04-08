@@ -1,10 +1,6 @@
 'use client';
 
 import React, { useState } from 'react';
-import { Box, Chip, Stack, Typography, Button } from '@mui/material';
-import GridViewIcon from '@mui/icons-material/GridView';
-import ViewListIcon from '@mui/icons-material/ViewList';
-import FilterListIcon from '@mui/icons-material/FilterList';
 import { PostData } from '@/types/post';
 
 type ContentType = 'all' | 'article' | 'podcast';
@@ -80,99 +76,101 @@ const BlogContentControls: React.FC<BlogContentControlsProps> = ({
   };
 
   return (
-    <>
+    <div className="mb-6"> 
       {/* Content Filter Controls */}
-      <Box sx={{ 
-        display: 'flex', 
-        justifyContent: 'space-between', 
-        alignItems: 'center', 
-        mb: 4,
-        flexDirection: { xs: 'column', sm: 'row' },
-        gap: 2
-      }}>
-        <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-          <FilterListIcon />
-          <Typography variant="subtitle1" sx={{ fontWeight: 'medium' }}>
+      <div className="flex flex-col sm:flex-row justify-between items-center mb-6 gap-4">
+        <div className="flex items-center gap-2">
+          {/* Filter Icon SVG */}
+          <svg className="w-5 h-5 text-gray-600 dark:text-gray-400" fill="none" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" viewBox="0 0 24 24" stroke="currentColor"><path d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z"></path></svg>
+          <span className="text-base font-medium text-gray-800 dark:text-gray-200"> 
             Filter Content
-          </Typography>
-        </Box>
+          </span>
+        </div>
         
-        <Stack direction="row" spacing={1} sx={{ flexWrap: 'wrap', justifyContent: 'center' }}>
-          <Chip 
-            label="All Content" 
-            color={activeContentType === 'all' ? 'primary' : 'default'}
-            variant={activeContentType === 'all' ? 'filled' : 'outlined'}
-            clickable
-            onClick={() => handleContentTypeChange('all')}
-          />
-          <Chip 
-            label="Articles" 
-            color={activeContentType === 'article' ? 'primary' : 'default'}
-            variant={activeContentType === 'article' ? 'filled' : 'outlined'}
-            clickable
-            onClick={() => handleContentTypeChange('article')}
-          />
-          <Chip 
-            label="Podcasts" 
-            color={activeContentType === 'podcast' ? 'primary' : 'default'}
-            variant={activeContentType === 'podcast' ? 'filled' : 'outlined'}
-            clickable
-            onClick={() => handleContentTypeChange('podcast')}
-          />
-        </Stack>
-        
-        <Box sx={{ display: 'flex', gap: 1 }}>
-          <Button 
-            size="small" 
-            variant={viewMode === 'grid' ? 'contained' : 'outlined'}
-            sx={{ minWidth: 0, p: 1 }}
+        {/* Content Type Filters */}
+        <div className="flex flex-wrap justify-center gap-2"> 
+          {[ 'all', 'article', 'podcast'].map((type) => {
+            const isActive = activeContentType === type;
+            const baseClasses = "px-3 py-1 rounded-full text-sm font-medium cursor-pointer transition-colors duration-150 ease-in-out";
+            const selectedClasses = "bg-blue-600 text-white hover:bg-blue-700 dark:bg-blue-500 dark:hover:bg-blue-600";
+            const defaultClasses = "bg-transparent border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700";
+            let label = type.charAt(0).toUpperCase() + type.slice(1); // Capitalize
+            if (type === 'all') label = 'All Content';
+            
+            return (
+              <button
+                key={type}
+                className={`${baseClasses} ${isActive ? selectedClasses : defaultClasses}`}
+                onClick={() => handleContentTypeChange(type as ContentType)}
+              >
+                {label}
+              </button>
+            );
+          })}
+        </div>
+
+        {/* View Mode Toggle */}
+        <div className="flex gap-2"> 
+          <button 
+            className={`p-2 rounded-md border transition-colors duration-150 ease-in-out 
+                      ${viewMode === 'grid' 
+                        ? 'bg-blue-600 text-white border-blue-600 dark:bg-blue-500 dark:border-blue-500' 
+                        : 'bg-transparent border-gray-300 dark:border-gray-600 text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700'}`}
             aria-label="Grid view"
             onClick={() => handleViewModeChange('grid')}
           >
-            <GridViewIcon fontSize="small" />
-          </Button>
-          <Button 
-            size="small" 
-            variant={viewMode === 'list' ? 'contained' : 'outlined'}
-            sx={{ minWidth: 0, p: 1 }}
+            {/* Grid Icon SVG */}
+            <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fillRule="evenodd" d="M3 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1z" clipRule="evenodd"></path></svg>
+          </button>
+          <button 
+            className={`p-2 rounded-md border transition-colors duration-150 ease-in-out 
+                      ${viewMode === 'list' 
+                        ? 'bg-blue-600 text-white border-blue-600 dark:bg-blue-500 dark:border-blue-500' 
+                        : 'bg-transparent border-gray-300 dark:border-gray-600 text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700'}`}
             aria-label="List view"
             onClick={() => handleViewModeChange('list')}
           >
-            <ViewListIcon fontSize="small" />
-          </Button>
-        </Box>
-      </Box>
+            {/* List Icon SVG */}
+            <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fillRule="evenodd" d="M3 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1z" clipRule="evenodd"></path></svg>
+          </button>
+        </div>
+      </div>
 
       {/* Tag Navigation */}
-      <Box sx={{ mb: 5, overflow: 'auto', pb: 1 }}>
-        <Stack 
-          direction="row" 
-          spacing={1} 
-          sx={{ 
-            flexWrap: { xs: 'nowrap', md: 'wrap' },
-            justifyContent: { xs: 'flex-start', md: 'center' }
-          }}
-        >
-          <Chip 
-            label="All Tags" 
-            color={activeTags.length === 0 ? 'primary' : 'default'}
-            variant={activeTags.length === 0 ? 'filled' : 'outlined'}
-            clickable
-            onClick={handleResetFilters}
-          />
-          {uniqueTags.map((tag: string) => (
-            <Chip 
-              key={tag} 
-              label={tag}
-              color={activeTags.includes(tag) ? 'primary' : 'default'}
-              variant={activeTags.includes(tag) ? 'filled' : 'outlined'}
-              clickable
-              onClick={() => handleTagToggle(tag)}
-            />
-          ))}
-        </Stack>
-      </Box>
-    </>
+      <div className="mb-8 pb-2 overflow-x-auto"> 
+        <div className="flex flex-nowrap md:flex-wrap justify-start md:justify-center gap-2"> 
+          {(() => { 
+            const isAllTagsActive = activeTags.length === 0;
+            const baseClasses = "px-3 py-1 rounded-full text-sm font-medium cursor-pointer transition-colors duration-150 ease-in-out whitespace-nowrap";
+            const selectedClasses = "bg-blue-600 text-white hover:bg-blue-700 dark:bg-blue-500 dark:hover:bg-blue-600";
+            const defaultClasses = "bg-transparent border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700";
+            
+            return (
+              <>
+                <button 
+                  className={`${baseClasses} ${isAllTagsActive ? selectedClasses : defaultClasses}`}
+                  onClick={handleResetFilters}
+                >
+                  All Tags
+                </button>
+                {uniqueTags.map((tag: string) => {
+                  const isActive = activeTags.includes(tag);
+                  return (
+                    <button 
+                      key={tag} 
+                      className={`${baseClasses} ${isActive ? selectedClasses : defaultClasses}`}
+                      onClick={() => handleTagToggle(tag)}
+                    >
+                      {tag}
+                    </button>
+                  );
+                })}
+              </>
+            );
+          })()} 
+        </div>
+      </div>
+    </div>
   );
 };
 

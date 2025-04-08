@@ -1,15 +1,13 @@
 'use client';
 
 import React, { useState, useEffect, useRef, useMemo } from 'react';
-import { Box, Typography, useTheme, Paper, Chip, FormControlLabel, Switch, Button } from '@mui/material';
-import RefreshIcon from '@mui/icons-material/Refresh';
-import BarChartIcon from '@mui/icons-material/BarChart';
 import { PhilosopherData, GraphNode } from '@/types/graph';
 import { NodeObject, ForceGraphMethods } from 'react-force-graph-2d';
-import { GraphControls } from '@/components/Graph/controls/GraphControls';
+import dynamic from 'next/dynamic';
+import GraphLegend from '@/components/Graph/GraphLegend'; // Import the GraphLegend component
 import SearchBar from '@/components/Graph/controls/SearchBar';
 import AnalyticsModal from '@/components/Graph/analytics/AnalyticsModal';
-import dynamic from 'next/dynamic';
+import { NodeDetailPanel } from '@/components/Graph/panels/NodeDetailPanel'; // Use named import
 
 // Dynamically import the graph component to avoid SSR issues
 const DynamicPhilosopherGraph = dynamic(
@@ -18,13 +16,9 @@ const DynamicPhilosopherGraph = dynamic(
 );
 
 // Define the page component
-const PhilosopherGraphPage: React.FC = () => {
+export default function PhilosopherGraphPage() { // Use default export function
   // Theme and dimensions
-  const theme = useTheme();
-  const [dimensions, setDimensions] = useState({
-    width: typeof window !== 'undefined' ? window.innerWidth : 1200,
-    height: typeof window !== 'undefined' ? window.innerHeight : 800,
-  });
+  const [dimensions, setDimensions] = useState({ width: 1200, height: 800 }); // Initialize with defaults
   
   // Graph data state
   const [graphData, setGraphData] = useState<PhilosopherData>({ nodes: [], links: [] });
@@ -34,60 +28,95 @@ const PhilosopherGraphPage: React.FC = () => {
   // UI state
   const [showAnalytics, setShowAnalytics] = useState<boolean>(false);
   const [physicsEnabled, setPhysicsEnabled] = useState<boolean>(true);
-  const [zoomLevel, setZoomLevel] = useState<number>(1);
+  // const [zoomLevel, setZoomLevel] = useState<number>(1); // Commented out unused state
   
   // Filtering state
   const [activeEras, setActiveEras] = useState<string[]>([]);
   const [searchQuery, setSearchQuery] = useState<string>('');
+  const [selectedNode, setSelectedNode] = useState<GraphNode | null>(null); // Add state for selected node
+  const [availableEras, setAvailableEras] = useState<string[]>([]); // State for dynamic eras
   
   // Create a reference to the graph component
   const graphRef = useRef<ForceGraphMethods | null>(null);
   
+  // Reusable function to fetch graph data
+  const loadGraphData = async (isRefresh: boolean = false) => {
+    try {
+      setLoading(true);
+      setError(null);
+      
+      // Add cache-busting parameter to prevent browser caching
+      const cacheBuster = `?t=${Date.now()}`;
+      const response = await fetch(`/data/philosophers.json${cacheBuster}`, {
+        method: 'GET',
+        headers: {
+          'Cache-Control': 'no-cache, no-store, must-revalidate',
+          'Pragma': 'no-cache',
+          'Expires': '0'
+        },
+        credentials: 'same-origin'
+      });
+      
+      if (!response.ok) {
+        throw new Error(`Failed to fetch data: ${response.status} ${response.statusText}`);
+      }
+      
+      const data = await response.json();
+      console.log(`Loaded ${data.nodes.length} philosophers and ${data.links.length} connections`);
+      
+      // Reset filters only on initial load, not on refresh potentially?
+      // Or always reset them? Current logic resets on both. Let's keep it for now.
+      setActiveEras([]);
+      setSearchQuery('');
+      
+      // Set the graph data
+      setGraphData(data);
+
+      // Reset the view after refresh if needed
+      if (isRefresh && graphRef.current && data.nodes.length > 0) {
+        setTimeout(() => { // Check graphRef again inside timeout
+          if (graphRef.current) {
+            try {
+              graphRef.current.zoomToFit(400);
+            } catch (error) {
+              console.error("Error resetting view after refresh:", error);
+            }
+          }
+        }, 100);
+      }
+
+    } catch (err) {
+      const error = err as Error;
+      console.error("Error fetching/loading graph data:", error);
+      setError(`Failed to load philosopher data. Please try again. (${error?.message || 'Unknown error'})`);
+    } finally {
+      // Ensure loading state is always turned off
+      setLoading(false); 
+    }
+  };
+
   // Fetch data on initial load
   useEffect(() => {
-    const fetchData = async () => {
-      try {
-        setLoading(true);
-        setError(null);
-        
-        // Add cache-busting parameter to prevent browser caching
-        const cacheBuster = `?t=${Date.now()}`;
-        const response = await fetch(`/data/philosophers.json${cacheBuster}`, {
-          method: 'GET',
-          headers: {
-            'Cache-Control': 'no-cache, no-store, must-revalidate',
-            'Pragma': 'no-cache',
-            'Expires': '0'
-          },
-          credentials: 'same-origin'
-        });
-        
-        if (!response.ok) {
-          throw new Error(`Failed to fetch data: ${response.status} ${response.statusText}`);
-        }
-        
-        const data = await response.json();
-        console.log(`Loaded ${data.nodes.length} philosophers and ${data.links.length} connections`);
-        
-        // Reset filters
-        setActiveEras([]);
-        setSearchQuery('');
-        
-        // Set the graph data
-        setGraphData(data);
-        setLoading(false);
-      } catch (err) {
-        const error = err as Error;
-        console.error("Error fetching data:", error);
-        setError(`Failed to load philosopher data. Please try again. (${error?.message || 'Unknown error'})`);
-        setLoading(false);
-      }
-    };
-    
-    fetchData();
-  }, []);
+    loadGraphData(); // Call the reusable function
+  }, []); // Empty dependency array ensures this runs only once on mount
   
-  // Handle window resize
+  // Effect to extract available eras from data
+  useEffect(() => {
+    if (graphData && graphData.nodes.length > 0) {
+      const erasInData = new Set(graphData.nodes
+        .map(node => node.era)
+        .filter((era): era is string => typeof era === 'string' && era.trim() !== '') // Filter out empty/non-string eras
+      );
+      // Add " Era" suffix and sort
+      const formattedEras = Array.from(erasInData)
+        .map(era => `${era} Era`)
+        .sort(); 
+      setAvailableEras(formattedEras);
+      console.log("Available eras updated:", formattedEras);
+    }
+  }, [graphData]); // Re-run when graphData changes
+  
+  // Handle window resize and set initial dimensions
   useEffect(() => {
     const handleResize = () => {
       setDimensions({
@@ -95,11 +124,13 @@ const PhilosopherGraphPage: React.FC = () => {
         height: window.innerHeight,
       });
     };
+
+    handleResize(); // Call once initially to set dimensions
     
     window.addEventListener('resize', handleResize);
     return () => window.removeEventListener('resize', handleResize);
   }, []);
-  
+
   // Filter graph data based on active eras and search query
   const filteredData = useMemo(() => {
     if (!graphData) return { nodes: [], links: [] };
@@ -107,7 +138,6 @@ const PhilosopherGraphPage: React.FC = () => {
     // If no data yet, return empty structure
     if (!graphData.nodes || graphData.nodes.length === 0) {
       console.log("No graph data available for filtering");
-      return { nodes: [], links: [] };
     }
     
     console.log(`Filtering data with ${activeEras.length} active eras and search: "${searchQuery}"`);
@@ -120,7 +150,7 @@ const PhilosopherGraphPage: React.FC = () => {
     
     // Filter nodes by era and search query
     const filteredNodes = graphData.nodes.filter(node =>
-      (activeEras.length === 0 || (node.era && activeEras.includes(node.era))) &&
+      (activeEras.length === 0 || (node.era && activeEras.includes(`${node.era} Era`))) && // Compare with " Era" suffix
       (searchQuery === '' || (node.name && node.name.toLowerCase().includes(searchQuery.toLowerCase())))
     );
     
@@ -170,318 +200,179 @@ const PhilosopherGraphPage: React.FC = () => {
   };
   
   // Handle search query change
-  const handleSearchChange = (query: string) => {
+  const handleSearch = (query: string) => {
+    console.log(`Setting search query to: "${query}"`);
     setSearchQuery(query);
   };
-  
-  // Handle node selection from search
-  const handleNodeSelect = (node: GraphNode | null) => {
-    if (node && graphRef.current) {
-      console.log(`Selected node: ${node.name}`);
-      // Center view on the selected node
-      graphRef.current.centerAt(node.x, node.y, 500); // Center with animation
-      graphRef.current.zoom(2, 500); // Zoom in with animation
+
+  // Handle node selection from search (placeholder)
+  const handleNodeSelectFromSearch = (node: GraphNode | null) => {
+    if (node) {
+      console.log(`Node selected from search: ${node.name}`);
+      // Potentially center graph or highlight node
+      setSelectedNode(node);
     } else {
-      console.log("Node selection cleared or graphRef not available.");
+      console.log("Node selection cleared from search.");
     }
   };
-  
-  // Create searchable nodes
-  const searchableNodes = useMemo(() => {
-    return graphData.nodes as GraphNode[];
-  }, [graphData.nodes]);
-  
-  // Handle zoom controls
-  const handleZoomIn = () => {
-    setZoomLevel(prev => Math.min(prev + 0.2, 3));
-    // Add null check
-    if (graphRef.current) {
-      try {
-        // Get current zoom and increase it
-        const currentZoomLevel = graphRef.current.zoom(); // Get current zoom
-        graphRef.current.zoom(currentZoomLevel * 1.2, 400);
-      } catch (error) {
-        console.error("Error zooming in:", error);
-      }
-    }
+
+  // Handle node click
+  const handleNodeClick = (node: NodeObject) => {
+    // Cast to GraphNode to access properties
+    const graphNode = node as GraphNode;
+    console.log("Node clicked:", graphNode);
+    setSelectedNode(graphNode);
   };
-  
-  const handleZoomOut = () => {
-    setZoomLevel(prev => Math.max(prev - 0.2, 0.5));
-    // Add null check
-    if (graphRef.current) {
-      try {
-        // Get current zoom and decrease it
-        const currentZoomLevel = graphRef.current.zoom(); // Get current zoom
-        graphRef.current.zoom(currentZoomLevel / 1.2, 400);
-      } catch (error) {
-        console.error("Error zooming out:", error);
-      }
-    }
+
+  // Handle panel close
+  const handleClosePanel = () => {
+    setSelectedNode(null);
   };
-  
-  const handleResetView = () => {
-    setZoomLevel(1);
-    // Add null check
-    if (graphRef.current) {
-      try {
-        // Reset zoom and center
-        graphRef.current.zoomToFit(400);
-      } catch (error) {
-        console.error("Error resetting view:", error);
-      }
-    }
+
+  // Function to handle zoom change (passed to GraphControls)
+  // const handleZoomChange = (newZoomLevel: number) => {
+  //   setZoomLevel(newZoomLevel);
+  // };
+
+  // Function to toggle physics (passed to GraphControls)
+  const handlePhysicsToggle = () => {
+    setPhysicsEnabled(prev => !prev);
   };
-  
-  // Handle refresh
-  const handleRefresh = () => {
-    // Reload the data
-    const fetchData = async () => {
-      try {
-        setLoading(true);
-        
-        // Add cache-busting parameter to prevent browser caching
-        const cacheBuster = `?t=${Date.now()}`;
-        const response = await fetch(`/data/philosophers.json${cacheBuster}`, {
-          method: 'GET',
-          headers: {
-            'Cache-Control': 'no-cache, no-store, must-revalidate',
-            'Pragma': 'no-cache',
-            'Expires': '0'
-          },
-          // Add credentials to ensure cookies are sent if needed
-          credentials: 'same-origin'
-        });
-        
-        if (!response.ok) {
-          throw new Error(`Failed to fetch data: ${response.status} ${response.statusText}`);
-        }
-        
-        const data = await response.json();
-        setGraphData(data);
-        
-        // Reset any active filters or selections
-        setActiveEras([]);
-        setSearchQuery('');
-        
-        // Reset the view
-        // Add null check and ensure data is loaded before resetting
-        if (graphRef.current && graphData.nodes.length > 0) { 
-          setTimeout(() => { // Check graphRef again inside timeout
-            if (graphRef.current) {
-              try {
-                graphRef.current.zoomToFit(400);
-              } catch (error) {
-                console.error("Error resetting view after refresh:", error);
-              }
-            }
-          }, 100);
-        }
-        
-        setLoading(false);
-      } catch (err) {
-        const error = err as Error;
-        console.error('Error loading graph data:', error);
-        setError(`Failed to load philosopher data: ${error instanceof Error ? error.message : 'Unknown error'}`);
-        setLoading(false);
-      }
-    };
-    
-    fetchData();
-  };
-  
-  // Toggle analytics modal
-  const handleToggleAnalytics = () => {
-    setShowAnalytics(prev => !prev);
-  };
-  
-  // Loading state
-  if (loading) {
-    return (
-      <Box 
-        sx={{ 
-          display: 'flex', 
-          justifyContent: 'center', 
-          alignItems: 'center', 
-          height: '100vh',
-          flexDirection: 'column',
-          gap: 2
-        }}
-      >
-        <Typography variant="h5">Loading Philosopher Graph...</Typography>
-      </Box>
-    );
-  }
-  
-  // Error state
-  if (error) {
-    return (
-      <Box 
-        sx={{ 
-          display: 'flex', 
-          justifyContent: 'center', 
-          alignItems: 'center', 
-          height: '100vh',
-          flexDirection: 'column',
-          gap: 2
-        }}
-      >
-        <Typography variant="h5" color="error">{error}</Typography>
-        <Button variant="contained" onClick={handleRefresh}>
-          Try Again
-        </Button>
-      </Box>
-    );
-  }
-  
+
+  // Main return JSX
   return (
-    <Box sx={{ 
-      position: 'relative', 
-      width: '100%', 
-      height: '100vh',
-      bgcolor: theme.palette.mode === 'dark' ? '#121212' : '#f5f5f5',
-      overflow: 'hidden'
-    }}>
-      {/* Main Graph Visualization */}
-      <DynamicPhilosopherGraph
-        ref={graphRef}
-        width={dimensions.width}
-        height={dimensions.height}
-        data={filteredData}
-        physicsEnabled={physicsEnabled}
-        selectedLayout="force"
-        zoomLevel={zoomLevel}
-        onNodeClick={(node: NodeObject) => {
-          console.log('Node clicked:', node.id);
-          // Call a specific click handler if needed
-          // handleNodeSelect(node as GraphNode | null); // Example if you need the full GraphNode
-        }}
-        onNodeHover={(node: NodeObject | null) => {
-          console.log('Node hovered:', node ? node.id : null);
-          // handleNodeHover(node as GraphNode | null); // Pass potentially null node
-        }}
-      />
-      
-      {/* Filtering Controls */}
-      <Box sx={{ 
-        position: 'absolute', 
-        top: 16, 
-        left: 16, 
-        zIndex: 1000,
-        display: 'flex',
-        flexDirection: 'column',
-        gap: 2
-      }}>
-        <Paper
-          elevation={3}
-          sx={{
-            p: 2,
-            borderRadius: '8px',
-            width: '250px',
-            boxShadow: '0 4px 12px rgba(0,0,0,0.1)',
-          }}
-        >
-          <Typography variant="h6" gutterBottom sx={{ fontWeight: 500 }}>
-            Graph Controls
-          </Typography>
-          
-          <Box sx={{ mb: 2 }}>
-            <Typography variant="subtitle2" gutterBottom>
-              Filter by Era
-            </Typography>
-            <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 1 }}>
-              {["Ancient Era", "Medieval Era", "Renaissance Era", "Early Modern Era", "Modern Era", "Contemporary Era"].map((era) => (
-                <Chip 
-                  key={era}
-                  label={era.replace(" Era", "")}
-                  size="small"
-                  onClick={() => handleEraFilter(era)}
-                  color={activeEras.includes(era) ? "primary" : "default"}
-                  variant={activeEras.includes(era) ? "filled" : "outlined"}
-                  sx={{ 
-                    borderRadius: '4px',
-                    '&:hover': { boxShadow: '0 2px 5px rgba(0,0,0,0.1)' }
-                  }}
-                />
-              ))}
-            </Box>
-          </Box>
-          
-          <Box sx={{ mb: 2 }}>
-            <Typography variant="subtitle2" gutterBottom>
-              Physics
-            </Typography>
-            <FormControlLabel
-              control={
-                <Switch 
-                  checked={physicsEnabled}
-                  onChange={(e) => setPhysicsEnabled(e.target.checked)}
-                  size="small"
-                />
-              }
-              label="Enable Physics"
-            />
-          </Box>
-          
-          <Box sx={{ display: 'flex', gap: 1 }}>
-            <Button 
-              variant="outlined" 
-              size="small" 
-              onClick={handleRefresh}
-              startIcon={<RefreshIcon />}
-              sx={{ borderRadius: '4px' }}
-            >
-              Refresh
-            </Button>
-            <Button 
-              variant="outlined" 
-              size="small" 
-              onClick={handleToggleAnalytics}
-              startIcon={<BarChartIcon />}
-              sx={{ borderRadius: '4px' }}
-            >
-              Analytics
-            </Button>
-          </Box>
-        </Paper>
-      </Box>
-      
-      {/* Centered Search Bar */}
-      <Box sx={{ 
-        position: 'absolute', 
-        top: 16, 
-        left: '50%', 
-        transform: 'translateX(-50%)', 
-        zIndex: 1000,
-        width: '300px'
-      }}>
-        <SearchBar
-          data={searchableNodes} // Pass nodes for searching
-          onSearchChange={handleSearchChange}
-          onSelect={handleNodeSelect} // Pass the typed selection handler
+    // Replace Box with div and Tailwind classes
+    <div className="relative w-full h-screen overflow-hidden bg-gray-100">
+      {/* Header Area */}
+      {/* Replace Paper with div and Tailwind classes */}
+      <div className="absolute top-4 left-4 right-4 z-10 p-4 bg-white shadow-md rounded-lg flex flex-wrap items-center justify-between gap-4">
+        {/* Replace Typography with h2 and Tailwind classes */}
+        <h2 className="text-2xl font-semibold text-gray-800 flex-shrink-0">Philosopher Network</h2>
+        
+        {/* Search Bar - Pass correct props */}
+        <SearchBar 
+          data={graphData.nodes} // Use graphData.nodes
+          onSelect={handleNodeSelectFromSearch} // Handler for selection
+          onSearchChange={handleSearch} // Handler for input change
+          // Removed initialValue as SearchBar manages its own state
         />
-      </Box>
-      
-      {/* Zoom Controls */}
-      <GraphControls
-        onZoomIn={handleZoomIn}
-        onZoomOut={handleZoomOut}
-        onReset={handleResetView}
-        onToggleAnalytics={handleToggleAnalytics}
-        showingAnalytics={showAnalytics}
-        position="bottom-right"
+
+        {/* Controls and Filters Container */}
+        <div className="flex items-center flex-wrap gap-4">
+          {/* Available Eras Chips */}
+          <div className="flex flex-wrap gap-2">
+            {availableEras.length > 0 ? availableEras.map((era) => (
+              // Replace Chip with button and Tailwind classes (mimicking chip style)
+              <button
+                key={era}
+                onClick={() => handleEraFilter(era)}
+                className={`px-3 py-1 rounded-full text-sm font-medium border ${activeEras.includes(era) 
+                    ? 'bg-indigo-600 text-white border-indigo-600' 
+                    : 'bg-gray-100 text-gray-700 border-gray-300 hover:bg-gray-200'}`}
+              >
+                {era}
+              </button>
+            )) : <span className="text-sm text-gray-500">Loading eras...</span>}
+          </div>
+
+          {/* Refresh Button */}
+          {/* Replace Button with button and Tailwind classes */}
+          <button
+            onClick={() => loadGraphData(true)} // Pass true for refresh
+            className="p-2 rounded-md bg-gray-200 text-gray-700 hover:bg-gray-300 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+            title="Refresh Data"
+            disabled={loading}
+          >
+            {/* Replace RefreshIcon - using text/emoji for now */}
+            {loading ? '...' : '🔄'}
+          </button>
+
+          {/* Analytics Button */}
+          {/* Replace Button with button and Tailwind classes */}
+          <button
+            onClick={() => setShowAnalytics(true)}
+            className="p-2 rounded-md bg-gray-200 text-gray-700 hover:bg-gray-300 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+            title="Show Analytics"
+            disabled={loading || !graphData || graphData.nodes.length === 0}
+          >
+            {/* Replace BarChartIcon - using text/emoji for now */}
+            📊
+          </button>
+          
+          {/* Physics Toggle */}
+          {/* Replace FormControlLabel/Switch with label/input and Tailwind */}
+          <label className="flex items-center space-x-2 cursor-pointer">
+            <span className="text-sm text-gray-700">Physics:</span>
+            <input 
+              type="checkbox" 
+              checked={physicsEnabled} 
+              onChange={handlePhysicsToggle} 
+              className="toggle-switch" // Requires custom CSS or a Tailwind plugin for Switch appearance
+            />
+            {/* Basic Tailwind Toggle (needs improvement for aesthetics) */}
+             {/* <div className={`w-10 h-5 flex items-center rounded-full p-1 cursor-pointer ${physicsEnabled ? 'bg-indigo-600' : 'bg-gray-300'}`}>
+                <div className={`bg-white w-4 h-4 rounded-full shadow-md transform duration-300 ease-in-out ${physicsEnabled ? 'translate-x-4' : ''}`}></div>
+             </div> */}
+          </label>
+
+          {/* Potentially add GraphControls here if it doesn't use MUI */}
+          {/* <GraphControls 
+            onZoomChange={handleZoomChange} 
+            onPhysicsToggle={handlePhysicsToggle} 
+            physicsEnabled={physicsEnabled}
+            currentZoom={zoomLevel}
+            graphRef={graphRef.current} 
+          /> */} 
+        </div>
+      </div>
+
+      {/* Graph Area */}
+      {/* Replace Box with div */}
+      <div className="w-full h-full">
+        {loading && (
+          // Replace Box/Typography with div/p and Tailwind classes
+          <div className="absolute inset-0 flex items-center justify-center bg-gray-100 bg-opacity-75 z-20">
+            <p className="text-lg font-medium text-gray-700">Loading Graph Data...</p>
+            {/* Could add a simple spinner here if needed */}
+          </div>
+        )}
+        {error && (
+          // Replace Box/Typography with div/p and Tailwind classes
+          <div className="absolute inset-0 flex items-center justify-center bg-red-50 z-20 p-4">
+            <p className="text-lg font-medium text-red-700">Error: {error}</p>
+          </div>
+        )}
+        {!loading && !error && (
+          <DynamicPhilosopherGraph
+            data={filteredData} // Correct prop name: data, not graphData
+            width={dimensions.width}
+            height={dimensions.height}
+            onNodeClick={handleNodeClick}
+            ref={graphRef} // Correct prop: use ref, not graphRef
+            physicsEnabled={physicsEnabled}
+            selectedLayout={"force"} // Example: Assuming default layout
+            onNodeHover={() => {}} // Example: Placeholder hover handler
+          />
+        )}
+      </div>
+
+      {/* Legend Area */}
+      <GraphLegend />
+
+      {/* Node Detail Panel */}
+      <NodeDetailPanel 
+        node={selectedNode} 
+        onClose={handleClosePanel} 
       />
-      
+
       {/* Analytics Modal */}
-      {showAnalytics && (
+      {showAnalytics && graphData && (
         <AnalyticsModal
           open={showAnalytics}
           onClose={() => setShowAnalytics(false)}
           data={graphData}
         />
       )}
-    </Box>
+    </div>
   );
 };
-
-export default PhilosopherGraphPage;

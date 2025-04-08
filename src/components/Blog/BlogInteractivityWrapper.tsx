@@ -22,8 +22,14 @@ const BlogInteractivityWrapper: React.FC<BlogInteractivityWrapperProps> = ({
 
   // Effect to filter posts when content type or tags change
   useEffect(() => {
+    console.log('[Effect Start] Filtering triggered. Active Type:', activeContentType, 'Active Tags:', activeTags);
     let filtered = [...allPosts];
+    console.log('[Effect Start] Initial posts count:', filtered.length);
     
+    // --- Debugging Log Before Type Filter --- 
+    console.log('[Effect] Before type filter:', filtered.map(p => ({ slug: p.slug, isPodcast: p.isPodcast })));
+    // ----------------------------------------
+
     // Filter by content type
     if (activeContentType !== 'all') {
       filtered = filtered.filter(post => {
@@ -32,6 +38,10 @@ const BlogInteractivityWrapper: React.FC<BlogInteractivityWrapperProps> = ({
         return true;
       });
     }
+
+    // --- Debugging Log After Type Filter --- 
+    console.log(`[Effect] After type filter ('${activeContentType}'):`, filtered.map(p => ({ slug: p.slug, isPodcast: p.isPodcast })));
+    // ---------------------------------------
     
     // Filter by tags (if any tags are selected)
     if (activeTags.length > 0) {

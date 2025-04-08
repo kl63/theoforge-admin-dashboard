@@ -1,10 +1,8 @@
 'use client';
 
 import React, { useState } from 'react';
-import { Box, Typography, Container, Chip, Stack, Button } from '@mui/material';
 import Image from 'next/image';
 import Link from 'next/link';
-import TagOutlinedIcon from '@mui/icons-material/TagOutlined';
 import { PostData } from '@/types/post';
 import BlogContentControls from './BlogContentControls';
 
@@ -41,16 +39,16 @@ const BlogClient: React.FC<BlogClientProps> = ({ allPosts }) => {
   };
 
   return (
-    <Container maxWidth="lg" sx={{ py: { xs: 4, md: 6 } }}>
+    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 md:py-12">
       {/* Page Header */}
-      <Box sx={{ mb: 6, textAlign: 'center' }}>
-        <Typography variant="h3" component="h1" gutterBottom sx={{ fontWeight: 'bold' }}>
+      <div className="mb-12 text-center">
+        <h1 className="text-4xl md:text-5xl font-extrabold mb-4 text-gray-900 dark:text-white">
           Insights & Expertise
-        </Typography>
-        <Typography variant="h6" sx={{ color: 'text.secondary', maxWidth: 700, mx: 'auto' }}>
+        </h1>
+        <p className="text-lg text-gray-600 dark:text-gray-400 max-w-2xl mx-auto">
           Enterprise technology strategies and thought leadership for forward-thinking executives
-        </Typography>
-      </Box>
+        </p>
+      </div>
       
       {/* Interactive Filter Controls */}
       <BlogContentControls 
@@ -62,21 +60,13 @@ const BlogClient: React.FC<BlogClientProps> = ({ allPosts }) => {
       
       {/* Featured Post */}
       {featuredPost && (
-        <Box sx={{ mb: 6 }}>
-          <Typography variant="overline" sx={{ color: 'primary.main', fontWeight: 'bold', display: 'block', mb: 2 }}>
+        <div className="mb-12">
+          <span className="block text-sm font-semibold text-blue-600 dark:text-blue-400 uppercase tracking-wider mb-2">
             FEATURED INSIGHT
-          </Typography>
+          </span>
           
-          <Box sx={{ 
-            display: 'grid',
-            gridTemplateColumns: { xs: '1fr', md: '1fr 1fr' },
-            gap: 4,
-            bgcolor: 'background.paper',
-            borderRadius: 2,
-            overflow: 'hidden',
-            boxShadow: 1
-          }}>
-            <Box sx={{ position: 'relative', height: { xs: 240, md: '100%' }, minHeight: { md: 320 } }}>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-8 bg-white dark:bg-gray-800 rounded-lg overflow-hidden shadow-md">
+            <div className="relative h-60 md:h-auto md:min-h-[320px]">
               <Image 
                 src={featuredPost.image || '/images/placeholder.png'} 
                 alt={featuredPost.title} 
@@ -86,194 +76,139 @@ const BlogClient: React.FC<BlogClientProps> = ({ allPosts }) => {
                 priority
               />
               {featuredPost.isPodcast && (
-                <Box 
-                  sx={{ 
-                    position: 'absolute', 
-                    top: 16, 
-                    left: 16, 
-                    bgcolor: 'primary.main',
-                    color: 'white',
-                    px: 1.5,
-                    py: 0.5,
-                    borderRadius: 1,
-                    fontSize: '0.75rem',
-                    fontWeight: 'bold'
-                  }}
+                <div 
+                  className="absolute top-4 left-4 bg-blue-600 text-white px-2 py-1 rounded text-xs font-bold"
                 >
                   PODCAST
-                </Box>
+                </div>
               )}
-            </Box>
+            </div>
             
-            <Box sx={{ p: { xs: 3, md: 4 }, display: 'flex', flexDirection: 'column' }}>
-              <Box sx={{ mb: 2 }}>
-                <Stack direction="row" spacing={1} sx={{ mb: 2, flexWrap: 'wrap' }}>
+            <div className="p-4 md:p-6 flex flex-col">
+              <div className="mb-4">
+                <div className="flex flex-wrap gap-2 mb-3">
                   {featuredPost.tags?.slice(0, 3).map((tag: string) => (
-                    <Chip 
+                    <span 
                       key={tag} 
-                      label={tag} 
-                      size="small" 
-                      variant="outlined"
-                      icon={<TagOutlinedIcon fontSize="small" />}
-                    />
+                      className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-300 border border-gray-200 dark:border-gray-600"
+                    >
+                      <svg className="-ml-0.5 mr-1.5 h-3 w-3 text-gray-500 dark:text-gray-400" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+                        <path fillRule="evenodd" d="M17.707 9.293a1 1 0 010 1.414l-7 7a1 1 0 01-1.414 0l-7-7A.997.997 0 012 10V5a3 3 0 013-3h5a.997.997 0 01.707.293l7 7zM5 6a1 1 0 100-2 1 1 0 000 2z" clipRule="evenodd" />
+                      </svg>
+                      {tag}
+                    </span>
                   ))}
-                </Stack>
+                </div>
                 
-                <Typography variant="h4" component="h2" gutterBottom sx={{ fontWeight: 'bold' }}>
+                <h2 className="text-2xl md:text-3xl font-bold mb-2 text-gray-900 dark:text-white">
                   {featuredPost.title}
-                </Typography>
+                </h2>
                 
-                <Typography variant="body1" color="text.secondary" sx={{ mb: 2 }}>
+                <p className="text-base text-gray-600 dark:text-gray-400 mb-4 line-clamp-3">
                   {featuredPost.excerpt || featuredPost.title}
-                </Typography>
-              </Box>
+                </p>
+              </div>
               
-              <Box sx={{ mt: 'auto' }}>
-                <Box sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
-                  <Typography variant="caption" sx={{ color: 'text.secondary' }}>
+              <div className="mt-auto">
+                <div className="flex items-center mb-4">
+                  <span className="text-xs text-gray-500 dark:text-gray-400">
                     {new Date(featuredPost.date).toLocaleDateString('en-US', {
                       year: 'numeric',
                       month: 'long',
                       day: 'numeric'
                     })}
                     {featuredPost.readingTime && ` · ${featuredPost.readingTime} min read`}
-                  </Typography>
-                </Box>
+                  </span>
+                </div>
                 
-                <Button 
-                  component={Link}
+                <Link 
                   href={`/blog/${featuredPost.slug}`}
-                  variant="contained" 
-                  color="primary"
+                  className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
                 >
                   Read {featuredPost.isPodcast ? 'Episode' : 'Article'}
-                </Button>
-              </Box>
-            </Box>
-          </Box>
-        </Box>
+                </Link>
+              </div>
+            </div>
+          </div>
+        </div>
       )}
       
       {/* No Results State */}
       {filteredPosts.length === 0 && (
-        <Box sx={{ textAlign: 'center', py: 8 }}>
-          <Typography variant="h5" component="h3" gutterBottom>
+        <div className="text-center py-16">
+          <h3 className="text-xl font-semibold mb-2 text-gray-800 dark:text-gray-200">
             No matching content found
-          </Typography>
-          <Typography variant="body1" color="text.secondary" sx={{ mb: 4 }}>
+          </h3>
+          <p className="text-gray-600 dark:text-gray-400 mb-6">
             Try adjusting your filters or selecting different tags
-          </Typography>
-        </Box>
+          </p>
+        </div>
       )}
       
       {/* Content Grid or List View */}
       {filteredPosts.length > 0 && (
-        <Box sx={{ 
-          display: 'grid',
-          gridTemplateColumns: viewMode === 'grid' 
-            ? { xs: '1fr', sm: 'repeat(2, 1fr)', md: 'repeat(3, 1fr)' }
-            : '1fr',
-          gap: { xs: 3, md: 4 },
-          mb: 6
-        }}>
+        <div className={`grid ${viewMode === 'grid' ? 'grid-cols-1 sm:grid-cols-2 md:grid-cols-3' : 'grid-cols-1'} gap-4 md:gap-6 mb-12`}>
           {filteredPosts.map((post: PostData) => (
-            <Box 
-              key={post.slug} 
-              sx={{ 
-                display: 'flex', 
-                flexDirection: viewMode === 'grid' ? 'column' : { xs: 'column', sm: 'row' },
-                height: '100%',
-                borderRadius: 2,
-                overflow: 'hidden',
-                transition: 'transform 0.2s, box-shadow 0.2s',
-                '&:hover': {
-                  transform: 'translateY(-4px)',
-                  boxShadow: 3
-                },
-                bgcolor: 'background.paper',
-                boxShadow: 1
-              }}
-              component={Link}
+            <Link 
+              key={post.slug}
               href={`/blog/${post.slug}`}
-              style={{ textDecoration: 'none', color: 'inherit' }}
+              className={`flex ${viewMode === 'grid' ? 'flex-col' : 'flex-col sm:flex-row'} h-full rounded-lg overflow-hidden transition-all duration-200 ease-in-out hover:shadow-xl hover:-translate-y-1 bg-white dark:bg-gray-800 shadow-md no-underline text-inherit`}
             >
-              <Box sx={{ 
-                position: 'relative', 
-                height: viewMode === 'grid' ? 200 : 240,
-                width: viewMode === 'grid' ? '100%' : { xs: '100%', sm: 240 },
-                bgcolor: 'grey.100',
-                flexShrink: 0
-              }}>
+              {/* Image container - adjustments for list view */}
+              <div className={`relative ${viewMode === 'grid' ? 'h-48' : 'h-48 sm:h-auto sm:w-1/3 md:w-1/4'} flex-shrink-0`}>
                 <Image 
                   src={post.image || '/images/placeholder.png'} 
                   alt={post.title} 
                   fill 
                   style={{ objectFit: 'cover' }}
-                  sizes={viewMode === 'grid' 
-                    ? "(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-                    : "(max-width: 768px) 100vw, 240px"
-                  }
+                  sizes={viewMode === 'grid' ? "(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw" : "(max-width: 640px) 100vw, 33vw"}
                 />
                 {post.isPodcast && (
-                  <Box 
-                    sx={{ 
-                      position: 'absolute', 
-                      top: 12, 
-                      left: 12, 
-                      bgcolor: 'primary.main',
-                      color: 'white',
-                      px: 1,
-                      py: 0.25,
-                      borderRadius: 1,
-                      fontSize: '0.7rem',
-                      fontWeight: 'bold'
-                    }}
+                  <div 
+                    className="absolute top-2 left-2 bg-blue-600 text-white px-1.5 py-0.5 rounded text-[0.65rem] font-bold z-10"
                   >
                     PODCAST
-                  </Box>
+                  </div>
                 )}
-              </Box>
+              </div>
               
-              <Box sx={{ 
-                p: 3, 
-                display: 'flex', 
-                flexDirection: 'column', 
-                flexGrow: 1,
-                width: viewMode === 'list' ? { xs: '100%', sm: 'calc(100% - 240px)' } : '100%'
-              }}>
-                {post.tags && post.tags.length > 0 && (
-                  <Chip 
-                    label={post.tags[0]} 
-                    size="small" 
-                    sx={{ alignSelf: 'flex-start', mb: 1.5 }}
-                    variant="outlined"
-                  />
+              {/* Content container */}
+              <div className={`p-3 ${viewMode === 'grid' ? 'sm:p-4' : 'sm:p-5'} flex flex-col flex-grow`}>
+                <h3 
+                  className={`font-bold ${viewMode === 'grid' ? 'text-lg mb-1' : 'text-xl mb-2'} flex-grow leading-snug text-gray-900 dark:text-white line-clamp-3`}
+                >
+                  {post.title}
+                </h3>
+                
+                {/* Show excerpt only in list view for better space usage */} 
+                {viewMode === 'list' && (
+                  <p className="text-sm text-gray-600 dark:text-gray-400 mb-3 line-clamp-2">
+                    {post.excerpt || post.title}
+                  </p>
                 )}
                 
-                <Typography variant="h6" component="h3" sx={{ fontWeight: 'bold', mb: 1 }}>
-                  {post.title}
-                </Typography>
-                
-                <Typography variant="body2" color="text.secondary" sx={{ mb: 2 }}>
-                  {post.excerpt || post.title}
-                </Typography>
-                
-                <Box sx={{ mt: 'auto' }}>
-                  <Typography variant="caption" sx={{ color: 'text.secondary' }}>
-                    {new Date(post.date).toLocaleDateString('en-US', {
-                      year: 'numeric',
-                      month: 'long',
-                      day: 'numeric'
-                    })}
-                    {post.readingTime && ` · ${post.readingTime} min read`}
-                  </Typography>
-                </Box>
-              </Box>
-            </Box>
+                <div className="flex justify-between items-center mt-auto pt-2">
+                  <span className="text-xs text-gray-500 dark:text-gray-400">
+                    {new Date(post.date).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}
+                  </span>
+                  
+                  <div className="flex flex-wrap justify-end gap-1">
+                    {post.tags?.slice(0, viewMode === 'grid' ? 2 : 3).map((tag: string) => (
+                      <span 
+                        key={tag} 
+                        className="inline-flex items-center px-1.5 py-0.5 rounded text-[0.65rem] font-medium bg-gray-100 text-gray-700 dark:bg-gray-700 dark:text-gray-300 border border-gray-200 dark:border-gray-600"
+                      >
+                        {tag}
+                      </span>
+                    ))}
+                  </div>
+                </div>
+              </div>
+            </Link>
           ))}
-        </Box>
+        </div>
       )}
-    </Container>
+    </div>
   );
 };
 

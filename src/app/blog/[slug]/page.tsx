@@ -1,17 +1,6 @@
 import React from 'react';
 import { notFound } from 'next/navigation';
-import Container from '@mui/material/Container';
-import Box from '@mui/material/Box';
-import Typography from '@mui/material/Typography';
-import Paper from '@mui/material/Paper';
-import Chip from '@mui/material/Chip';
-import Divider from '@mui/material/Divider';
-import Button from '@mui/material/Button';
 import Link from 'next/link';
-import ArrowBackIcon from '@mui/icons-material/ArrowBack';
-import HeadphonesIcon from '@mui/icons-material/Headphones';
-import PodcastsIcon from '@mui/icons-material/Podcasts';
-import MusicNoteIcon from '@mui/icons-material/MusicNote';
 import { getPostData, getAllPostSlugs, getPostsByTag } from '@/lib/posts';
 import { PostData } from '@/types/post';
 import MarkdownRenderer from '@/components/Common/MarkdownRenderer';
@@ -20,6 +9,20 @@ import PodcastMetadata from '@/components/Blog/PodcastMetadata';
 import SocialShare from '@/components/Blog/SocialShare';
 import NewsletterSignup from '@/components/Blog/NewsletterSignup';
 import LinkedInPreview from '@/components/Blog/LinkedInPreview';
+import PageContainer from '@/components/Layout/PageContainer';
+
+// Inline SVG Icons
+const ArrowBackSvg = () => (
+  <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+    <path strokeLinecap="round" strokeLinejoin="round" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+  </svg>
+);
+
+const HeadphonesSvg = () => (
+  <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+    <path strokeLinecap="round" strokeLinejoin="round" d="M19 11a7 7 0 01-7 7m0 0a7 7 0 01-7-7m7 7v4m0 0H8m4 0h4m-4-8a3 3 0 01-3-3V5a3 3 0 116 0v6a3 3 0 01-3 3z" />
+  </svg>
+);
 
 export async function generateStaticParams() {
   const slugs = await getAllPostSlugs();
@@ -97,199 +100,154 @@ export default async function BlogPostPage({ params }: { params: Promise<{ slug:
   const readingTimeMinutes = Math.max(1, Math.round(wordCount / 200));
 
   return (
-    <Box sx={{ py: { xs: 6, md: 8 }, bgcolor: 'background.default' }}>
-      <Container maxWidth="lg">
-        <Box sx={{ mb: 4 }}>
-          <Button
-            variant="outlined"
-            startIcon={<ArrowBackIcon />}
-            component={Link}
+    <PageContainer maxWidth="max-w-screen-lg" className="py-12 md:py-16 bg-white dark:bg-gray-900">
+      <div>
+        <div className="mb-6">
+          <Link
             href="/blog"
-            sx={{ borderRadius: 8 }}
+            className="inline-flex items-center text-sm font-medium text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-300 border border-gray-300 dark:border-gray-600 rounded-full px-4 py-2 transition-colors duration-150 hover:bg-gray-100 dark:hover:bg-gray-700"
           >
+            <ArrowBackSvg />
             Back to All Articles
-          </Button>
-        </Box>
+          </Link>
+        </div>
 
-        <Paper elevation={0} sx={{ borderRadius: 2, overflow: 'hidden', bgcolor: 'background.paper', border: '1px solid', borderColor: 'divider', mb: 6 }}>
+        <article className="rounded-lg overflow-hidden bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 mb-12 shadow-sm">
           {post.image && (
-            <Box sx={{ position: 'relative', width: '100%', height: { xs: 304, sm: 400, md: 496 }, backgroundColor: 'grey.100', overflow: 'hidden' }}>
+            <div 
+              className="relative w-full bg-gray-100 dark:bg-gray-700 overflow-hidden" 
+              style={{ height: '31rem', position: 'relative' }}
+            >
               <Image src={post.image} alt={post.title} fill priority style={{ objectFit: 'cover', objectPosition: 'center top' }} sizes="(max-width: 960px) 100vw, 960px" />
               {post.isPodcast && (
-                <Box sx={{ position: 'absolute', top: 16, right: 16, zIndex: 2, bgcolor: 'rgba(0,0,0,0.7)', color: 'white', borderRadius: 8, px: 2, py: 1, display: 'flex', alignItems: 'center' }}>
-                  <HeadphonesIcon sx={{ mr: 1, fontSize: 18 }} />
-                  <Typography variant="caption" sx={{ fontWeight: 'medium' }}>
+                <div className="absolute top-4 right-4 z-10 bg-black/70 text-white rounded-full px-3 py-1 flex items-center">
+                  <HeadphonesSvg />
+                  <span className="text-xs font-medium">
                     Podcast Episode {post.podcastEpisodeNumber}
-                  </Typography>
-                </Box>
+                  </span>
+                </div>
               )}
-            </Box>
+            </div>
           )}
 
-          <Box sx={{ p: { xs: 3, sm: 5, md: 6 } }}>
-            <Box sx={{ mb: 6 }}>
-              <Box sx={{ display: 'flex', flexWrap: 'wrap', alignItems: 'center', gap: 1, mb: 2 }}>
+          <div className="p-4 sm:p-8 md:p-10">
+            <div className="mb-8">
+              <div className="flex flex-wrap items-center gap-x-3 gap-y-2 mb-3">
                 {post.tags && post.tags.length > 0 && (
-                  <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 1, mr: 2 }}>
+                  <div className="flex flex-wrap gap-2 mr-2">
                     {post.tags.map((tag) => (
-                      <Chip key={tag} label={tag} size="small" variant="outlined" component={Link} href={`/blog?tag=${encodeURIComponent(tag)}`} clickable />
+                      <Link
+                        key={tag}
+                        href={`/blog?tag=${encodeURIComponent(tag)}`}
+                        className="inline-block px-2.5 py-0.5 rounded text-xs font-medium border border-gray-300 dark:border-gray-600 text-gray-600 dark:text-gray-300 bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors"
+                      >
+                        {tag}
+                      </Link>
                     ))}
-                  </Box>
+                  </div>
                 )}
-                <Typography variant="caption" component="span" sx={{ color: 'text.secondary', display: 'flex', alignItems: 'center', whiteSpace: 'nowrap' }}>
+                <span className="text-xs text-gray-500 dark:text-gray-400 flex items-center whitespace-nowrap">
                   {formattedDate} • {post.isPodcast ? post.podcastDuration : `${readingTimeMinutes} min read`}
-                </Typography>
-              </Box>
+                </span>
+              </div>
 
-              <Typography variant="h2" component="h1" sx={{ fontWeight: 'bold', fontSize: { xs: '2rem', sm: '2.5rem', md: '3rem' }, lineHeight: 1.2, mb: 3 }}>
+              <h1 className="font-bold text-3xl sm:text-4xl md:text-5xl leading-tight mb-4 text-gray-900 dark:text-gray-100">
                 {post.title}
-              </Typography>
+              </h1>
 
-              <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: 2 }}>
+              <div className="flex justify-between items-center flex-wrap gap-4">
                 {post.author && (
-                  <Box sx={{ display: 'flex', alignItems: 'center' }}>
-                    <Box sx={{ width: 40, height: 40, borderRadius: '50%', bgcolor: 'primary.main', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'white', fontWeight: 'bold', mr: 2 }}>
+                  <div className="flex items-center">
+                    <div className="w-10 h-10 rounded-full bg-blue-600 flex items-center justify-center text-white font-bold mr-3">
                       {post.author.charAt(0).toUpperCase()}
-                    </Box>
-                    <Box>
-                      <Typography variant="subtitle2" sx={{ fontWeight: 'medium' }}>
+                    </div>
+                    <div>
+                      <p className="text-sm font-medium text-gray-900 dark:text-gray-100">
                         {post.author}
-                      </Typography>
-                      <Typography variant="caption" color="text.secondary">
+                      </p>
+                      <p className="text-xs text-gray-500 dark:text-gray-400">
                         TheoForge
-                      </Typography>
-                    </Box>
-                  </Box>
+                      </p>
+                    </div>
+                  </div>
                 )}
                 <SocialShare title={post.title} url={`https://theoforge.com/blog/${post.slug}`} description={post.excerpt} hashtags={post.tags} />
-              </Box>
-            </Box>
+              </div>
+            </div>
 
             {post.isPodcast && (
               <PodcastMetadata episodeNumber={post.podcastEpisodeNumber} duration={post.podcastDuration} releaseDate={post.date} host={post.podcastHost} guest={post.podcastGuest} />
             )}
 
-            <Divider sx={{ my: 5 }} />
+            <hr className="my-8 border-gray-200 dark:border-gray-700" />
 
-            <Box sx={{ maxWidth: '46rem', mx: 'auto', fontSize: '1.125rem', '& > p:first-of-type': { fontSize: '1.25rem', color: 'text.primary' }, '& h1, & h2, & h3': { mt: 4, mb: 2 }, '& p': { lineHeight: 1.7, mb: 2 }, '& a': { color: 'primary.main' }, '& blockquote': { borderLeft: '4px solid', borderColor: 'divider', pl: 2, my: 2, fontStyle: 'italic' }, '& ul, & ol': { pl: 3, mb: 2 }, '& li': { mb: 1 } }}>
+            <div className="prose prose-lg dark:prose-invert">
               <MarkdownRenderer content={post.content} />
-            </Box>
+            </div>
 
-            <Box sx={{ mt: 6, pt: 4, borderTop: '1px solid', borderColor: 'divider', display: 'flex', justifyContent: 'space-between', flexWrap: 'wrap', gap: 2 }}>
-              <Box>
-                <Typography variant="subtitle2" sx={{ mb: 1 }}>
+            <div className="mt-10 pt-6 border-t border-gray-200 dark:border-gray-700 flex justify-between flex-wrap gap-4">
+              <div>
+                <h4 className="text-sm font-medium mb-2 text-gray-700 dark:text-gray-300">
                   Related Topics
-                </Typography>
-                <Box sx={{ display: 'flex', gap: 1, flexWrap: 'wrap' }}>
+                </h4>
+                <div className="flex gap-2 flex-wrap">
                   {post.tags?.map((tag) => (
-                    <Chip key={tag} label={tag} size="small" variant="outlined" component={Link} href={`/blog?tag=${encodeURIComponent(tag)}`} clickable />
+                    <Link
+                      key={tag}
+                      href={`/blog?tag=${encodeURIComponent(tag)}`}
+                      className="inline-block px-2.5 py-0.5 rounded text-xs font-medium border border-gray-300 dark:border-gray-600 text-gray-600 dark:text-gray-300 bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors"
+                    >
+                      {tag}
+                    </Link>
                   ))}
-                </Box>
-              </Box>
-              <Box>
-                <Typography variant="subtitle2" sx={{ mb: 1 }}>
+                </div>
+              </div>
+              <div>
+                <h4 className="text-sm font-medium mb-2 text-gray-700 dark:text-gray-300">
                   Share This Article
-                </Typography>
+                </h4>
                 <SocialShare title={post.title} url={`https://theoforge.com/blog/${post.slug}`} description={post.excerpt} hashtags={post.tags} />
-              </Box>
-            </Box>
-          </Box>
-        </Paper>
-
-        <Box sx={{ mb: 8 }}>
-          <NewsletterSignup title="Get the Latest AI Insights" subtitle="Subscribe to receive our weekly newsletter featuring expert insights, podcast episodes, and exclusive resources for enterprise leaders." />
-        </Box>
+              </div>
+            </div>
+          </div>
+        </article>
 
         {relatedPosts.length > 0 && (
-          <Box sx={{ mt: 8, pt: 6, borderTop: '1px solid', borderColor: 'divider' }}>
-            <Typography variant="h4" component="h2" gutterBottom sx={{ fontWeight: 'bold', mb: 4 }}>
-              Explore Further Insights
-            </Typography>
-            <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 3 }}>
+          <div className="mt-16">
+            <h3 className="text-2xl font-semibold mb-4 text-gray-900 dark:text-gray-100">Related Articles</h3>
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
               {relatedPosts.map((relatedPost) => (
-                <Box key={relatedPost.slug} sx={{ flexBasis: { xs: '100%', sm: 'calc(50% - 12px)', md: 'calc(33.333% - 16px)' }, maxWidth: { xs: '100%', sm: 'calc(50% - 12px)', md: 'calc(33.333% - 16px)' }, flexGrow: 1, flexShrink: 0, display: 'flex', alignItems: 'stretch' }}>
-                  <Paper elevation={0} sx={{ border: '1px solid', borderColor: 'divider', borderRadius: 2, overflow: 'hidden', transition: 'transform 0.3s ease, box-shadow 0.3s ease', width: '100%', display: 'flex', flexDirection: 'column', '&:hover': { transform: 'translateY(-4px)', boxShadow: 3 } }}>
-                    <Link href={`/blog/${relatedPost.slug}`} style={{ textDecoration: 'none', color: 'inherit', display: 'flex', flexDirection: 'column', flexGrow: 1 }}>
-                      {relatedPost.image && (
-                        <Box sx={{ position: 'relative', height: 160, overflow: 'hidden', flexShrink: 0 }}>
-                          <Image src={relatedPost.image} alt={relatedPost.title} fill style={{ objectFit: 'cover', objectPosition: 'center top' }} sizes="(max-width: 768px) 100vw, (max-width: 1200px) 33vw, 300px" />
-                          {relatedPost.isPodcast && (
-                            <Box sx={{ position: 'absolute', top: 10, right: 10, bgcolor: 'rgba(0,0,0,0.6)', color: 'white', borderRadius: '50%', p: 0.75, display: 'flex', alignItems: 'center', justifyContent: 'center', width: 32, height: 32 }}>
-                              <HeadphonesIcon fontSize="small" />
-                            </Box>
-                          )}
-                        </Box>
-                      )}
-                      <Box sx={{ p: 2, flexGrow: 1, display: 'flex', flexDirection: 'column' }}>
-                        <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 1 }}>
-                          <Typography variant="caption" color="text.secondary" component="div">
-                            {new Date(relatedPost.date).toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' })}
-                          </Typography>
-                          {relatedPost.isPodcast && (
-                            <Chip label="Podcast" size="small" color="primary" sx={{ borderRadius: 1, height: 20, fontSize: '0.65rem' }} />
-                          )}
-                        </Box>
-                        <Typography variant="subtitle1" sx={{ fontWeight: 'medium', mt: 1, mb: 1 }}>
-                          {relatedPost.title}
-                        </Typography>
-                        <Typography variant="body2" color="text.secondary" sx={{ display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical', overflow: 'hidden', flexGrow: 1, mb: 'auto' }}>
-                          {relatedPost.excerpt}
-                        </Typography>
-                      </Box>
-                    </Link>
-                  </Paper>
-                </Box>
+                <Link key={relatedPost.slug} href={`/blog/${relatedPost.slug}`} passHref legacyBehavior>
+                  <a className="block rounded-lg overflow-hidden border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 text-decoration-none h-full transition shadow-sm hover:shadow-md hover:border-blue-500 dark:hover:border-blue-500">
+                    {relatedPost.image && (
+                      <div className="relative w-full h-40 bg-gray-100 dark:bg-gray-700">
+                        <Image src={relatedPost.image} alt={relatedPost.title} fill style={{ objectFit: 'cover' }} sizes="(max-width: 640px) 100vw, (max-width: 768px) 50vw, 33vw" />
+                      </div>
+                    )}
+                    <div className="p-4">
+                      <p className="text-xs text-gray-500 dark:text-gray-400 mb-1">
+                        {new Date(relatedPost.date).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}
+                      </p>
+                      <h4 className="text-base font-medium mb-1 leading-snug text-gray-900 dark:text-gray-100">
+                        {relatedPost.title}
+                      </h4>
+                      <p className="text-sm text-gray-600 dark:text-gray-400">
+                        {relatedPost.excerpt}
+                      </p>
+                    </div>
+                  </a>
+                </Link>
               ))}
-            </Box>
-          </Box>
+            </div>
+          </div>
         )}
 
-        <Box sx={{ textAlign: 'center', mb: 8 }}>
-          <Typography variant="h5" component="h3" gutterBottom sx={{ fontWeight: 'medium' }}>
-            Ready to explore how AI can transform your organization?
-          </Typography>
-          <Box sx={{ display: 'flex', gap: 2, justifyContent: 'center', mt: 3, flexWrap: 'wrap' }}>
-            <Button variant="contained" color="primary" size="large" component={Link} href="/contact" sx={{ borderRadius: 8, px: 3 }}>
-              Contact Us
-            </Button>
-            <Button variant="outlined" size="large" component={Link} href="/blog" sx={{ borderRadius: 8, px: 3 }}>
-              Explore More Articles
-            </Button>
-          </Box>
-        </Box>
-
-        <Box sx={{ mb: 8, textAlign: 'center' }}>
-          <Box sx={{ mb: 3 }}>
-            <Typography variant="h5" component="h3" gutterBottom sx={{ fontWeight: 'medium' }}>
-              Spread the Knowledge
-            </Typography>
-            <Typography variant="body1" sx={{ maxWidth: '700px', mx: 'auto', mb: 3 }}>
-              Help your network benefit from these insights by sharing this {post.isPodcast ? 'podcast episode' : 'article'} on LinkedIn.
-            </Typography>
-          </Box>
+        <div className="mt-16">
           <LinkedInPreview post={post} baseUrl="https://theoforge.com" />
-        </Box>
+        </div>
 
-        {post.isPodcast && (post.podcastSpotifyUrl || post.podcastAppleUrl) && (
-          <Box sx={{ mb: 4, p: 2, bgcolor: 'grey.100', borderRadius: 2 }}>
-            <Typography variant="h6" gutterBottom sx={{ fontWeight: 'medium' }}>
-              Listen to this episode:
-            </Typography>
-            <Box sx={{ display: 'flex', gap: 2, flexWrap: 'wrap' }}>
-              {post.podcastSpotifyUrl && (
-                <Button variant="contained" color="success" startIcon={<MusicNoteIcon />} href={post.podcastSpotifyUrl} target="_blank" rel="noopener noreferrer" sx={{ borderRadius: 8 }}>
-                  Spotify
-                </Button>
-              )}
-              {post.podcastAppleUrl && (
-                <Button variant="contained" color="secondary" startIcon={<PodcastsIcon />} href={post.podcastAppleUrl} target="_blank" rel="noopener noreferrer" sx={{ borderRadius: 8 }}>
-                  Apple Podcasts
-                </Button>
-              )}
-            </Box>
-          </Box>
-        )}
-      </Container>
-    </Box>
+        <NewsletterSignup title="Get the Latest AI Insights" subtitle="Subscribe to receive our weekly newsletter featuring expert insights, podcast episodes, and exclusive resources for enterprise leaders." />
+      </div>
+    </PageContainer>
   );
 }

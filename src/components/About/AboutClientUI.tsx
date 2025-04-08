@@ -2,75 +2,11 @@
 "use client"; // Mark this as a Client Component
 
 import React from 'react';
-import Box from '@mui/material/Box';
-import Container from '@mui/material/Container';
-import Typography from '@mui/material/Typography';
-import Paper from '@mui/material/Paper';
-import Button from '@mui/material/Button';
-import Avatar from '@mui/material/Avatar';
-import { styled } from '@mui/material/styles';
-import Link from '@mui/material/Link';
+import Image from 'next/image';
+import PageContainer from '@/components/Layout/PageContainer'; // Import PageContainer
 
 // Import the data fetching function and types
 import { AboutData } from '@/lib/about';
-
-// Enhanced styled component for Markdown content
-const MarkdownContent = styled(Box)(({ theme }) => ({
-  marginTop: theme.spacing(4),
-  '& h1': {
-    fontSize: '2.2rem',
-    marginTop: theme.spacing(4),
-    marginBottom: theme.spacing(3),
-    fontWeight: 600,
-    color: theme.palette.primary.main,
-  },
-  '& h2': {
-    fontSize: '1.8rem',
-    marginTop: theme.spacing(4),
-    marginBottom: theme.spacing(2),
-    fontWeight: theme.typography.fontWeightMedium,
-    color: theme.palette.text.primary,
-    borderBottom: `1px solid ${theme.palette.divider}`,
-    paddingBottom: theme.spacing(1),
-  },
-  '& h3, & h4, & h5, & h6': {
-    marginTop: theme.spacing(3),
-    marginBottom: theme.spacing(2),
-    fontWeight: theme.typography.fontWeightMedium,
-  },
-  '& p': {
-    lineHeight: 1.7,
-    marginBottom: theme.spacing(2),
-    fontSize: '1.05rem',
-  },
-  '& ul, & ol': {
-    paddingLeft: theme.spacing(3),
-    marginBottom: theme.spacing(3),
-  },
-  '& li': {
-    marginBottom: theme.spacing(1.5),
-    lineHeight: 1.6,
-    fontSize: '1.05rem',
-  },
-  '& a': {
-    color: theme.palette.primary.main,
-    textDecoration: 'none',
-    '&:hover': {
-      textDecoration: 'underline',
-    },
-  },
-  '& strong': {
-    fontWeight: 600,
-    color: theme.palette.text.primary,
-  },
-  '& blockquote': {
-    borderLeft: `4px solid ${theme.palette.primary.main}`,
-    paddingLeft: theme.spacing(2),
-    fontStyle: 'italic',
-    margin: theme.spacing(2, 0),
-    color: theme.palette.text.secondary,
-  },
-}));
 
 // Updated props interface name and prop name
 interface AboutClientUIProps {
@@ -83,90 +19,82 @@ export const AboutClientUI: React.FC<AboutClientUIProps> = ({ aboutData }) => {
   // Handle the case where data might not be available (simplify check)
   if (!aboutData) {
     // Display a loading state or an error message
-    return <Typography>Loading about information...</Typography>;
+    // Wrapped loading state in PageContainer for consistency
+    return (
+      <PageContainer maxWidth="max-w-4xl" className="bg-white py-16">
+        <p className="text-center p-8">Loading about information...</p>
+      </PageContainer>
+    );
   }
 
-  return (
-    <Box sx={{ bgcolor: 'background.paper', py: 8 }}>
-      <Container maxWidth="lg">
-        
-        <Paper elevation={3} sx={{ p: { xs: 3, md: 5 } }}>
-          {/* Profile header with image and title */}
-          <Box sx={{ 
-            display: 'flex', 
-            flexDirection: { xs: 'column', sm: 'row' }, 
-            alignItems: { xs: 'center', sm: 'flex-start' }, 
-            mb: 6,
-            pb: 4,
-            borderBottom: '1px solid',
-            borderColor: 'divider'
-          }}>
-            <Avatar
-              src={aboutData.image ?? undefined} // Use updated prop name
-              alt={aboutData.name} // Use updated prop name
-              sx={{ 
-                width: { xs: 150, md: 200 }, 
-                height: { xs: 150, md: 200 }, 
-                mr: { xs: 0, sm: 4 }, 
-                mb: { xs: 3, sm: 0 },
-                boxShadow: 3
-              }}
-            />
-            <Box>
-              <Typography variant="h2" component="h1" gutterBottom sx={{ 
-                fontWeight: 'bold',
-                fontSize: { xs: '2rem', md: '2.5rem' }
-              }}>
-                {aboutData.name} {/* Use updated prop name */}
-              </Typography>
-              <Typography 
-                variant="h5" 
-                color="text.secondary" 
-                component="p"
-                gutterBottom
-              >
-                {aboutData.title} {/* Use updated prop name */}
-              </Typography>
-              <Typography variant="body1" paragraph>
-                My approach centers on understanding the client&apos;s unique context and goals, allowing me to craft bespoke strategies that drive tangible results. Whether it&apos;s optimizing operations, navigating digital transformation, or enhancing customer engagement, I bring a blend of analytical rigor and creative problem-solving to every project.
-              </Typography>
-            </Box>
-          </Box>
+  // Handle potential undefined image and name safely
+  const imageSrc = aboutData.image || '/placeholder-avatar.png';
+  const altText = aboutData.name || 'Author Avatar'; // Fallback for alt text
 
-          {/* Main content */}
-          <MarkdownContent>
-            {aboutData.contentHtml ? (
-              <div dangerouslySetInnerHTML={{ __html: aboutData.contentHtml }} />
-            ) : (
-              <Typography color="error">Content is missing.</Typography> // Fallback message
-            )}
-          </MarkdownContent>
-          
-          {/* Contact CTA */}
-          <Box sx={{ 
-            mt: 6, 
-            pt: 4, 
-            borderTop: '1px solid', 
-            borderColor: 'divider',
-            textAlign: 'center'
-          }}>
-            <Typography variant="h5" component="p" gutterBottom>
-              Ready to Transform Complexity into Confidence?
-            </Typography>
-            <Button 
-              variant="contained" 
-              color="primary" 
-              size="large" 
-              component={Link}
-              href="/contact"
-              sx={{ mt: 2 }}
-            >
-              Discuss Your AI Strategy
-            </Button>
-          </Box>
-        </Paper>
-      </Container>
-    </Box>
+  return (
+    // Use PageContainer for outer layout
+    <PageContainer maxWidth="max-w-4xl" className="bg-white py-16">
+      {/* Removed the redundant container div */}
+      {/* Replace Paper with div and Tailwind classes */}
+      <div className="bg-white shadow-lg rounded-lg p-6 md:p-10">
+        {/* Profile header */}
+        {/* Replace Box with div and Tailwind classes */}
+        <div className="flex flex-col sm:flex-row items-center sm:items-start mb-8 pb-6 border-b border-gray-200">
+          {/* Replace Avatar with img and Tailwind classes */}
+          <div className="relative w-full h-36 md:w-48 md:h-48 overflow-hidden rounded-full shadow-md">
+            <Image
+              src={imageSrc} // Use the defined variable
+              alt={altText} // Use the defined variable
+              fill
+              style={{ objectFit: 'cover' }} // Use style prop for objectFit with fill
+              sizes="(max-width: 768px) 100vw, 50vw"
+            />
+          </div>
+          {/* Replace Box with div */}
+          <div>
+            {/* Replace Typography with h1 and Tailwind classes */}
+            <h1 className="text-3xl md:text-4xl font-bold mb-2">
+              {aboutData.name}
+            </h1>
+            {/* Replace Typography with p and Tailwind classes */}
+            <p className="text-xl text-gray-600 mb-4">
+              {aboutData.title}
+            </p>
+            {/* Replace Typography with p and Tailwind classes */}
+            <p className="text-base text-gray-700 leading-relaxed">
+              My approach centers on understanding the client&apos;s unique context and goals, allowing me to craft bespoke strategies that drive tangible results. Whether it&apos;s optimizing operations, navigating digital transformation, or enhancing customer engagement, I bring a blend of analytical rigor and creative problem-solving to every project.
+            </p>
+          </div>
+        </div>
+
+        {/* Main content - Apply Tailwind prose classes */}
+        {/* Removed MarkdownContent styled component wrapper */}
+        <div className="prose prose-lg max-w-none">
+          {aboutData.contentHtml ? (
+            <div dangerouslySetInnerHTML={{ __html: aboutData.contentHtml }} />
+          ) : (
+            // Replace Typography with p and Tailwind classes
+            <p className="text-red-600">Content is missing.</p> // Fallback message
+          )}
+        </div>
+        
+        {/* Contact CTA */}
+        {/* Replace Box with div and Tailwind classes */}
+        <div className="mt-10 pt-6 border-t border-gray-200 text-center">
+          {/* Replace Typography with p and Tailwind classes */}
+          <p className="text-2xl font-semibold mb-4">
+            Ready to Transform Complexity into Confidence?
+          </p>
+          {/* Replace Button/Link with a tag styled as button */}
+          <a 
+            href="/contact"
+            className="inline-block px-8 py-3 bg-indigo-600 text-white text-lg font-medium rounded-md shadow-md hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition duration-150 ease-in-out mt-2"
+          >
+            Discuss Your AI Strategy
+          </a>
+        </div>
+      </div>
+    </PageContainer>
   );
 };
 

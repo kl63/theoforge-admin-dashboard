@@ -1,5 +1,4 @@
 import * as React from 'react';
-import Box from '@mui/material/Box';
 
 import HeroSection from '../components/Home/HeroSection';
 import ServicesSection from '../components/Home/ServicesSection';
@@ -10,17 +9,10 @@ import ForgeSection from '../components/Home/ForgeSection';
 import CallToActionSection from '../components/Home/CallToActionSection';
 
 // Import data fetching functions and types
-import { testimonials } from '../data/testimonials'; 
 import { getSortedPostsData } from '@/lib/posts';
 import { getSortedServicesData } from '@/lib/services'; 
 import { PostData } from '@/types/post'; 
 import { ServiceData } from '@/types/service'; 
-
-// Specific images for the latest blog posts
-const insightImages = [
-  '/vibe_coding.png', 
-  '/images/blog/alien_intelligence.png', 
-];
 
 export default async function HomePage() {
   // Fetch exactly 3 blog posts - now with await
@@ -31,24 +23,17 @@ export default async function HomePage() {
   const allServices: ServiceData[] = await getSortedServicesData(); 
   const displayServices = allServices.slice(0, 3);
 
-  // Add images to the latest posts data
-  const latestPostsWithImages: PostData[] = latestPosts.map((post, index) => ({
-    ...post,
-    // Remove fallback, rely on InfoCard to handle missing image
-    image: insightImages[index], 
-  }));
-
   return (
-    <Box>
+    <main>
       <HeroSection />
       <AboutSection />
       {/* Pass only the first 3 services */}
       <ServicesSection services={displayServices} /> 
-      <TestimonialsSection testimonials={testimonials} />
+      <TestimonialsSection />
       {/* Correct prop name: blogSnippets */}
-      <BlogSnippetsSection blogSnippets={latestPostsWithImages} />
+      <BlogSnippetsSection blogSnippets={latestPosts} />
       <ForgeSection />
       <CallToActionSection />
-    </Box>
+    </main>
   );
 }

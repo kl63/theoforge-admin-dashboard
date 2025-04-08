@@ -38,32 +38,26 @@ export async function getAllPostSlugs(): Promise<string[]> {
 // Helper function to get data for a single post by slug
 export async function getPostData(slug: string): Promise<PostData | null> {
   const fullPath = path.join(postsDirectory, `${slug}.md`);
-  console.log('Attempting to read file:', fullPath);
+  // console.log('Attempting to read file:', fullPath); // Keep this commented unless needed
   let matterResult: matter.GrayMatterFile<string>;
 
   try {
     const fileContents = await fs.promises.readFile(fullPath, 'utf8');
-    // Use gray-matter to parse the post metadata section
     matterResult = matter(fileContents);
-
   } catch (error: unknown) {
     console.error(`Error reading or parsing file ${fullPath}:`, error);
-
-    // Optional: More specific error handling
     if (error instanceof Error) {
-        // Check for specific error codes if needed, e.g., ENOENT for file not found
-        // if ((error as NodeJS.ErrnoException).code === 'ENOENT') { ... }
         console.error(`Error details: ${error.message}`);
     }
-
-    return null; // Return null if file doesn't exist or fails to parse
+    return null; 
   }
 
-  // Ensure frontmatter data is accessed safely
   const frontmatter = matterResult.data || {};
 
-  // Combine the data with the slug and content
-  // Ensure all required fields are present or provide defaults
+  // --- Debugging Log --- 
+  console.log(`[getPostData - ${slug}] Raw frontmatter.isPodcast:`, frontmatter.isPodcast, `(Type: ${typeof frontmatter.isPodcast})`);
+  // ---------------------
+
   const postData: PostData = {
     slug,
     title: frontmatter.title ?? 'Untitled Post',
@@ -72,21 +66,22 @@ export async function getPostData(slug: string): Promise<PostData | null> {
     content: matterResult.content,
     author: frontmatter.author,
     image: frontmatter.image,
-    // audioUrl: frontmatter.audioUrl, // Keep commented out as it's deprecated
     tags: frontmatter.tags ?? [],
-    readingTime: frontmatter.readingTime, // Let caller handle undefined
-    // Podcast fields - ensure they exist or are undefined
-    isPodcast: frontmatter.isPodcast ?? false,
+    readingTime: frontmatter.readingTime,
+    isPodcast: frontmatter.isPodcast ?? false, // Default to false if undefined/null
     podcastEpisodeNumber: frontmatter.podcastEpisodeNumber,
     podcastDuration: frontmatter.podcastDuration,
     podcastHost: frontmatter.podcastHost,
     podcastGuest: frontmatter.podcastGuest,
-    // Add the new platform URL fields
     podcastSpotifyUrl: frontmatter.podcastSpotifyUrl,
     podcastAppleUrl: frontmatter.podcastAppleUrl,
-    podcastGoogleUrl: frontmatter.podcastGoogleUrl, // Read even if not used in UI yet
-    podcastRssUrl: frontmatter.podcastRssUrl, // Read even if not used in UI yet
+    podcastGoogleUrl: frontmatter.podcastGoogleUrl, 
+    podcastRssUrl: frontmatter.podcastRssUrl, 
   };
+
+  // --- Debugging Log --- 
+  console.log(`[getPostData - ${slug}] Final postData.isPodcast:`, postData.isPodcast);
+  // ---------------------
 
   return postData;
 }

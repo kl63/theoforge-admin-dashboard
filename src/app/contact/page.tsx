@@ -1,19 +1,7 @@
 'use client';
 
 import React, { useState } from 'react';
-import Container from '@mui/material/Container';
-import Box from '@mui/material/Box';
-import Typography from '@mui/material/Typography';
-import TextField from '@mui/material/TextField';
-import Button from '@mui/material/Button';
-import Alert from '@mui/material/Alert';
-import CircularProgress from '@mui/material/CircularProgress'; 
-import SendIcon from '@mui/icons-material/Send';
-import Divider from '@mui/material/Divider';
-import Link from '@mui/material/Link';
-import EmailIcon from '@mui/icons-material/Email';
-import PhoneIcon from '@mui/icons-material/Phone';
-import Stack from '@mui/material/Stack'; 
+import PageContainer from '@/components/Layout/PageContainer';
 
 // Rebuilt Contact Page Component
 const ContactPage: React.FC = () => {
@@ -78,123 +66,97 @@ const ContactPage: React.FC = () => {
     }
   };
 
+  const pageTitle = "Get In Touch";
+  const pageSubtitle = "Have questions or want to discuss a project? Fill out the form below or contact us directly.";
+
   return (
-    <Container maxWidth="md" sx={{ py: { xs: 4, md: 8 } }}>
-      {/* Page Title */}
-      <Typography
-        variant="h3"
-        component="h1"
-        gutterBottom
-        align="center" 
-        sx={{ fontWeight: 600, mb: 2 }}
+    <main>
+      <PageContainer 
+        title={pageTitle} 
+        subtitle={pageSubtitle} 
+        className="py-8 md:py-16 bg-white dark:bg-gray-900"
       >
-        Get In Touch
-      </Typography>
-      <Typography variant="h6" align="center" color="text.secondary" sx={{ mb: 6 }}>
-        Have questions or want to discuss a project? Fill out the form below or contact us directly.
-      </Typography>
+        {/* Form Section */}
+        <form
+          onSubmit={handleSubmit}
+          noValidate
+          className="w-full max-w-lg mx-auto"
+        >
+          <div className="flex flex-col space-y-6"> 
+            <input
+              required
+              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
+              id="name"
+              placeholder="Full Name"
+              name="name"
+              autoComplete="name"
+            />
+            <input
+              required
+              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
+              id="email"
+              placeholder="Email Address"
+              name="email"
+              type="email"
+              autoComplete="email"
+            />
+            <textarea
+              required
+              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
+              id="message"
+              placeholder="Your Message"
+              name="message"
+              rows={6}
+            />
+            <button
+              type="submit"
+              className="w-full inline-flex justify-center items-center px-6 py-3 border border-transparent text-base font-medium rounded-md shadow-sm text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 disabled:opacity-50 disabled:cursor-not-allowed"
+              disabled={isSubmitting}
+            >
+              {isSubmitting ? 'Sending...' : 'Send Message'}
+            </button>
+          </div>
 
-      {/* Form Section */}
-      <Box
-        component="form"
-        onSubmit={handleSubmit}
-        noValidate
-        sx={{
-          width: '100%', 
-          maxWidth: '600px', 
-          mx: 'auto', 
-        }}
-      >
-        {/* Stacked Fields Container */}
-        <Stack spacing={3}> 
-          <TextField
-            required
-            fullWidth
-            id="name"
-            label="Full Name"
-            name="name"
-            autoComplete="name"
-            variant="outlined"
-          />
-          <TextField
-            required
-            fullWidth
-            id="email"
-            label="Email Address"
-            name="email"
-            type="email"
-            autoComplete="email"
-            variant="outlined"
-          />
-          <TextField
-            required
-            fullWidth
-            id="message"
-            label="Your Message"
-            name="message"
-            multiline
-            rows={6}
-            variant="outlined"
-          />
-          <Button
-            type="submit"
-            fullWidth
-            variant="contained"
-            color="primary"
-            size="large"
-            disabled={isSubmitting}
-            endIcon={isSubmitting ? <CircularProgress size={24} color="inherit" /> : <SendIcon />}
-            // sx={{ py: 1.5 }} // Removed explicit padding, relying on size="large" definition
-          >
-            {isSubmitting ? 'Sending...' : 'Send Message'}
-          </Button>
-        </Stack>
+          {/* Submission Feedback */}
+          {submitStatus === 'success' && (
+            <div className="mt-6 p-4 rounded-md bg-green-50 text-green-700">
+              {submitMessage}
+            </div>
+          )}
+          {submitStatus === 'error' && (
+            <div className="mt-6 p-4 rounded-md bg-red-50 text-red-700">
+              {submitMessage}
+            </div>
+          )}
+        </form>
 
-        {/* Submission Feedback */}
-        {submitStatus === 'success' && (
-          <Alert severity="success" sx={{ mt: 3 }}>
-            {submitMessage}
-          </Alert>
-        )}
-        {submitStatus === 'error' && (
-          <Alert severity="error" sx={{ mt: 3 }}>
-            {submitMessage}
-          </Alert>
-        )}
-      </Box>
+        {/* Divider */}
+        <hr className="my-12 md:my-16 border-gray-200 dark:border-gray-700" />
 
-      {/* Divider */}
-      <Divider sx={{ my: { xs: 6, md: 8 } }} />
-
-      {/* Contact Info Section */}
-      <Box sx={{ textAlign: 'center' }}> 
-        <Typography variant="h5" component="h2" sx={{ fontWeight: 600, mb: 3 }}>
-          Contact Information
-        </Typography>
-        <Stack spacing={2} direction="column" alignItems="center">
-          <Link
-            href="mailto:info@yourcompany.com" 
-            variant="body1"
-            sx={{ display: 'flex', alignItems: 'center', textDecoration: 'none' }}
-            color="inherit"
-          >
-            <EmailIcon sx={{ mr: 1 }} />
-            info@yourcompany.com 
-          </Link>
-          <Link
-            href="tel:+1234567890" 
-            variant="body1"
-            sx={{ display: 'flex', alignItems: 'center', textDecoration: 'none' }}
-            color="inherit"
-          >
-            <PhoneIcon sx={{ mr: 1 }} />
-            (123) 456-7890 
-          </Link>
-          {/* Add Address etc. if needed using similar Stack/Link structure */}
-        </Stack>
-      </Box>
-    </Container>
+        {/* Contact Info Section */}
+        <div className="text-center"> 
+          <h2 className="text-2xl font-semibold mb-6">
+            Contact Information
+          </h2>
+          <div className="flex flex-col space-y-3 items-center">
+            <a
+              href="mailto:info@yourcompany.com" 
+              className="flex items-center text-gray-700 hover:text-indigo-600"
+            >
+              <span className="ml-2">info@yourcompany.com</span> 
+            </a>
+            <a
+              href="tel:+1234567890" 
+              className="flex items-center text-gray-700 hover:text-indigo-600"
+            >
+              <span className="ml-2">(123) 456-7890</span> 
+            </a>
+            {/* Add Address etc. if needed using similar structure */}
+          </div>
+        </div>
+      </PageContainer>
+    </main>
   );
-};
+ };
 
 export default ContactPage;

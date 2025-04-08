@@ -25,6 +25,11 @@ export default async function AboutPage() {
 
   // Handle the case where data might not be available
   // This check is crucial because getAboutData currently returns null
-
-  return <AboutClientUI aboutData={aboutData} />; // Pass prop as 'aboutData'
+  
+  // Wrap the client UI in a <main> tag for semantic structure
+  return (
+    <main>
+      <AboutClientUI aboutData={aboutData} />
+    </main>
+  );
 }

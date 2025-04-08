@@ -1,16 +1,9 @@
 'use client';
 
 import React from 'react';
-import { Box, Paper, Typography } from '@mui/material';
-import { Theme } from '@mui/material/styles';
 import { CommunityInfo, RelationInfo } from '../../../types/graph';
 
 export interface GraphLegendsProps {
-  /**
-   * Theme object for styling
-   */
-  theme: Theme;
-  
   /**
    * Community information for legend display
    */
@@ -22,7 +15,8 @@ export interface GraphLegendsProps {
   relations?: RelationInfo[];
   
   /**
-   * Position of the legends panel
+   * Position of the *community* legends panel
+   * Relation legend is fixed bottom-right.
    */
   position?: 'top-left' | 'top-right' | 'bottom-left' | 'bottom-right';
 }
@@ -38,104 +32,90 @@ const DEFAULT_RELATIONS: RelationInfo[] = [
  * Legends panel for graph visualization
  */
 export const GraphLegends: React.FC<GraphLegendsProps> = ({
-  theme,
   communities = [],
   relations = DEFAULT_RELATIONS,
   position = 'top-right'
 }) => {
-  // Determine position styles based on position prop
-  const positionStyles = {
-    'top-left': { top: 16, left: 16 },
-    'top-right': { top: 80, right: 16 }, // Positioned below header
-    'bottom-left': { bottom: 16, left: 16 },
-    'bottom-right': { bottom: 16, right: 16 }
+  // Define position Tailwind classes
+  const positionClassesMap = {
+    'top-left': 'top-4 left-4',
+    'top-right': 'top-20 right-4', // Adjusted for potential header
+    'bottom-left': 'bottom-4 left-4',
+    'bottom-right': 'bottom-4 right-4'
   };
+
+  const communityPositionClasses = positionClassesMap[position];
+  const relationPositionClasses = 'bottom-4 right-4'; // Fixed position for relation legend
   
+  // Common panel classes
+  const panelBaseClasses = `
+    absolute p-3 rounded-lg shadow-md 
+    bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm 
+    z-10 max-w-[250px]`;
+
   // Only render if there are communities or relations to display
   if (communities.length === 0 && relations.length === 0) {
     return null;
   }
   
   return (
-    <Box>
-      {/* Community Legend */}
+    <>
+      {/* Community Legend - Replaced Paper/Box/Typography */}
       {communities.length > 0 && (
-        <Paper
-          elevation={3}
-          sx={{
-            position: 'absolute',
-            padding: 2,
-            borderRadius: 2,
-            backgroundColor: theme.palette.mode === 'dark' ? 'rgba(0,0,0,0.7)' : 'rgba(255,255,255,0.9)',
-            backdropFilter: 'blur(5px)',
-            zIndex: 1000,
-            maxWidth: 250,
-            ...positionStyles[position]
-          }}
-        >
-          <Typography variant="subtitle2" gutterBottom>
+        <div className={`${panelBaseClasses} ${communityPositionClasses}`}>
+          <h3 className="text-xs font-semibold uppercase tracking-wider text-gray-600 dark:text-gray-300 mb-2">
             Groups
-          </Typography>
-          <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1 }}>
+          </h3>
+          <div className="flex flex-col gap-2"> 
             {communities.map(community => (
-              <Box key={community.id} sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                <Box 
-                  sx={{ 
-                    width: 12, 
-                    height: 12, 
-                    borderRadius: '50%', 
-                    backgroundColor: community.color || theme.palette.primary.main, 
-                    mr: 1 
-                  }} 
+              <div key={community.id} className="flex items-start gap-2"> 
+                {/* Color Swatch - Replaced Box */}
+                <div 
+                  className="w-3 h-3 rounded-full mt-0.5 flex-shrink-0" 
+                  style={{ backgroundColor: community.color || '#00695C' /* Default Teal */ }} 
                 />
-                <Box>
-                  <Typography variant="body2" sx={{ fontWeight: 'medium' }}>{community.name}</Typography>
+                {/* Text Content - Replaced Box/Typography */}
+                <div className="flex-grow">
+                  <p className="text-sm font-medium text-gray-800 dark:text-gray-100 leading-tight">{community.name}</p>
                   {community.description && (
-                    <Typography variant="caption" sx={{ display: 'block', color: 'text.secondary' }}>
+                    <p className="text-xs text-gray-500 dark:text-gray-400 leading-tight mt-0.5">
                       {community.description}
-                    </Typography>
+                    </p>
                   )}
-                </Box>
-              </Box>
+                </div>
+              </div>
             ))}
-          </Box>
-        </Paper>
+          </div>
+        </div>
       )}
       
-      {/* Relation Legend */}
+      {/* Relation Legend - Replaced Paper/Box/Typography */}
+      {/* Ensure relation legend doesn't overlap with community legend if both are bottom-right */}
       {relations.length > 0 && (
-        <Paper
-          elevation={3}
-          sx={{
-            position: 'absolute',
-            padding: 2,
-            borderRadius: 2,
-            backgroundColor: theme.palette.mode === 'dark' ? 'rgba(0,0,0,0.7)' : 'rgba(255,255,255,0.9)',
-            backdropFilter: 'blur(5px)',
-            zIndex: 1000,
-            bottom: 16,
-            right: 16
-          }}
+        <div 
+          className={`
+            ${panelBaseClasses} ${relationPositionClasses}
+            ${position === 'bottom-right' && communities.length > 0 ? 'mb-24' : ''} 
+          `}
         >
-          <Typography variant="subtitle2" gutterBottom>
+          <h3 className="text-xs font-semibold uppercase tracking-wider text-gray-600 dark:text-gray-300 mb-2">
             Connection Types
-          </Typography>
-          <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1 }}>
+          </h3>
+          <div className="flex flex-col gap-1.5"> 
             {relations.map(relation => (
-              <Box key={relation.type} sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                <Box 
-                  sx={{ 
-                    width: 20, 
-                    height: 2, 
-                    backgroundColor: relation.color || theme.palette.primary.main 
-                  }} 
+              <div key={relation.type} className="flex items-center gap-2"> 
+                {/* Color Line Swatch - Replaced Box */}
+                <div 
+                  className="w-5 h-0.5 flex-shrink-0"
+                  style={{ backgroundColor: relation.color || '#aaaaaa' /* Default Gray */ }} 
                 />
-                <Typography variant="body2">{relation.name}</Typography>
-              </Box>
+                {/* Replaced Typography */}
+                <p className="text-sm text-gray-800 dark:text-gray-100 leading-tight">{relation.name}</p>
+              </div>
             ))}
-          </Box>
-        </Paper>
+          </div>
+        </div>
       )}
-    </Box>
+    </>
   );
 };

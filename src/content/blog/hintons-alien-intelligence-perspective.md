@@ -6,7 +6,6 @@ image: /images/blog/alien_intelligence.png
 author: Keith Williams
 tags: [AI Ethics, AGI, Research, Future of AI]
 audioUrl: /hinton_interview.mp3
-isPodcast: true
 podcastEpisodeNumber: 3
 podcastDuration: 38:45
 podcastHost: Keith Williams

@@ -1,9 +1,9 @@
 import React from 'react';
-import { Container, Typography, Box } from '@mui/material';
 import { getSortedServicesData } from '@/lib/services'; // Assuming this path is correct
 import { ServiceData } from '@/types/service'; // Assuming this path is correct
 import InfoCard from '@/components/Common/InfoCard'; // Use InfoCard from Common components
 import { Metadata } from 'next';
+import PageContainer from '@/components/Layout/PageContainer'; // Import PageContainer
 
 export const metadata: Metadata = {
   title: 'TheoForge Services | AI Strategy, Implementation & Enablement',
@@ -13,29 +13,18 @@ export const metadata: Metadata = {
 export default async function ServicesPage() {
   const allServicesData: ServiceData[] = await getSortedServicesData();
 
-  return (
-    <Box>
-      <Container maxWidth="lg" sx={{ py: { xs: 4, md: 6 } }}>
-        {/* Page Header */}
-        <Box sx={{ mb: 6, textAlign: 'center' }}>
-          <Typography variant="h3" component="h1" gutterBottom sx={{ fontWeight: 'bold' }}>
-            Our Services
-          </Typography>
-          <Typography variant="h6" color="text.secondary" sx={{ maxWidth: 700, mx: 'auto' }}>
-            Integrated services designed to transform AI complexity into confident action and strategic advantage.
-          </Typography>
-        </Box>
+  const pageTitle = "Our Services";
+  const pageSubtitle = "Integrated services designed to transform AI complexity into confident action and strategic advantage.";
 
+  return (
+    <main>
+      <PageContainer 
+        title={pageTitle} 
+        subtitle={pageSubtitle} 
+        className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 bg-white dark:bg-gray-900 py-8 md:py-12"
+      >
         {/* Services CSS Grid */}
-        <Box sx={{
-          display: 'grid',
-          gridTemplateColumns: {
-            xs: 'repeat(1, 1fr)', // 1 column on extra-small screens
-            sm: 'repeat(2, 1fr)', // 2 columns on small screens
-            md: 'repeat(3, 1fr)', // 3 columns on medium screens and up
-          },
-          gap: 4, // Gap between grid items (adjust as needed)
-        }}>
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 md:gap-8">
           {allServicesData.map((service) => (
             <InfoCard 
               key={service.slug} // Key moves to the mapped element
@@ -45,8 +34,8 @@ export default async function ServicesPage() {
               link={service.link} // InfoCard expects a link prop
             />
           ))}
-        </Box>
-      </Container>
-    </Box>
+        </div>
+      </PageContainer>
+    </main>
   );
 };

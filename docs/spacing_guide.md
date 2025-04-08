@@ -1,1 +1,97 @@
-# Theoforge - Spacing Guide (v1.0)\n\n## 1. Spacing Philosophy & Strategy\n\nConsistent and intentional spacing is crucial for establishing visual hierarchy, rhythm, clarity, and a sense of professional order throughout the Theoforge digital presence. It reduces cognitive load for users and reinforces the brand's core attributes of structure, precision, and trustworthiness, essential for engaging a C-suite audience.\n\nOur strategy is based on the **8-Point Grid System**, a widely adopted standard in modern UI design.\n\n## 2. The 8-Point Grid System\n\n*   **Base Unit:** The fundamental unit for all spacing is **8 pixels**. In Material UI, this corresponds to `theme.spacing(1)`.\n*   **Consistency:** ALL spatial values (margins, padding, gaps) MUST be multiples of this 8px base unit.\n*   **Implementation:** Leverage Material UI's `theme.spacing()` utility EXCLUSIVELY for defining spacing. Avoid hardcoded pixel values (e.g., `12px`, `20px`).\n    *   `theme.spacing(1)` = 8px\n    *   `theme.spacing(2)` = 16px\n    *   `theme.spacing(3)` = 24px\n    *   `theme.spacing(4)` = 32px\n    *   And so on...\n*   **Fractional Units:** For finer control where necessary (e.g., between an icon and tightly associated text), use half-unit steps: `theme.spacing(0.5)` = 4px.\n\n## 3. Standard Spacing Scale & Usage\n\nWhile context matters, these standard multiples provide a baseline for common use cases:\n\n*   **Tight Spacing (`theme.spacing(0.5)` - `theme.spacing(1)`: 4px - 8px)**\n    *   Use cases: Internal padding within very small elements (small chips, badges), gap between an icon and its immediate label.\n*   **Standard Spacing (`theme.spacing(2)` - `theme.spacing(3)`: 16px - 24px)**\n    *   Use cases: Default internal padding for components like Cards, Buttons (vertical/horizontal may differ slightly but use the scale), spacing between related items in a list or group (e.g., form fields, blog meta items), gap between heading and subsequent content.\n*   **Medium Spacing (`theme.spacing(4)` - `theme.spacing(6)`: 32px - 48px)**\n    *   Use cases: Separating distinct components within a section (e.g., between text block and image), vertical spacing between list items or cards in a grid/stack where more breathing room is desired.\n*   **Wide Spacing (`theme.spacing(8)` - `theme.spacing(12)+`: 64px - 96px+)**\n    *   Use cases: Vertical separation between major page sections, defining overall page/container padding (especially horizontal padding on larger screens).\n\n## 4. Implementation Guidelines\n\n*   **Use Theme:** Always use `theme.spacing()` via the `sx` prop or `styled()` components.\n    *   Example: `sx={{ padding: theme.spacing(3) }}` or `sx={{ marginTop: 4 }}` (MUI automatically multiplies integers by `theme.spacing()`).\n*   **MUI Components:** Leverage MUI layout components like `<Stack spacing={2}>` or `<Grid container spacing={3}>` which inherently use the theme spacing.\n*   **Consistency Over Literal Ratios:** Prioritize the consistency of the 8pt system over attempting to force exact irrational ratios like Phi. The system itself creates harmony.\n*   **Review & Refine:** Regularly review component spacing during development and visual QA to ensure consistency and effectiveness.\n\n## 5. Relation to Typography\n\nLine height should generally be managed via the typography scale definitions in `theme.ts` (`lineHeight` property). While based on relative units (`em` or unitless), the resulting pixel values should feel harmonious with the 8pt grid. Spacing *between* text elements (e.g., margin below a paragraph) follows the 8pt grid rules.\n\n---\n*Version 1.0 - Based on 8-point grid best practices.*\n
+# Theoforge - Spacing Guide (v1.1 - Tailwind CSS)
+
+## 1. Philosophy & System: The 8-Point Grid
+
+Consistent spacing is essential for creating a clean, structured, and professional user interface that aligns with Theoforge's "Sage" brand archetype. We utilize the **8-Point Grid System** as the foundation for all spacing and sizing.
+
+**Why the 8-Point Grid?**
+
+*   **Consistency:** All spatial relationships (padding, margin, element dimensions) are derived from a single base unit (8px), creating predictable rhythm.
+*   **Efficiency:** Simplifies design and development decisions. Instead of arbitrary pixel values, you use multiples of 8.
+*   **Cross-Platform Adaptability:** Scales well across different screen sizes and resolutions.
+*   **Professional Standard:** Widely adopted in modern UI/UX design.
+
+**Base Unit:**
+
+*   **1 spacing unit = 8px**
+
+## 2. Tailwind Configuration
+
+Tailwind CSS naturally aligns with a spacing scale. By default, its numeric spacing utilities (e.g., `p-4`, `m-2`, `gap-8`) map to `0.25rem` increments (`1` = 0.25rem, `2` = 0.5rem, `4` = 1rem). With a default browser font size of 16px, this means:
+
+*   `1` = 4px
+*   `2` = 8px (Our base unit)
+*   `3` = 12px
+*   `4` = 16px
+*   `5` = 20px
+*   `6` = 24px
+*   `8` = 32px
+*   etc.
+
+**To strictly enforce the 8-point grid (multiples of 8px), you might need to customize the `theme.spacing` scale in `tailwind.config.js`:**
+
+```javascript
+// tailwind.config.js
+module.exports = {
+  theme: {
+    extend: {
+      spacing: {
+        // Define explicit 8px increments if needed
+        '1': '8px',   // Replaces default 4px
+        '2': '16px',  // Replaces default 8px
+        '3': '24px',  // Replaces default 12px
+        '4': '32px',  // Replaces default 16px
+        '5': '40px',  // Replaces default 20px
+        '6': '48px',  // Replaces default 24px
+        '7': '56px',  // Replaces default 28px
+        '8': '64px',  // Replaces default 32px
+        '9': '72px',  // Replaces default 36px
+        '10': '80px', // Replaces default 40px
+        '11': '88px', // Replaces default 44px
+        '12': '96px', // Replaces default 48px
+        // Add larger values as needed, maintaining the 8px increment
+        // ... e.g., '16': '128px'
+      }
+    }
+  },
+  plugins: []
+};
+```
+*   **Decision:** Evaluate if sticking to Tailwind's default 4px increments (where `p-2`, `p-4`, `p-6`, `p-8` correspond to 8px, 16px, 24px, 32px) is sufficient, or if explicitly overriding the scale for stricter 8px multiples is preferred.
+
+## 3. Usage Guidelines
+
+*   **Source of Truth:** `tailwind.config.js` (either default or customized spacing scale).
+*   **Application:** Use Tailwind's spacing utility classes for *all* margins, padding, gaps, and fixed width/height dimensions where appropriate.
+    *   **Padding:** `p-2`, `px-4`, `pt-6` (translates to 8px, 16px horizontal, 24px top based on config)
+    *   **Margin:** `m-4`, `mx-auto`, `mb-8` (translates to 16px, auto horizontal, 32px bottom based on config)
+    *   **Gaps (Flexbox/Grid):** `gap-4`, `gap-x-6`, `gap-y-2`
+    *   **Dimensions:** `w-8`, `h-16`, `min-w-24` (corresponds to spacing scale units, e.g., 32px, 64px, 96px with default config)
+*   **Consistency is Key:** Avoid arbitrary pixel values (`style={{ padding: '15px' }}`) or inconsistent spacing. Always use the defined scale via utility classes.
+*   **Layout Components:** Utilize Flexbox (`flex`, `items-center`, `justify-between`) and Grid (`grid`, `grid-cols-3`) with `gap-*` utilities for managing layout structure and spacing between elements.
+
+## 4. Common Spacing Values (Examples based on default Tailwind 4px increment scale)
+
+| Use Case                      | Tailwind Classes (Example) | Pixels (Approx) |
+| :---------------------------- | :------------------------- | :-------------- |
+| Small Icon Padding            | `p-1` or `p-2`             | 4px or 8px      |
+| Inline Element Spacing        | `mx-2` or `gap-2`          | 8px             |
+| Button Padding (Y/X)          | `py-2 px-4`                | 8px / 16px      |
+| Input/Field Padding         | `p-3` or `p-4`             | 12px or 16px    |
+| Card Internal Padding         | `p-4` or `p-6`             | 16px or 24px    |
+| Section Padding (Y)           | `py-8` or `py-12`          | 32px or 48px    |
+| Gaps Between Cards/Items    | `gap-4` or `gap-6`         | 16px or 24px    |
+| Margin Below Headings         | `mb-4` or `mb-6`           | 16px or 24px    |
+| Margin Below Paragraphs       | `mb-4`                     | 16px            |
+| Page Container Padding (X)    | `px-4` or `px-6`           | 16px or 24px    |
+
+*Note: Adjust these examples if you customize the spacing scale in `tailwind.config.js`.*
+
+## 5. Implementation
+
+*   Ensure Tailwind CSS is properly installed and configured in the project.
+*   Apply spacing consistently using utility classes in your React components.
+*   Refactor existing components to remove hardcoded pixel values for spacing and replace them with Tailwind classes.
+
+---
+*Version 1.1 - Updated for Tailwind CSS implementation.*
