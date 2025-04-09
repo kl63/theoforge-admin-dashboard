@@ -12,7 +12,7 @@ const SectionContainer: React.FC<SectionContainerProps> = ({
   children, 
   id, 
   className = '', 
-  py = 'py-16' // Default vertical padding using standard Tailwind scale (4rem / 64px)
+  py = 'py-12 md:py-16' // Responsive padding - smaller on mobile, larger on desktop
 }) => {
   return (
     <section id={id} className={cn(py, className)}>

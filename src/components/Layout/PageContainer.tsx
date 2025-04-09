@@ -1,4 +1,7 @@
 import React from 'react';
+import { cn } from '@/lib/utils';
+import Heading from '../Common/Heading';
+import Paragraph from '../Common/Paragraph';
 
 interface PageContainerProps {
   children: React.ReactNode;
@@ -21,7 +24,7 @@ const PageContainer: React.FC<PageContainerProps> = ({
     ${maxWidth}
     mx-auto
     px-4 sm:px-6 lg:px-8
-    py-16 // Consistent vertical padding with SectionContainer
+    // Default py-16 applied via SectionContainer pattern below, or override via className
     ${className}
   `;
 
@@ -36,14 +39,14 @@ const PageContainer: React.FC<PageContainerProps> = ({
       {(title || subtitle) && (
         <div className={headerClasses.trim().replace(/\s+/g, ' ')}>
           {title && (
-            <h1 className="font-poppins text-4xl md:text-5xl font-semibold mb-4 text-text-primary dark:text-dark-text-primary">
+            <Heading level={1} className="mb-4 text-4xl font-semibold md:text-5xl">
               {title}
-            </h1>
+            </Heading>
           )}
           {subtitle && (
-            <p className="font-poppins text-lg text-text-secondary dark:text-dark-text-secondary max-w-3xl mx-auto">
+            <Paragraph variant="body1" className="text-lg max-w-3xl mx-auto text-muted-foreground">
               {subtitle}
-            </p>
+            </Paragraph>
           )}
         </div>
       )}

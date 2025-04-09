@@ -1,6 +1,5 @@
 import React from 'react';
 import { getAllTestimonials, TestimonialData } from '@/lib/testimonialUtils'; 
-import SectionContainer from '../Layout/SectionContainer';
 import SectionHeading from '../Common/SectionHeading';
 import TestimonialCard from '../Testimonials/TestimonialCard';
 import Button from '../Common/Button';
@@ -28,10 +27,16 @@ const TestimonialsSection: React.FC<TestimonialsSectionProps> = ({ maxItems }) =
   }
 
   return (
-    <SectionContainer className="bg-muted dark:bg-muted-dark">
+    <div>
       <SectionHeading align="center" className="md:text-5xl mb-12">
         What Our Clients Say
       </SectionHeading>
+      
+      <div className="max-w-3xl mx-auto text-center mb-10">
+        <p className="text-gray-600 dark:text-gray-300">
+          Enterprise leaders trust TheoForge to guide their <span className="text-secondary font-medium">AI transformation journey</span>
+        </p>
+      </div>
 
       <Carousel 
         opts={{
@@ -43,7 +48,7 @@ const TestimonialsSection: React.FC<TestimonialsSectionProps> = ({ maxItems }) =
         <CarouselContent className="-ml-4"> {/* Adjust margin for item padding */} 
           {testimonialsToDisplay.map((testimonial) => (
             // Set responsive basis: 1 on mobile, 2 on md, 3 on lg
-            <CarouselItem key={testimonial.id} className="basis-full md:basis-1/2 lg:basis-1/3 pl-4"> 
+            <CarouselItem key={testimonial.id} className="basis-full md:basis-1/2 lg:basis-1/3 pl-4 pb-6"> 
               <div className="h-full"> {/* Ensure card stretches */} 
                 <TestimonialCard testimonial={testimonial} />
               </div>
@@ -60,13 +65,13 @@ const TestimonialsSection: React.FC<TestimonialsSectionProps> = ({ maxItems }) =
       </Carousel>
       
       {maxItems && allTestimonials.length > maxItems && (
-          <div className="mt-12 text-center">
-              <Button href="/testimonials" variant="outline" size="md">
+          <div className="mt-10 text-center">
+              <Button href="/testimonials" variant="secondary" size="md" className="shadow-sm">
                   View All Testimonials
               </Button>
           </div>
       )}
-    </SectionContainer>
+    </div>
   );
 };
 

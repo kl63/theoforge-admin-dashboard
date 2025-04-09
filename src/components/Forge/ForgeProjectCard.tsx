@@ -28,44 +28,47 @@ const ForgeProjectCard: React.FC<ForgeProjectCardProps> = ({ project }) => {
 
   const isComingSoon = status === 'Coming Soon';
 
+  // Determine if the link is internal or external
+  const isInternalLink = tryUrl && tryUrl.startsWith('/');
+
   return (
-    <BaseCard key={id} className="flex flex-col h-full"> 
+    <BaseCard key={id} className="flex flex-col h-full shadow-sm"> 
       {/* Inner wrapper for consistent padding */} 
-      <div className="p-6 flex-grow flex flex-col"> 
+      <div className="p-4 flex-grow flex flex-col"> 
         {/* Image */} 
         {image ? (
-          <div className="w-full mb-4 rounded overflow-hidden"> 
+          <div className="w-full mb-3 rounded-lg overflow-hidden bg-teal-900 aspect-[4/3] flex items-center justify-center"> 
             <Image
               src={image}
               alt={`${title} preview`}
               width={320}
               height={180}
-              className="w-full h-auto object-cover bg-muted dark:bg-muted-dark"
+              className="w-full h-auto object-cover"
             />
           </div>
         ) : (
-          <div className="w-full aspect-video mb-4 bg-muted dark:bg-muted-dark rounded flex items-center justify-center"> 
+          <div className="w-full aspect-[4/3] mb-3 bg-teal-900 dark:bg-teal-800 rounded-lg flex items-center justify-center"> 
             <JdenticonIcon value={title} size={40} />
           </div>
         )}
 
         {/* Title */} 
-        <Heading level={4} className="mb-4 text-foreground dark:text-foreground-dark"> 
+        <Heading level={4} className="mb-2 text-base font-semibold text-gray-900 dark:text-gray-50"> 
           {title}
         </Heading>
 
         {/* Description */} 
-        <Paragraph variant="body1" className="text-muted-foreground dark:text-muted-foreground-dark mb-4 flex-grow"> 
+        <Paragraph variant="body2" className="text-gray-600 dark:text-gray-300 mb-3 flex-grow text-sm"> 
           {content}
         </Paragraph>
 
         {/* Tags */} 
         {tags && tags.length > 0 && (
-          <div className="mb-4 flex flex-wrap gap-2"> 
+          <div className="mb-3 flex flex-wrap gap-1.5"> 
             {tags.map((tag) => (
               <span
                 key={tag}
-                className="px-2 py-0.5 bg-primary-100 text-primary-800 text-xs font-medium rounded-full dark:bg-primary-900 dark:text-primary-300"
+                className="px-2 py-0.5 bg-teal-50 text-teal-700 text-xs font-medium rounded-md dark:bg-teal-900/30 dark:text-teal-300"
               >
                 {tag}
               </span>
@@ -74,8 +77,8 @@ const ForgeProjectCard: React.FC<ForgeProjectCardProps> = ({ project }) => {
         )}
         
         {/* Status Badge */} 
-        {status && (
-            <div className="mb-4"> 
+        {status && !isComingSoon && (
+            <div className="mb-2"> 
               <span className={`inline-flex items-center px-3 py-0.5 rounded-full text-sm font-medium ${ 
                 isComingSoon 
                   ? 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-300' 
@@ -87,14 +90,23 @@ const ForgeProjectCard: React.FC<ForgeProjectCardProps> = ({ project }) => {
         )}
         
         {/* Buttons */} 
-        <div className="mt-auto pt-6 flex flex-wrap gap-4"> 
+        <div className="mt-auto pt-2 border-t border-gray-100 dark:border-gray-700 flex flex-wrap gap-2"> 
           {githubUrl && (
-            <Button href={githubUrl} variant="outline" size="sm" leftIcon={<FaGithub />} target="_blank" rel="noopener noreferrer">
+            <Button href={githubUrl} variant="outline" size="sm" leftIcon={<FaGithub />} target="_blank" rel="noopener noreferrer" className="mt-2 text-sm py-1">
               GitHub
             </Button>
           )}
           {tryUrl && (
-            <Button href={tryUrl} variant="secondary" size="sm" leftIcon={<FaArrowUpRightFromSquare />} target="_blank" rel="noopener noreferrer" disabled={isComingSoon}>
+            <Button 
+              href={tryUrl} 
+              variant="primary"
+              size="sm"
+              leftIcon={<FaArrowUpRightFromSquare />} 
+              target={isInternalLink ? "_self" : "_blank"}
+              rel={isInternalLink ? "" : "noopener noreferrer"}
+              disabled={isComingSoon} 
+              className="mt-2 text-sm py-1"
+            >
               {isComingSoon ? 'Coming Soon' : 'Try It'}
             </Button>
           )}

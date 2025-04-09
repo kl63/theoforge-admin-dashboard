@@ -1,4 +1,5 @@
 import * as React from 'react';
+import SectionContainer from '../components/Layout/SectionContainer';
 
 import HeroSection from '../components/Home/HeroSection';
 import ServicesSection from '../components/Home/ServicesSection';
@@ -30,14 +31,30 @@ export default async function HomePage() {
   return (
     <main>
       <HeroSection />
-      <AboutSection />
-      {/* Pass only the first 3 services */}
-      <ServicesSection services={displayServices} /> 
-      <TestimonialsSection />
-      {/* Correct prop name: blogSnippets */}
-      <BlogSnippetsSection blogSnippets={latestPosts} />
-      {/* Pass forge projects data as prop */}
-      <ForgeSection projects={allForgeProjects} />
+ 
+      <SectionContainer id="about">
+        <AboutSection />
+      </SectionContainer>
+
+      <SectionContainer id="services" className="bg-neutral-100 dark:bg-neutral-900">
+        <ServicesSection services={displayServices} />
+      </SectionContainer>
+
+      <div className="bg-muted dark:bg-muted-dark">
+        <SectionContainer id="testimonials">
+          <TestimonialsSection />
+        </SectionContainer>
+      </div>
+
+      <SectionContainer id="insights" className="bg-neutral-100 dark:bg-neutral-900">
+        <BlogSnippetsSection blogSnippets={latestPosts} />
+      </SectionContainer>
+
+      <SectionContainer id="forge">
+        <ForgeSection projects={allForgeProjects} />
+      </SectionContainer>
+
+      {/* CTA section needs to be full-width */}
       <CallToActionSection />
     </main>
   );

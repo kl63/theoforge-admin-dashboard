@@ -22,6 +22,40 @@ const getHueFromString = (str: string): number => {
   return (hash % 256) / 256;
 };
 
+// Define era order and descriptions for consistency
+const eraInfo = {
+  'Ancient': { order: 1, desc: 'Classical & Hellenistic (800 BCE - 500 CE)' },
+  'Medieval': { order: 2, desc: 'Middle Ages (500 - 1400 CE)' },
+  'Renaissance': { order: 3, desc: 'Renaissance (1400 - 1600 CE)' },
+  'Enlightenment': { order: 4, desc: 'Age of Reason (1600 - 1800 CE)' },
+  'Modern': { order: 5, desc: 'Modern Era (1800 - 1950 CE)' },
+  'Contemporary': { order: 6, desc: 'Current Era (1950 - Present)' }
+};
+
+// Helper to get a consistent color for each era based on its order
+const getEraColor = (era: string, isActive: boolean): { bg: string, text: string, border: string } => {
+  // Use predetermined colors based on era rather than random hues
+  const eraOrder = eraInfo[era as keyof typeof eraInfo]?.order || 0;
+  
+  // Color palette based on historical timeline
+  const hues = {
+    1: 45,  // Ancient - Gold/Yellow
+    2: 270, // Medieval - Purple
+    3: 200, // Renaissance - Blue
+    4: 150, // Enlightenment - Teal
+    5: 350, // Modern - Red/Pink
+    6: 120  // Contemporary - Green
+  };
+  
+  const hue = hues[eraOrder as keyof typeof hues] || 0;
+  
+  return {
+    bg: isActive ? `hsl(${hue}, 70%, 60%)` : `hsl(${hue}, 30%, 90%)`,
+    text: isActive ? 'white' : `hsl(${hue}, 80%, 25%)`,
+    border: isActive ? `hsl(${hue}, 70%, 45%)` : `hsl(${hue}, 30%, 80%)`
+  };
+};
+
 interface GraphLegendProps {
   availableEras: string[];
   activeEras: string[];
@@ -94,29 +128,34 @@ const GraphLegend: React.FC<GraphLegendProps> = ({
           <hr className="my-2 border-border-light dark:border-border-dark" />
           <p className="text-xs font-bold mb-1 text-text-secondary dark:text-dark-text-secondary">Filter by Era</p>
           <div className="flex flex-wrap gap-2">
-            {availableEras.map((era) => {
-              const isActive = activeEras.includes(era);
-              const hue = getHueFromString(era); // Get a consistent hue for the era
-              const bgColor = isActive ? `hsl(${hue}, 60%, 60%)` : `hsl(${hue}, 40%, 85%)`;
-              const textColor = isActive ? '#ffffff' : `hsl(${hue}, 50%, 30%)`;
-              const borderColor = isActive ? `hsl(${hue}, 60%, 50%)` : `hsl(${hue}, 40%, 75%)`;
+            {availableEras
+              // Sort chronologically based on predefined order
+              .sort((a, b) => {
+                const orderA = eraInfo[a as keyof typeof eraInfo]?.order || 999;
+                const orderB = eraInfo[b as keyof typeof eraInfo]?.order || 999;
+                return orderA - orderB;
+              })
+              .map((era) => {
+                const isActive = activeEras.includes(era);
+                const colors = getEraColor(era, isActive);
+                const eraDesc = eraInfo[era as keyof typeof eraInfo]?.desc || '';
 
-              return (
-                <button
-                  key={era}
-                  onClick={() => onToggleEra(era)}
-                  className={`px-3 py-1 rounded-full text-xs font-medium border transition-colors duration-150`}
-                  style={{
-                    backgroundColor: bgColor,
-                    color: textColor,
-                    borderColor: borderColor,
-                  }}
-                  title={`Toggle ${era} filter`}
-                >
-                  {era}
-                </button>
-              );
-            })}
+                return (
+                  <button
+                    key={era}
+                    onClick={() => onToggleEra(era)}
+                    className={`px-3 py-1 rounded-full text-xs font-medium border transition-colors duration-150 hover:shadow-sm`}
+                    style={{
+                      backgroundColor: colors.bg,
+                      color: colors.text,
+                      borderColor: colors.border,
+                    }}
+                    title={eraDesc ? `${era}: ${eraDesc}` : `Toggle ${era} filter`}
+                  >
+                    {era}
+                  </button>
+                );
+              })}
           </div>
         </>
       )}

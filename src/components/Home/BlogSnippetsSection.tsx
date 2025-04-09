@@ -3,7 +3,6 @@
 import React from 'react';
 import NextLink from 'next/link';
 import InfoCard from '../Common/InfoCard';
-import SectionContainer from '../Layout/SectionContainer'; 
 import SectionHeading from '../Common/SectionHeading'; 
 import { PostData } from '@/types/post'; 
 import Button from '../Common/Button'; 
@@ -20,8 +19,8 @@ interface BlogSnippetsSectionProps {
 }
 
 const BlogSnippetsSection: React.FC<BlogSnippetsSectionProps> = ({ blogSnippets }) => (
-  // Use SectionContainer, pass ID and background classes
-  <SectionContainer id="blog-insights" className="bg-background dark:bg-background"> {/* Use theme background */}
+  // SectionContainer removed, applied in page.tsx
+  <div>
     {/* Use SectionHeading, specify alignment */}
     <SectionHeading align="left">
       Latest Insights & Articles
@@ -59,7 +58,7 @@ const BlogSnippetsSection: React.FC<BlogSnippetsSectionProps> = ({ blogSnippets 
         View All Insights
       </Button>
     </div>
-  </SectionContainer>
+  </div>
 );
 
 export default BlogSnippetsSection;

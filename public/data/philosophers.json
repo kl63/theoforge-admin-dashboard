@@ -114,7 +114,7 @@
     {
       "id": "nietzsche",
       "name": "Friedrich Nietzsche",
-      "era": "19th Century",
+      "era": "Modern",
       "community": 3,
       "influenceScore": 9.0,
       "description": "German philosopher, cultural critic, composer, poet, and philologist whose work has exerted a profound influence on modern intellectual history.",
@@ -128,7 +128,7 @@
     {
       "id": "hegel",
       "name": "Georg Wilhelm Friedrich Hegel",
-      "era": "19th Century",
+      "era": "Modern",
       "community": 3,
       "influenceScore": 8.8,
       "description": "German philosopher who was a major figure in German idealism. His historicist and idealist account of reality revolutionized European philosophy.",
@@ -156,7 +156,7 @@
     {
       "id": "wittgenstein",
       "name": "Ludwig Wittgenstein",
-      "era": "20th Century",
+      "era": "Modern",
       "community": 4,
       "influenceScore": 8.7,
       "description": "Austrian-British philosopher who worked primarily in logic, the philosophy of mathematics, the philosophy of mind, and the philosophy of language.",
@@ -170,7 +170,7 @@
     {
       "id": "sartre",
       "name": "Jean-Paul Sartre",
-      "era": "20th Century",
+      "era": "Modern",
       "community": 5,
       "influenceScore": 8.4,
       "description": "French philosopher, playwright, novelist, screenwriter, political activist, biographer, and literary critic. A key figure in existentialism and phenomenology.",
@@ -184,7 +184,7 @@
     {
       "id": "beauvoir",
       "name": "Simone de Beauvoir",
-      "era": "20th Century",
+      "era": "Contemporary",
       "community": 5,
       "influenceScore": 8.3,
       "description": "French writer, intellectual, existentialist philosopher, political activist, feminist, and social theorist. A major figure in modern feminist philosophy.",
@@ -198,7 +198,7 @@
     {
       "id": "russell",
       "name": "Bertrand Russell",
-      "era": "20th Century",
+      "era": "Modern",
       "community": 4,
       "influenceScore": 8.6,
       "description": "British philosopher, logician, mathematician, historian, writer, social critic, political activist, and Nobel laureate. A founder of analytic philosophy.",
@@ -296,7 +296,7 @@
     {
       "id": "theophrastus",
       "name": "Theophrastus",
-      "era": "c. 371 – c. 287 BC",
+      "era": "Ancient",
       "school": "Peripatetic",
       "description": "Aristotle's successor, meticulously cataloging the natural world and refining logical frameworks, demonstrating the strategic value of empirical grounding for complex systems – a foundational principle mirrored in modern AI strategy.",
       "key_ideas": [
@@ -309,7 +309,7 @@
     {
       "id": "keith_williams",
       "name": "Keith Williams",
-      "era": "Late 20th - Early 21st Century AD (and possibly beyond, via digital consciousness)",
+      "era": "Contemporary",
       "school": "Pragmatic AI Syncretism",
       "description": "Allegedly human progenitor of TheoForge, known for translating arcane AI incantations into actionable business strategies. Often found muttering about graph databases and the surprising parallels between vector embeddings and ancient Greek metaphysics. Suspected of time travel.",
       "key_ideas": [
@@ -337,7 +337,7 @@
     {
       "id": "mill",
       "name": "John Stuart Mill",
-      "era": "19th Century",
+      "era": "Modern",
       "community": 3,
       "influenceScore": 8.2,
       "description": "English philosopher, political economist, and civil servant. One of the most influential thinkers in liberalism, contributing to social theory, political theory, and political economy.",
@@ -351,7 +351,7 @@
     {
       "id": "wollstonecraft",
       "name": "Mary Wollstonecraft",
-      "era": "Enlightenment",
+      "era": "Modern",
       "community": 2,
       "influenceScore": 7.9,
       "description": "English writer, philosopher, and advocate of women's rights. Considered one of the first feminist philosophers, famous for 'A Vindication of the Rights of Woman'.",
@@ -365,7 +365,7 @@
     {
       "id": "kierkegaard",
       "name": "Søren Kierkegaard",
-      "era": "19th Century",
+      "era": "Modern",
       "community": 3,
       "influenceScore": 8.5,
       "description": "Danish philosopher, theologian, and poet widely considered the first existentialist philosopher, known for his exploration of faith, subjectivity, and individual existence.",

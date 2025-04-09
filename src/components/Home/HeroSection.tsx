@@ -9,40 +9,50 @@ import Paragraph from '../Common/Paragraph'; // Import the Paragraph component
 const HeroSection = () => (
   // Replace fixed height with min-height, remove flex center, add explicit padding
   <section
-    className="min-h-[70vh] flex flex-col justify-center text-white bg-[url('/hero_bg.png')] bg-cover bg-center bg-no-repeat relative overflow-hidden py-20 sm:py-24 md:py-32"
+    className="min-h-[90vh] flex flex-col justify-center text-white bg-[url('/hero_star_bg.png')] bg-cover bg-center bg-no-repeat relative overflow-hidden pt-20 sm:pt-24 md:pt-32"
   >
     {/* Overlay */}
     <div
-      className="absolute inset-0 bg-black/65 z-10" // Using Tailwind color/opacity format
+      className="absolute inset-0 bg-black/40 z-10" // Reduced opacity to show more background
     />
-    {/* Content Container: Add items-center here */}
+    {/* Content Container: Update to create proper text alignment */}
     <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 relative z-20 flex flex-col items-center">
-      {/* Inner Content Box: Increase padding, keep text-left */}
-      <div 
-        className="flex flex-col items-start text-left p-6 sm:p-8"
-      >
+      {/* Inner Content Box: Change to center text alignment for more authority */}
+      <div className="flex flex-col items-center text-center p-6 sm:p-8">
         {/* Adjust smallest heading size */}
         <Heading
           level={1} // H1 equivalent
-          className="font-semibold text-white text-2xl sm:text-4xl md:text-5xl mb-6" // Changed 3xl to 2xl
+          className="font-bold text-white text-3xl sm:text-5xl md:text-6xl mb-8 leading-tight" // Larger, bolder text
         >
           Transform AI Complexity into Strategic Confidence
         </Heading>
         {/* Use Paragraph component, variant defaults to body1 */}
-        <Paragraph
-          className="text-white text-lg mb-8" // Added gold accents
-        >
-          Partner with Theoforge to navigate the AI landscape. Leverage integrated expertise in strategy, engineering, and education to build reliable, <span className="text-[#B8860B] font-medium">high-impact AI solutions</span> that drive <span className="text-[#B8860B] font-medium">measurable business value</span>. Listen to our weekly podcast and join our Discord community to learn more.
+        <Paragraph className="text-white text-xl mb-10 max-w-2xl"> 
+          Partner with TheoForge to navigate the AI landscape through 
+          <span className="text-secondary font-semibold"> integrated expertise</span> in strategy, 
+          engineering, and education to build reliable, 
+          <span className="text-secondary font-semibold"> high-impact AI solutions</span>
         </Paragraph>
+
         {/* Use Button component with Secondary OUTLINE variant */}
-        <Button 
-          variant="outline"
-          href="/contact" 
-          size="lg" 
-          className="mt-4 border-[#B8860B] text-white hover:bg-[#B8860B]/10" // Gold border, white text
-        >
-          Begin Your AI Transformation
-        </Button>
+        <div className="flex flex-col sm:flex-row gap-4 mt-2">
+          <Button 
+            variant="primary"
+            href="/services" 
+            size="lg" 
+            className="shadow-md"
+          >
+            Explore Our Services
+          </Button>
+          <Button 
+            variant="outline"
+            href="/community" 
+            size="lg" 
+            className="border-secondary text-white hover:bg-secondary/10" 
+          >
+            Join Our Community
+          </Button>
+        </div>
       </div>
     </div> 
   </section>

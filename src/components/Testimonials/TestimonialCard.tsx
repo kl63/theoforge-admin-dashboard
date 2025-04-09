@@ -35,22 +35,24 @@ const TestimonialCard: React.FC<TestimonialCardProps> = ({ testimonial }) => {
       </div>
 
       {/* Content Container (Below image, standard padding) */} 
-      <div className="p-6 flex flex-col flex-grow"> 
+      <div className="p-6 pb-8 flex flex-col flex-grow"> 
         {/* Quote (First, with icon) */} 
-        <Paragraph 
-          className="italic relative mb-4 flex-grow text-base text-neutral-700 dark:text-neutral-300"
-        >
-          <FaQuoteLeft className="absolute left-0 top-0 -translate-x-full text-neutral-300 dark:text-neutral-600 mr-2" />
-          {quote}
-        </Paragraph>
+        <div className="relative mb-6 flex-grow">
+          <FaQuoteLeft className="text-secondary text-2xl mb-2" />
+          <Paragraph 
+            className="italic text-lg text-gray-700 dark:text-gray-200 leading-relaxed"
+          >
+            {quote}
+          </Paragraph>
+        </div>
 
         {/* Author Info (Aligned left now) */} 
-        <div className="mt-auto pt-4 border-t border-neutral-200 dark:border-neutral-700"> 
-          <Heading level={5} className="mb-0">
+        <div className="mt-auto pt-4 border-t border-secondary/20 dark:border-secondary/30"> 
+          <Heading level={5} className="mb-1 font-semibold text-lg">
             {name}
           </Heading>
-          <Paragraph variant="body2" className="text-neutral-500 dark:text-neutral-400">
-            {title}, {company}
+          <Paragraph variant="body2" className="text-gray-600 dark:text-gray-400">
+            <span className="font-medium">{title}</span>{title && company ? ', ' : ''}{company}
           </Paragraph>
         </div>
       </div>

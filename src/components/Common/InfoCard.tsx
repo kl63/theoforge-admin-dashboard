@@ -39,16 +39,16 @@ const InfoCard: React.FC<InfoCardProps> = ({
           />
         </div>
       )}
-      {/* Use standard padding: p-6 (24px) */}
-      <div className="p-6 flex-grow flex flex-col"> 
-        <Heading level={5} className="mb-4"> 
+      {/* Improve padding and structure */}
+      <div className="p-6 pt-7 pb-8 flex-grow flex flex-col"> 
+        <Heading level={5} className="mb-4 text-xl font-semibold text-gray-900 dark:text-gray-50"> 
           {title}
         </Heading>
-        <Paragraph variant="body2" className="mb-4"> {/* Paragraph margin: standard mb-4 (16px) */}
+        <Paragraph variant="body2" className="mb-6 text-gray-600 dark:text-gray-300"> 
           {excerpt}
         </Paragraph>
-        <div className="mt-auto pt-0"> 
-          <Button href={link} variant="outline" size="sm" rightIcon={<span className="ml-1">→</span>}>
+        <div className="mt-auto pt-2 border-t border-gray-100 dark:border-gray-700"> 
+          <Button href={link} variant="primary" size="sm" rightIcon={<span className="ml-1">→</span>} className="mt-4">
             Learn More
           </Button>
         </div>

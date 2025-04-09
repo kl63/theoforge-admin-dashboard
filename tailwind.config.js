@@ -21,78 +21,77 @@ module.exports = {
     },
     extend: {
       fontSize: { 
-        'xs': ['0.75rem', '1.5'],    
-        'sm': ['0.875rem', '1.5'],   
-        'base': ['1rem', '1.6'],     
-        'lg': ['1.125rem', '1.4'],   
-        'xl': ['1.375rem', '1.3'],   
-        '2xl': ['1.75rem', '1.25'],  
-        '3xl': ['2.25rem', '1.2'],   
-        '4xl': ['2.75rem', '1.15'],  
-        '5xl': ['3.5rem', '1.1'],   
-        '6xl': ['4.5rem', '1.05'],  
+        xs: ['0.75rem', '1.5'],    // 12px / 18px
+        sm: ['0.875rem', '1.7'],   // 14px / 24px
+        base: ['1rem', '1.7'],       // 16px / 27px - Crucial: 1.7 line-height
+        lg: ['1.125rem', '1.7'],   // 18px / 30px
+        xl: ['1.25rem', '1.6'],    // 20px / 32px
+        '2xl': ['1.5rem', '1.6'],    // 24px / 38px
+        '3xl': ['1.875rem', '1.5'],  // 30px / 45px
+        '4xl': ['2.25rem', '1.4'],   // 36px / 50px
+        '5xl': ['3rem', '1.3'],      // 48px / 62px
+        '6xl': ['3.75rem', '1.2'],   // 60px / 72px
       },
-      spacing: { 
-        // Keep standard Tailwind spacing
+      spacing: {
+        // Keep default spacing scale, rely on consistent application
       },
-      colors: { 
-        neutral: {
-          900: '#212121',
-          800: '#424242', 
-          700: '#616161',
-          600: '#757575',
-          500: '#9E9E9E',
-          400: '#BDBDBD',
-          300: '#E0E0E0',
-          200: '#EEEEEE',
-          100: '#F5F5F5',
-        },
-        error: '#D32F2F',
-        info: '#0288D1',
-        success: '#2E7D32',
-        // Explicitly link shadcn/ui CSS variables to Tailwind color names
-        background: 'hsl(var(--background))', 
-        foreground: 'hsl(var(--foreground))',
+      colors: {
+        // Use CSS variables defined in globals.css for theme colors
         border: 'hsl(var(--border))',
         input: 'hsl(var(--input))',
         ring: 'hsl(var(--ring))',
-        primary: { 
-          DEFAULT: 'hsl(var(--primary))',          
-          foreground: 'hsl(var(--primary-foreground))', 
+        background: 'hsl(var(--background))',
+        foreground: 'hsl(var(--foreground))',
+        primary: {
+          DEFAULT: 'hsl(var(--primary))',
+          foreground: 'hsl(var(--primary-foreground))',
+          dark: 'hsl(var(--primary-dark))', // Added for hover/focus
         },
-        secondary: { 
-          DEFAULT: 'hsl(var(--secondary))',         
+        secondary: {
+          DEFAULT: 'hsl(var(--secondary))',
           foreground: 'hsl(var(--secondary-foreground))',
+          dark: 'hsl(var(--secondary-dark))', // Added for hover/focus
         },
         destructive: {
-          DEFAULT: 'hsl(var(--destructive))',      
-          foreground: 'hsl(var(--destructive-foreground))', 
+          DEFAULT: 'hsl(var(--destructive))',
+          foreground: 'hsl(var(--destructive-foreground))',
+        },
+        info: {
+          DEFAULT: 'hsl(var(--info))', // Added Feedback Color
+        },
+        success: {
+          DEFAULT: 'hsl(var(--success))', // Added Feedback Color
+        },
+        warning: {
+          DEFAULT: 'hsl(var(--warning))', // Added Feedback Color
         },
         muted: {
-          DEFAULT: 'hsl(var(--muted))',             
-          foreground: 'hsl(var(--muted-foreground))', 
+          DEFAULT: 'hsl(var(--muted))',
+          foreground: 'hsl(var(--muted-foreground))',
         },
-        accent: { 
-          DEFAULT: 'hsl(var(--accent))',            
+        accent: {
+          DEFAULT: 'hsl(var(--accent))',
           foreground: 'hsl(var(--accent-foreground))',
+          dark: 'hsl(var(--accent-dark))', // Added for hover/focus
         },
         popover: {
-          DEFAULT: 'hsl(var(--popover))',           
-          foreground: 'hsl(var(--popover-foreground))', 
+          DEFAULT: 'hsl(var(--popover))',
+          foreground: 'hsl(var(--popover-foreground))',
         },
         card: {
-          DEFAULT: 'hsl(var(--card))',              
-          foreground: 'hsl(var(--card-foreground))',  
+          DEFAULT: 'hsl(var(--card))',
+          foreground: 'hsl(var(--card-foreground))',
         },
       },
-      fontFamily: {
-        heading: ['var(--font-inter)', ...defaultTheme.fontFamily.sans],
-        sans: ['var(--font-public-sans)', ...defaultTheme.fontFamily.sans],
-      },
-      borderRadius: { 
+      borderRadius: {
         lg: "var(--radius)",
         md: "calc(var(--radius) - 2px)",
         sm: "calc(var(--radius) - 4px)",
+      },
+      fontFamily: {
+        // Use CSS variable names defined in app/layout.tsx (or similar)
+        heading: ['var(--font-inter)', 'sans-serif'],
+        sans: ['var(--font-public-sans)', 'sans-serif'],
       },
       keyframes: { 
         "accordion-down": {

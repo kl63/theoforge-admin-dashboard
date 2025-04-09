@@ -22,7 +22,7 @@ const BaseCard: React.FC<BaseCardProps> = ({
         'flex-col': layout === 'vertical', 
         'flex-row items-start': layout === 'horizontal' 
       },
-      'h-full', // Ensure full height
+      'h-full min-h-[360px] sm:min-h-[400px] lg:min-h-[420px]', // Responsive minimum height scaling with breakpoints
       'rounded-lg',
       'bg-white dark:bg-neutral-800', // Standard background (paper is white by default)
       'border border-neutral-200 dark:border-neutral-700', // Standard border

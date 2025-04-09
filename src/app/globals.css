@@ -36,48 +36,62 @@ p, h1, h2, h3, h4, h5, h6 {
 
 /* Define CSS variables outside of layers for broader accessibility */
 :root {
-  --background: 0 0% 100%; /* White */
-  --foreground: 222.2 84% 4.9%; /* Almost Black */
-  --card: 0 0% 100%;
-  --card-foreground: 222.2 84% 4.9%;
-  --popover: 0 0% 100%;
-  --popover-foreground: 222.2 84% 4.9%;
-  --primary: 222.2 47.4% 11.2%; /* Shadcn Default Primary */
-  --primary-foreground: 210 40% 98%;
-  --secondary: 210 40% 96.1%; /* Shadcn Default Secondary */
-  --secondary-foreground: 222.2 47.4% 11.2%;
-  --muted: 210 40% 96.1%;
-  --muted-foreground: 215.4 16.3% 46.9%;
-  --accent: 210 40% 96.1%; /* Shadcn Default Accent */
-  --accent-foreground: 222.2 47.4% 11.2%;
-  --destructive: 0 84.2% 60.2%;
-  --destructive-foreground: 210 40% 98%;
-  --border: 214.3 31.8% 91.4%;
-  --input: 214.3 31.8% 91.4%;
-  --ring: 222.2 84% 4.9%;
-  --radius: 0.5rem; /* Default border radius */
+  /* Theoforge Light Theme based on color_guide.md */
+  --background: 210 17% 98%; /* Neutral 50 (#F9FAFB) */
+  --foreground: 222 39% 11%; /* Neutral 900 (#111827) */
+  --card: 0 0% 100%; /* White (#FFFFFF) */
+  --card-foreground: 222 39% 11%; /* Neutral 900 (#111827) */
+  --popover: 0 0% 100%; /* White (#FFFFFF) */
+  --popover-foreground: 222 39% 11%; /* Neutral 900 (#111827) */
+  --primary: 174 100% 21%; /* Teal 700 (#00695C) */
+  --primary-foreground: 0 0% 100%; /* White */
+  --primary-dark: 170 100% 15%; /* Teal 900 (#004D40) */
+  --secondary: 43 90% 38%; /* Muted Gold 700 (#B8860B) */
+  --secondary-foreground: 0 0% 100%; /* White */
+  --secondary-dark: 46 78% 31%; /* Muted Gold 800 (#8B6B11) - Approx */
+  --muted: 223 14% 91%; /* Neutral 200 (#E5E7EB) */
+  --muted-foreground: 219 14% 34%; /* Neutral 600 (#4B5563) */
+  --accent: 31 100% 48%; /* Focused Orange 600 (#F57C00) */
+  --accent-foreground: 0 0% 100%; /* White */
+  --accent-dark: 31 100% 36%; /* Focused Orange 800 (#B75A00) - Approx */
+  --destructive: 0 72% 51%; /* Red 600 (#DC2626) */
+  --destructive-foreground: 210 17% 98%; /* Neutral 50 (#F9FAFB) */
+  --info: 214 89% 52%; /* Blue 500 (#2196F3) */
+  --success: 122 39% 49%; /* Green 500 (#4CAF50) */
+  --warning: 36 100% 50%; /* Amber 500 (#FF9800) */
+  --border: 223 14% 91%; /* Neutral 200 (#E5E7EB) */
+  --input: 221 12% 85%; /* Neutral 300 (#D1D5DB) */
+  --ring: 174 100% 21%; /* Primary - Teal 700 (#00695C) */
+  --radius: 0.5rem; /* Keep shadcn default radius */
 }
 
 .dark {
-  --background: 222.2 84% 4.9%; /* Almost Black */
-  --foreground: 210 40% 98%; /* Almost White */
-  --card: 222.2 84% 4.9%;
-  --card-foreground: 210 40% 98%;
-  --popover: 222.2 84% 4.9%;
-  --popover-foreground: 210 40% 98%;
-  --primary: 210 40% 98%; /* Shadcn Dark Primary */
-  --primary-foreground: 222.2 47.4% 11.2%;
-  --secondary: 217.2 32.6% 17.5%; /* Shadcn Dark Secondary */
-  --secondary-foreground: 210 40% 98%;
-  --muted: 217.2 32.6% 17.5%;
-  --muted-foreground: 215 20.2% 65.1%;
-  --accent: 217.2 32.6% 17.5%; /* Shadcn Dark Accent */
-  --accent-foreground: 210 40% 98%;
-  --destructive: 0 62.8% 30.6%;
-  --destructive-foreground: 210 40% 98%;
-  --border: 217.2 32.6% 17.5%;
-  --input: 217.2 32.6% 17.5%;
-  --ring: 212.7 26.8% 83.9%;
+  /* Theoforge Dark Theme based on color_guide.md */
+  --background: 222 39% 11%; /* Neutral 900 (#111827) */
+  --foreground: 210 17% 98%; /* Neutral 50 (#F9FAFB) */
+  --card: 215 28% 17%; /* Neutral 800 (#1F2937) */
+  --card-foreground: 210 17% 98%; /* Neutral 50 (#F9FAFB) */
+  --popover: 215 28% 17%; /* Neutral 800 (#1F2937) */
+  --popover-foreground: 210 17% 98%; /* Neutral 50 (#F9FAFB) */
+  --primary: 177 51% 46%; /* Teal 400 (#38B2AC) - Lighter for dark */
+  --primary-foreground: 222 39% 11%; /* Neutral 900 (#111827) */
+  --primary-dark: 175 71% 30%; /* Teal 600 (#14867F) - Darker hover for dark */
+  --secondary: 46 65% 52%; /* Muted Gold 400 (#D4AF37) - Lighter for dark */
+  --secondary-foreground: 222 39% 11%; /* Neutral 900 (#111827) */
+  --secondary-dark: 44 78% 42%; /* Muted Gold 600 (#C6991A) - Darker hover for dark */
+  --muted: 215 19% 27%; /* Neutral 700 (#374151) */
+  --muted-foreground: 221 12% 65%; /* Neutral 400 (#9CA3AF) */
+  --accent: 27 96% 61%; /* Focused Orange 400 (#FB923C) - Lighter for dark */
+  --accent-foreground: 222 39% 11%; /* Neutral 900 (#111827) */
+  --accent-dark: 30 98% 54%; /* Focused Orange 500 (#F97316) - Darker hover for dark */
+  --destructive: 0 91% 71%; /* Red 400 (#F87171) */
+  --destructive-foreground: 222 39% 11%; /* Neutral 900 (#111827) */
+  --info: 210 96% 74%; /* Blue 300 (#90CAF9) */
+  --success: 125 57% 60%; /* Green 300 (#81C784) */
+  --warning: 39 100% 67%; /* Amber 300 (#FFB74D) */
+  --border: 215 19% 27%; /* Neutral 700 (#374151) */
+  --input: 219 14% 34%; /* Neutral 600 (#4B5563) */
+  --ring: 177 51% 46%; /* Primary - Teal 400 (#38B2AC) */
 }
 
 @layer base {

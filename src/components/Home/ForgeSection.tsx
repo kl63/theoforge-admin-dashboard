@@ -5,7 +5,6 @@ import NextLink from 'next/link';
 import { ForgeProjectData } from '@/lib/forgeUtils';
 import Image from 'next/image';
 import JdenticonIcon from '../Common/JdenticonIcon';
-import SectionContainer from '../Layout/SectionContainer';
 import SectionHeading from '../Common/SectionHeading';
 import ForgeProjectCard from '../Forge/ForgeProjectCard'; // Import the new specific card
 import Button from '../Common/Button';
@@ -33,18 +32,27 @@ const ForgeSection: React.FC<ForgeSectionProps> = ({ projects }) => {
   const displayProjects = nonFeatured.length >= 3 ? nonFeatured.slice(0, 3) : allProjects.slice(0, 3);
 
   return (
-    <SectionContainer className="bg-background dark:bg-background"> {/* Use theme background */}
+    <div>
       <SectionHeading className="md:text-5xl mb-2">
         From the Forge
       </SectionHeading>
       <Paragraph 
         variant="body1" 
-        className="mt-4 mb-12 leading-8 text-muted-foreground dark:text-muted-foreground-dark text-center max-w-3xl mx-auto"
+        className="mt-4 mb-6 leading-7 text-gray-600 dark:text-gray-300 text-center max-w-3xl mx-auto"
       >
-        Welcome to the Forge, our experimental playground. Here, we showcase innovative proof-of-concept projects demonstrating the potential of emerging AI technologies like Knowledge Graphs, Multi-Agent Systems (MCP), RAG, and advanced character agents.
+        Welcome to the Forge, our experimental playground. Here, we showcase innovative proof-of-concept projects demonstrating the potential of emerging AI technologies like <span className="text-secondary font-medium">Knowledge Graphs</span>, <span className="text-secondary font-medium">Multi-Agent Systems</span>, <span className="text-secondary font-medium">RAG</span>, and advanced character agents.
       </Paragraph>
+      
+      <div className="flex justify-center mb-10">
+        <span className="inline-flex items-center px-3 py-1 rounded-md text-sm font-medium bg-teal-50 text-teal-700 dark:bg-teal-900/30 dark:text-teal-300">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" className="w-4 h-4 mr-1.5">
+            <path d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z" />
+          </svg>
+          Outlaw Innovation
+        </span>
+      </div>
 
-      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-8 items-stretch">
+      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 sm:gap-8 md:gap-10 items-stretch">
         {displayProjects.map((project: ForgeProjectData) => (
           <ForgeProjectCard key={project.id} project={project} />
         ))}
@@ -52,12 +60,12 @@ const ForgeSection: React.FC<ForgeSectionProps> = ({ projects }) => {
 
       {allProjects.length > 3 && (
         <div className="mt-12 text-center">
-          <Button href="/forge" variant="outline" size="lg">
+          <Button href="/forge" variant="secondary" size="lg" className="shadow-sm">
             Explore All Projects
           </Button>
         </div>
       )}
-    </SectionContainer>
+    </div>
   );
 };
 
