@@ -55,7 +55,8 @@ interface SocialIconsProps extends React.HTMLAttributes<HTMLDivElement> {
  */
 const SocialIcons: React.FC<SocialIconsProps> = ({ className }) => {
   return (
-    <div className={`flex space-x-6 ${className || ''}`}>
+    // Reduce space-x for slightly tighter mobile, className allows overrides
+    <div className={`flex space-x-4 ${className || ''}`}>
       {socialLinksData.map((link) => (
         <a
           key={link.name}
@@ -63,7 +64,8 @@ const SocialIcons: React.FC<SocialIconsProps> = ({ className }) => {
           target="_blank"
           rel="noopener noreferrer"
           aria-label={link.ariaLabel}
-          className="text-neutral-500 hover:text-primary-600 dark:text-neutral-400 dark:hover:text-primary-400 transition-colors duration-200"
+          // Add padding to increase tap target size, maintain transition
+          className="p-1.5 block text-neutral-500 hover:text-primary-600 dark:text-neutral-400 dark:hover:text-primary-400 transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-primary/50 rounded"
         >
           <span className="sr-only">{link.ariaLabel}</span> {/* Added for screen readers */}
           <link.icon className="w-5 h-5" aria-hidden="true" /> {/* Hiding decorative icon */}

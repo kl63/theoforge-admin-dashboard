@@ -42,8 +42,8 @@ const TestimonialsSection: React.FC<TestimonialsSectionProps> = ({ maxItems }) =
       >
         <CarouselContent className="-ml-4"> {/* Adjust margin for item padding */} 
           {testimonialsToDisplay.map((testimonial) => (
-            // Set basis to 1/3 for 3 cards, add padding
-            <CarouselItem key={testimonial.id} className="basis-1/3 pl-4"> 
+            // Set responsive basis: 1 on mobile, 2 on md, 3 on lg
+            <CarouselItem key={testimonial.id} className="basis-full md:basis-1/2 lg:basis-1/3 pl-4"> 
               <div className="h-full"> {/* Ensure card stretches */} 
                 <TestimonialCard testimonial={testimonial} />
               </div>

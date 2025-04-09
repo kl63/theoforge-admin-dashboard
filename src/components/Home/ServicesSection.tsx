@@ -5,13 +5,6 @@ import InfoCard from '../Common/InfoCard'; // Correct path
 import SectionContainer from '../Layout/SectionContainer'; // Import new container
 import SectionHeading from '../Common/SectionHeading'; // Import new heading
 import { ServiceData } from '@/types/service'; // Import type from centralized location
-import {
-  Carousel,
-  CarouselContent,
-  CarouselItem,
-  CarouselNext,
-  CarouselPrevious,
-} from "@/components/ui/carousel";
 
 // Define the props for the ServicesSection component
 interface ServicesSectionProps {
@@ -29,32 +22,20 @@ const ServicesSection: React.FC<ServicesSectionProps> = ({ services }) => {
         Core Services for Your AI Transformation
       </SectionHeading>
 
-      {/* Replace Grid with Carousel */}
-      <Carousel 
-        opts={{
-          align: "start",
-          loop: true,
-        }}
-        // Remove max-width and mx-auto, let SectionContainer handle width
-        className="w-full" 
-      >
-        <CarouselContent>
-          {services.map((service, index) => (
-            // Add padding, remove intermediate div, put h-full back on InfoCard
-            <CarouselItem key={service.slug} className="basis-1/3 p-2">
-              <InfoCard
-                title={service.title}
-                excerpt={service.excerpt}
-                image={service.image}
-                link={`/services/${service.slug}`}
-                priorityImage={index < 3} // Prioritize first few images
-              />
-            </CarouselItem>
-          ))}
-        </CarouselContent>
-        <CarouselPrevious className="hidden sm:flex" /> {/* Hide controls on smallest screens */} 
-        <CarouselNext className="hidden sm:flex" />
-      </Carousel>
+      {/* Replace Carousel with a Grid */}
+      <div className="mt-12 grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
+        {services.map((service, index) => (
+          // Render InfoCard directly in the grid cell
+          <InfoCard
+            key={service.slug} // Add key here
+            title={service.title}
+            excerpt={service.excerpt}
+            image={service.image}
+            link={`/services/${service.slug}`}
+            priorityImage={index < 3} // Prioritize first few images
+          />
+        ))}
+      </div>
     </SectionContainer>
   );
 };
