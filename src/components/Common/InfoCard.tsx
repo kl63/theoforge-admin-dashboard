@@ -4,6 +4,9 @@ import React from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import BaseCard from './BaseCard';
+import Button from './Button';
+import Heading from './Heading';
+import Paragraph from './Paragraph';
 
 interface InfoCardProps {
   title: string;
@@ -11,46 +14,43 @@ interface InfoCardProps {
   image?: string;
   link: string;
   priorityImage?: boolean;
+  className?: string;
 }
 
-const InfoCard: React.FC<InfoCardProps> = ({ title, excerpt, image, link, priorityImage }) => {
+const InfoCard: React.FC<InfoCardProps> = ({ 
+  title, 
+  excerpt, 
+  image, 
+  link, 
+  priorityImage, 
+  className 
+}) => {
   return (
-    <BaseCard>
+    <BaseCard className={className}> 
       {image && (
-        // Explicit height added to potentially fix Next/Image fill warning
-        <div 
-          className="relative w-full overflow-hidden"
-          style={{ height: '12rem' }}
-        >
+        <div className="relative w-full mb-6 overflow-hidden rounded-lg aspect-video"> 
           <Image
             src={image}
             alt={title}
             fill
-            style={{ objectFit: 'cover' }}
-            sizes="(max-width: 640px) 100vw, 50vw"
+            className="object-cover bg-muted" 
             priority={priorityImage}
+            sizes="(max-width: 768px) 100vw, 33vw"
           />
         </div>
       )}
-      {/* Add fixed height, allow overflow scrolling */}
-      <div className="p-4 flex-grow flex flex-col h-48 overflow-y-auto"> 
-        <h3 className="text-xl font-semibold mb-2 text-gray-900 dark:text-white">
+      {/* Use standard padding: p-6 (24px) */}
+      <div className="p-6 flex-grow flex flex-col"> 
+        <Heading level={5} className="mb-4"> 
           {title}
-        </h3>
-        {/* Remove flex-grow from paragraph */}
-        <p className="text-gray-600 dark:text-gray-300">
+        </Heading>
+        <Paragraph variant="body2" className="mb-4"> {/* Paragraph margin: standard mb-4 (16px) */}
           {excerpt}
-        </p>
-        {/* Add sticky positioning or ensure button is always visible */}
-        <div className="mt-auto pt-4"> {/* Use mt-auto to push button down */} 
-          <Link href={link} legacyBehavior passHref>
-            <a
-              className="inline-flex items-center px-4 py-2 bg-blue-600 text-white text-sm font-medium rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition ease-in-out duration-150"
-            >
-              Learn More
-              <span className="ml-1">→</span>
-            </a>
-          </Link>
+        </Paragraph>
+        <div className="mt-auto pt-0"> 
+          <Button href={link} variant="outline" size="sm" rightIcon={<span className="ml-1">→</span>}>
+            Learn More
+          </Button>
         </div>
       </div>
     </BaseCard>

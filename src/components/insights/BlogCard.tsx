@@ -4,7 +4,7 @@ import React from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { PostData } from '@/types/post';
-import { ViewMode } from './BlogInteractivityWrapper';
+import { ViewMode } from './InsightsListWrapper';
 import BaseCard from '../Common/BaseCard';
 
 interface BlogCardProps {
@@ -15,7 +15,7 @@ interface BlogCardProps {
 }
 
 const BlogCard: React.FC<BlogCardProps> = ({ post, index, currentPage /*, viewMode*/ }) => { // Accept index and currentPage
-  const linkHref = `/blog/${post.slug}`;
+  const linkHref = `/insights/${post.slug}`; // Corrected path to insights
 
   // --- "New" Badge Logic ---
   const isNew = (() => {
@@ -35,66 +35,70 @@ const BlogCard: React.FC<BlogCardProps> = ({ post, index, currentPage /*, viewMo
 
   return (
     // Use BaseCard, pass specific classes via className prop
-    <BaseCard className="relative group hover:shadow-lg w-full"> 
-      {isNew && (
-        // Replaced Chip with span
-        <span 
-          className="absolute bottom-2 right-2 z-10 bg-pink-600 text-white text-xs font-bold px-2 py-0.5 rounded"
-        >
-          New
-        </span>
-      )}
-      {/* Replaced CardActionArea with Link (a tag) */}
+    // Remove group from BaseCard, add it to the Link for hover effects
+    <BaseCard className="relative w-full"> 
+      {/* Link now wraps the entire content for full clickability */}
       <Link 
         href={linkHref}
-        className="no-underline text-inherit flex flex-col flex-grow"
+        className="no-underline text-inherit flex flex-col flex-grow group rounded-md overflow-hidden" // Added group, rounded, overflow
       >
-        {/* Image container: Replaced Box with div */}
-        <div 
-          className={`relative overflow-hidden w-full`}
-          style={{ height: '12rem' }}
-        > 
+        {isNew && (
+          // Replaced Chip with span (Keep badge outside the main flex flow)
+          <span 
+            className="absolute bottom-2 right-2 z-10 bg-primary text-primary-foreground font-poppins text-xs font-bold px-2 py-0.5 rounded"
+          >
+            New
+          </span>
+        )}
+        {/* Image container: Remove rounding here, applied to Link */} 
+        <div className="relative overflow-hidden w-full"> 
           {post.image ? (
             // Replaced CardMedia with Image, added group-hover for scale effect
             <Image
               src={post.image || '/images/default-blog-banner.jpg'} // Ensure default
               alt={post.title}
-              fill
-              style={{ objectFit: 'cover' }} // Use style prop for objectFit with fill
+              width={320} // Standard width
+              height={180} // Standard height (16:9 aspect ratio)
+              className="w-full h-auto object-cover bg-neutral-200 dark:bg-neutral-700 transition-transform duration-300 ease-in-out group-hover:scale-105"
               sizes="(max-width: 640px) 100vw, 50vw" // Adjust sizes as needed
-              className="transition-transform duration-300 ease-in-out group-hover:scale-105"
               priority={index === 0 && currentPage === 1} // Update priority condition
             />
           ) : (
-            // Placeholder: Replaced Box with div
-            <div className={`12rem bg-gray-100 flex items-center justify-center`}>
+            // Placeholder: Ensure consistent aspect ratio
+            <div className="w-full aspect-video bg-muted-light dark:bg-muted-dark flex items-center justify-center">
               {/* Replaced Typography with p */}
-              <p className="text-xs text-gray-500">
+              <p className="font-poppins text-xs text-text-secondary dark:text-dark-text-secondary">
                 Image Coming Soon
               </p>
             </div>
           )}
         </div>
-        {/* Replaced CardContent with div */}
-        <div className="flex-grow w-full p-4 flex flex-col"> 
+        {/* Content Area: Use modular scale for consistency */}
+        <div className="p-4 flex-grow flex flex-col"> 
           {/* Replaced Typography with h2 */}
-          <h2 className="text-lg font-bold mb-1">
+          <h2 className="font-poppins font-semibold text-lg mb-4 text-text-primary dark:text-dark-text-primary"> 
             {post.title}
           </h2>
-          {/* Replaced Typography with p */}
-          <p className="text-sm text-gray-600 mb-4 line-clamp-3">
+          {/* Display the first tag if available */}
+          {post.tags && post.tags.length > 0 && (
+            <span className="font-poppins text-xs uppercase tracking-wider text-primary font-medium mb-2"> 
+              {post.tags[0]}
+            </span>
+          )}
+          {/* Excerpt - Simple paragraph */}
+          <p className="font-poppins text-sm text-text-secondary dark:text-dark-text-secondary mt-2 mb-4 flex-grow line-clamp-3"> 
             {post.excerpt}
           </p>
 
           {/* Tags Section */}
           {post.tags && Array.isArray(post.tags) && post.tags.length > 0 && (
             // Replaced Box with div, mt-auto to push to bottom within flex container
-            <div className="mt-auto mb-4"> 
+            <div className="mt-auto pt-4 mb-0"> 
               {/* Replaced Stack with div using flex */}
-              <div className="flex flex-row flex-wrap gap-1">
+              <div className="flex flex-row flex-wrap gap-2">
                 {post.tags.slice(0, 3).map((tag) => ( 
                   // Replaced Chip with span
-                  <span key={tag} className="px-2 py-0.5 border border-gray-300 rounded text-xs text-gray-700 bg-gray-50">
+                  <span key={tag} className="font-poppins px-2 py-0.5 border border-border-light dark:border-border-dark rounded text-xs text-text-secondary dark:text-dark-text-secondary bg-muted-light dark:bg-muted-dark"> 
                     {tag}
                   </span>
                 ))}
@@ -103,23 +107,6 @@ const BlogCard: React.FC<BlogCardProps> = ({ post, index, currentPage /*, viewMo
           )}
         </div>
       </Link> 
-      {/* Metadata Footer: Replaced Box with div */}
-      <div 
-        className="p-4 pt-0 mt-auto border-t border-gray-200 bg-gray-50"
-      >
-        {/* Replaced Box with div */}
-        <div className="flex items-center gap-1">
-          {/* Replaced Typography with p */}
-          <p className="text-xs text-gray-500 flex-grow"> 
-            {new Date(post.date).toLocaleDateString('en-US', {
-              year: 'numeric',
-              month: 'short',
-              day: 'numeric'
-            })} 
-            {post.readingTime ? ` • ${post.readingTime}` : ''} 
-          </p>
-        </div>
-      </div>
     </BaseCard>
   );
 };

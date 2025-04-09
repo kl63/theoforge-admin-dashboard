@@ -1,62 +1,52 @@
 // src/data/forgeProjects.ts
 
-// Define the interface for a Forge Project (formerly PlaygroundProject)
-export interface ForgeProject {
-  id: string;
-  title: string;
-  author: string;
-  githubUrl: string;
-  liveUrl?: string; // Optional URL for a live demo
-  tryUrl?: string; // Optional URL for an internal "Try It Out" page within /forge
-  tags?: string[]; // Optional tags for categorization/filtering
-  featured?: boolean; // Optional flag for featured project
-  description: string; // Moved description here
-}
+import { ForgeProjectData } from '@/lib/forgeUtils';
 
 // Placeholder data for Forge projects (formerly playgroundProjects)
-export const forgeProjects: ForgeProject[] = [
+export const forgeProjects: ForgeProjectData[] = [
   {
     id: 'philosopher-graph',
-    title: 'Philosopher Relationships',
-    description: 'Exploring the network of teachings and influences between ancient Greek philosophers using a simulated knowledge graph.',
-    author: 'TheoForge AI',
-    githubUrl: 'https://github.com/your-repo/philosopher-graph', // Placeholder
-    liveUrl: undefined, // No separate live demo for this one yet
-    tryUrl: '/forge/philosopher-graph', // Updated internal link
-    tags: ['Knowledge Graph', 'Visualization', 'Philosophy', 'Simulation'],
-    featured: true, // Let's feature this example
+    title: 'Philosopher Knowledge Graph',
+    content: 'Explore connections between philosophers and ideas using a dynamic knowledge graph interface. Demonstrates graph database integration and visualization.',
+    githubUrl: 'https://github.com/theoforge/philosopher-graph-demo', 
+    tryUrl: '/forge/philosopher-graph', 
+    tags: ['Knowledge Graph', 'Neo4j', 'Next.js', 'Visualization'],
+    featured: true,
+    image: undefined, 
+    status: 'Active', 
   },
   {
-    id: '1',
-    title: 'AI Content Summarizer',
-    description: 'A simple tool using OpenAI API to summarize long texts or articles. Exploring prompt engineering.',
-    author: 'Keith Williams', 
-    githubUrl: 'https://github.com/kaw393939/ai-summarizer-poc',
-    tags: ['Next.js', 'TypeScript', 'OpenAI', 'API', 'POC'],
-    featured: true, 
+    id: 'mcp-agents',
+    title: 'Multi-Agent Collaboration Platform (MCP)',
+    content: 'A framework for coordinating multiple AI agents to solve complex problems collaboratively. Architecture and initial tooling.',
+    githubUrl: 'https://github.com/theoforge', 
+    tryUrl: undefined,
+    tags: ['Agents', 'MCP', 'Collaboration', 'AI Orchestration', 'TBA'],
+    featured: false,
+    image: undefined,
+    status: 'Coming Soon', 
   },
   {
-    id: '2',
-    title: 'Interactive Data Visualization',
-    description: 'Experimenting with D3.js within a React component to create dynamic charts based on user input.',
-    author: 'Consultant A', 
-    githubUrl: 'https://github.com/consultantA/d3-react-example',
-    tags: ['React', 'D3.js', 'Data Viz', 'Frontend'],
+    id: 'rag-search',
+    title: 'RAG-Enhanced Enterprise Search',
+    content: 'Leveraging Retrieval-Augmented Generation to provide accurate, context-aware answers from internal knowledge bases.',
+    githubUrl: 'https://github.com/theoforge', 
+    tryUrl: undefined,
+    tags: ['RAG', 'Search', 'LLM', 'Vector Database', 'TBA'],
+    featured: false,
+    image: undefined,
+    status: 'Coming Soon', 
   },
   {
-    id: '3',
-    title: 'Serverless Function Automation',
-    description: 'Automating a data processing task using AWS Lambda and S3 triggers. Focus on cost-efficiency.',
-    author: 'Consultant B', 
-    githubUrl: 'https://github.com/consultantB/aws-lambda-automation',
-    tags: ['AWS', 'Serverless', 'Lambda', 'Python', 'Automation'],
+    id: 'char-agents',
+    title: 'Advanced Character Agents',
+    content: 'Developing sophisticated AI agents with distinct personalities, memory, and interaction styles for specialized applications.',
+    githubUrl: 'https://github.com/theoforge', 
+    tryUrl: undefined,
+    tags: ['Agents', 'LLM', 'Character AI', 'Memory', 'TBA'],
+    featured: false,
+    image: undefined,
+    status: 'Coming Soon', 
   },
-  {
-    id: '4',
-    title: 'Customizable UI Component Library',
-    description: 'Building a small set of reusable UI components with Storybook for documentation and testing.',
-    author: 'Consultant C', 
-    githubUrl: 'https://github.com/consultantC/react-component-lib',
-    tags: ['React', 'Storybook', 'UI/UX', 'Component Library'],
-  }
+  // Add more projects as needed
 ];

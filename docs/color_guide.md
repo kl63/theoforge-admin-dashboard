@@ -1,20 +1,20 @@
-# Theoforge - Color Guide (v1.1 - Tailwind CSS)
+# Theoforge - Color Guide (v1.3 - Tailwind CSS, Design Psychology & Contextual Application)
 
-## 1. Color Philosophy & Strategy
+## 1. Color Philosophy & Psychological Strategy (Reinforced)
 
-Color is a primary vehicle for communicating Theoforge's brand identity as The Sage: knowledgeable, trustworthy, guiding, clear, and structured. Our color strategy aims to build trust, convey expertise, ensure clarity, and create a professional, sophisticated visual experience appropriate for engaging senior executives (CEO/CIO) in Fortune 100 companies.
+Color is a primary subconscious communicator of **Theoforge's identity as The Sage**: the discerning, expert guide bringing **structured clarity** to technological complexity. Our color strategy is precisely engineered to evoke **trust, intellectual rigor, calm competence, and objective authority** in senior enterprise leaders (CEO/CIO/CTO). It aims to reduce cognitive load, facilitate effortless comprehension, signal premium wisdom, and provide focused guidance, all while demonstrating meticulous professionalism through universal accessibility.
 
-Key Strategic Principles:
+**Core Psychological Objectives (Reiterated):**
 
-*   **Trust & Stability:** Establish a foundation of trust through a stable, authoritative primary color.
-*   **Clarity & Structure:** Utilize a clear neutral palette for optimal readability and visual organization.
-*   **Sophistication & Quality:** Employ secondary colors subtly to signal premium value and expertise.
-*   **Focused Action:** Use accent colors sparingly and purposefully to guide users towards key actions.
-*   **Accessibility:** Ensure all color combinations meet or exceed WCAG AA contrast requirements, demonstrating consideration and professionalism.
+*   **Establish Foundational Trust & Calm Confidence:** Primary Teal signals stability, reliability, and measured intellectual depth.
+*   **Optimize Cognitive Processing & Clarity:** Structured Neutrals minimize visual noise, maximize readability, and underscore objectivity.
+*   **Signal Premium Expertise & Enduring Value:** Secondary Gold accents subtly convey achieved wisdom and the high value of strategic insight.
+*   **Direct Attention with Purposeful Precision:** Accent Orange highlights critical information or guides decisive action, mirroring the Sage's focused guidance.
+*   **Embody Professionalism & Accessible Knowledge:** Rigorous adherence to WCAG AA+ contrast standards is fundamental.
 
-## 2. Core Palette Definition & Configuration
+## 2. Core Palette: Psychological Intent & Configuration (Refined)
 
-This palette **must be configured** in the `tailwind.config.js` file under the `theme.extend.colors` section.
+This palette **must be configured** in `tailwind.config.js` under `theme.extend.colors`. Rationale is critical for consistent application.
 
 ```javascript
 // tailwind.config.js
@@ -22,74 +22,111 @@ module.exports = {
   theme: {
     extend: {
       colors: {
-        // Primary: Deep Teal
+        // Primary: Deep Teal - Calm competence, intellectual depth, stability, trust. Authoritative but not overly dominant.
         primary: {
-          DEFAULT: '#00695C', // Teal 700 (main)
-          light: '#439889',
-          dark: '#003D33',
+          DEFAULT: '#00695C', // Teal 700 (Main - Balanced authority)
+          light: '#26A69A',   // Teal 500 (Hover/Focus states - Approachable interaction cue)
+          dark: '#004D40',   // Teal 900 (Strong grounding, deep expertise signal)
+          lightest: '#E0F2F1', // Teal 50 (Subtle backgrounds, highlighting containers)
         },
-        // Secondary: Muted Gold
+        // Secondary: Muted Gold - Achieved wisdom, premium value, insight highlight. Use with extreme reserve.
         secondary: {
-          DEFAULT: '#B8860B', // DarkGoldenrod (main)
-          light: '#E6A634',
-          dark: '#8A5F00',
+          DEFAULT: '#B8860B', // DarkGoldenrod (Main - Signals high value/key insight)
+          // Variants rarely needed; maintain singularity for impact. Consider a slightly desaturated version for subtle print accents if required.
         },
-        // Accent: Bright Orange (For critical CTAs)
+        // Accent: Focused Orange - Precise attention direction for critical actions/data. Signals decisiveness.
         accent: {
-          DEFAULT: '#F57C00', // Orange 700 (main)
-          light: '#FFAD42',
-          dark: '#BB4D00',
+          DEFAULT: '#F57C00', // Orange 700 (Main - Primary CTA, critical alerts)
+          // Variants rarely needed; maintain singularity for impact.
         },
-        // Neutrals (Tailwind's built-in gray scale is often sufficient, but define specifics if needed)
-        neutral: { // Example using Tailwind's gray
-          900: '#212121', // Text Primary
-          700: '#616161', // Text Secondary
-          500: '#9E9E9E', // Text Disabled
-          300: '#E0E0E0', // Divider
-          // Add other shades as needed: 100, 200, 400, 600, 800 etc.
+        // Neutrals: Gray Scale - Structure, clarity, objectivity, minimal cognitive load. Foundation of the UI.
+        neutral: {
+          // Renaming suggestion for semantic clarity: e.g., neutral-text-primary, neutral-border-subtle
+          900: '#111827', // Gray 900 (Strongest text/structural contrast) - Adjusted for deeper black
+          800: '#374151', // Gray 700 (Primary body text - Optimal readability) - Adjusted for slightly softer primary text
+          700: '#6B7280', // Gray 500 (Secondary text/metadata - Clear hierarchy) - Adjusted for standard secondary
+          500: '#9CA3AF', // Gray 400 (Disabled states/placeholders)
+          300: '#D1D5DB', // Gray 300 (Subtle borders/dividers)
+          200: '#E5E7EB', // Gray 200 (Slight background variation/Card backgrounds)
+          100: '#F3F4F6', // Gray 100 (Hover states on neutrals, off-white backgrounds)
+           50: '#F9FAFB', // Gray 50 (Lightest background/paper feel)
         },
-        // Backgrounds (can often use neutral shades or white/black)
+        // Backgrounds: Primarily light Neutrals for clarity and focus in light mode.
         background: {
-          DEFAULT: '#FFFFFF', // default bg
-          paper: '#FFFFFF',   // paper/card bg
+          DEFAULT: '#FFFFFF', // Primary page background (Maximum Clarity)
+          paper: 'var(--color-neutral-50)', // Card/module background
+          // Consider using primary-lightest for specific highlighted sections if needed.
         },
-        // System Feedback Colors (Consider prefixing, e.g., 'feedback-error')
-        error: '#D32F2F', // Red 700
-        info: '#0288D1', // Light Blue 700
-        success: '#2E7D32', // Green 700
+        // System Feedback: Clear semantic indicators, ensuring accessibility.
+        feedback: {
+          error:   '#DC2626', // Red 600 (Slightly brighter for visibility)
+          info:    '#2563EB', // Blue 600 (Clear informational cue)
+          success: '#16A34A', // Green 600 (Clear positive confirmation)
+          warning: '#F59E0B', // Amber 500 (Requires dark text - Use neutral-900)
+        }
       },
+      // Add subtle focus ring styles aligned with Sage (e.g., thin, primary or neutral)
+      ringColor: theme => ({
+        ...theme('colors'),
+        'primary-focus': theme('colors.primary.light'), // Example
+      }),
+      ringWidth: { // Example
+        'focus': '2px',
+      },
+      ringOffsetWidth: { // Example
+        'focus': '2px',
+      }
     },
   },
-  plugins: [],
+  plugins: [
+    // Consider adding headless UI or Radix plugin for enhanced accessibility primitives if using
+  ],
 };
 ```
 
-*   **Naming Convention:** Use semantic names (`primary`, `secondary`, `accent`, `neutral`). The `DEFAULT` key is used for classes like `bg-primary`, `text-secondary`. Shades are accessed like `bg-primary-light`, `text-neutral-900`.
-*   **Contrast Text:** Tailwind doesn't have a built-in `contrastText` concept. You must manually choose appropriate text colors for backgrounds (e.g., `text-white` or `text-neutral-900`) to ensure contrast.
+*   **Rationale Enhanced:** More specific psychological descriptions for each color family.
+*   **Neutral Palette Adjusted:** Slightly shifted standard Tailwind gray names to specific hex codes for fine-tuning contrast and feel, potentially using slightly cooler grays to enhance the Teal's intellectual feel. Added comments for potential semantic renaming in code (`neutral-text-primary`, etc.) for better developer experience.
+*   **Feedback Colors Refined:** Adjusted some feedback colors for potentially better standard contrast/visibility while retaining semantic meaning. Explicitly noted dark text requirement for warning.
+*   **Focus States Added:** Included example configuration for focus rings, essential for accessibility and conveying deliberate interaction, a Sage trait.
 
-## 3. Color Usage Guidelines
+## 3. Color Usage Guidelines & Psychological Application (Expanded)
 
-*   **Dominance:** The primary Teal (`bg-primary`, `text-primary`) and Neutrals (`bg-white`, `bg-neutral-100`, `text-neutral-900`, `text-neutral-700`) should dominate.
-*   **Secondary Accentuation:** Use Muted Gold (`text-secondary`, `border-secondary`) sparingly for high-value highlights (e.g., `<span className="text-secondary font-semibold">...</span>`). Avoid using it for general interactive elements.
-*   **CTA Hierarchy:** Reserve Bright Orange (`bg-accent`, `hover:bg-accent-dark`) exclusively for the most critical CTAs. Less critical actions should use Primary Teal (`bg-primary`, `hover:bg-primary-dark`).
-*   **Text Hierarchy:** Use `text-neutral-900` for main content/headings. Use `text-neutral-700` for supporting information, labels, metadata where contrast allows. `text-neutral-500` for disabled states.
-*   **Consistency:** Strictly adhere to the Tailwind configuration. Use utility classes (e.g., `bg-primary`, `text-accent`, `border-neutral-300`). Avoid arbitrary style attributes (`style={{ color: '#B8860B' }}`).
+*   **Foundation (Trust & Clarity):** Reinforce: Use `bg-white` or `bg-neutral-50` for primary backgrounds. `text-neutral-800` for body ensures comfort during prolonged reading (essential for absorbing wisdom). `text-neutral-900` for headings establishes clear authority. Use `border-primary` or subtle `bg-primary-lightest` to delineate key structural areas or guidance sections.
+*   **Hierarchy & Structure:** Emphasize systematic use. `border-neutral-300` defines boundaries clearly but unobtrusively. Use `bg-neutral-100` or `bg-neutral-200` for nested elements (like sidebars, code blocks, or blockquotes) to create depth and structure without color noise.
+*   **Highlighting Wisdom (Secondary Gold):** Reiterate extreme sparsity. *Specific Use Cases:* Key performance indicators (KPIs) in dashboards, pull quotes of critical insights, author names on thought leadership pieces, perhaps subtle decorative elements in highest-level reports. **Never** interactive. Its purpose is to signal *achieved* value.
+*   **Directing Focus (Accent Orange):** Reiterate single primary CTA per view. *Specific Use Cases:* "Book Consultation," "Download Strategic Framework," "Finalize Assessment." Also applicable for critical error states or urgent system messages within `Alert` components. Secondary CTAs: `bg-primary` for important actions, `outline` or `ghost` variants with `text-primary` or `text-neutral-800` for less critical actions.
+*   **Interactive States:**
+    *   **Hover/Focus:** Interactive elements (`Button`, `Link`, navigation items) using `bg-primary` should transition to `bg-primary-light` (or `dark` depending on base) for clear but calm feedback. Neutral interactive elements hover to `bg-neutral-100`.
+    *   **Focus Rings:** Use thin (`ring-focus`), offset (`ring-offset-focus`) rings in `ring-primary-focus` for keyboard navigation – signals precision and accessibility.
+*   **Data Visualization:** Use the Neutral scale for base chart elements. Employ Primary Teal for primary data series. Use Accent Orange *or* Secondary Gold (choose one consistently for charts) *only* to highlight the single most critical data point or series requiring attention. Prioritize clarity over decoration.
 
-## 4. Accessibility & Contrast
+## 4. Accessibility & Contrast (Reinforced & Expanded)
 
-*   **Minimum Standard:** All text/background combinations *must* meet WCAG 2.1 Level AA contrast ratios.
-*   **Target Audience Consideration:** For critical text content aimed at potentially older executives, strive for Level AAA compliance where design permits, particularly for `text-neutral-700`.
-*   **Tooling:** Utilize contrast checking tools (browser extensions, online checkers, Tailwind contrast plugins if available) during design and development.
-*   **Verification Needed:** Apply appropriate text colors (e.g., `text-white` or `text-neutral-900`) and verify contrast for:
-    *   `text-neutral-700` (`#616161`) on `bg-white` (`#FFFFFF`) - *Ratio is 4.68:1 (AA Pass)*. Consider `text-neutral-800` (`#424242`, 7.26:1) for better comfort if needed.
-    *   Text on `bg-secondary` (`#B8860B`) - *Requires dark text (e.g., `text-neutral-900`) or white text only for large/bold elements.* White text has a ratio of 3.9:1 (Fail AA Normal).
-    *   Text on `bg-accent` (`#F57C00`) - *Requires dark text (e.g., `text-neutral-900`) or white text only for large/bold elements.* White text has a ratio of 3.05:1 (Fail AA Normal).
+*   **Minimum:** WCAG 2.1 AA remains mandatory.
+*   **Enhanced Target:** **AAA** for all body text (`text-neutral-800` on `bg-white`/`bg-neutral-50`) and primary UI text is strongly recommended for demonstrating meticulous care and ensuring readability for all users.
+*   **Verification:** Mandatory, automated checks in CI/CD pipelines if possible, plus manual checks during design reviews.
+*   **Specific Checks:** Reiterate need for dark text on Gold/Orange/Warning backgrounds. Text on `bg-primary` must be light (e.g., `text-white` or `text-neutral-50`). Text on `bg-primary-dark` must be light.
 
-## 5. Implementation Notes
+## 5. Dark Mode Considerations (New Section)
 
-*   **Source of Truth:** `tailwind.config.js`
-*   **Usage:** Apply colors via Tailwind utility classes in your React components (e.g., `className="bg-primary text-white p-4"`).
-*   **Component Abstraction:** Encapsulate common color combinations in reusable React components to maintain consistency (e.g., a `<Button variant="primary">` component that applies `bg-primary text-white hover:bg-primary-dark`).
+*   **Philosophy:** Maintain the core Sage principles of clarity, structure, and calm authority while reducing eye strain in low-light environments. Hierarchy and focus must be preserved. Avoid pure black backgrounds; opt for dark Neutrals.
+*   **Palette Mapping (Example):**
+    *   `background.DEFAULT`: `neutral-900`
+    *   `background.paper`: `neutral-800` (or a custom very dark gray)
+    *   `text.primary` (body): `neutral-100` or `neutral-200`
+    *   `text.secondary`: `neutral-300` or `neutral-400`
+    *   `primary.DEFAULT` (accents): `primary.light` (Teal 500 might offer better visibility)
+    *   `secondary.DEFAULT`: `secondary.DEFAULT` (Gold may need slight brightness increase for visibility on dark bg)
+    *   `accent.DEFAULT`: `accent.light` (Orange may need adjustment for accessible contrast)
+    *   Borders: Lighter Neutrals (`neutral-700` or `600`).
+*   **Implementation:** Utilize Tailwind's `dark:` variant (`dark:bg-neutral-900`, `dark:text-neutral-100`). Requires careful configuration and testing.
+
+## 6. Implementation Notes (Refined)
+
+*   **Source of Truth:** `tailwind.config.js`. Centralize all color definitions.
+*   **Utility-First:** Enforce utility class usage. Discourage arbitrary color values.
+*   **Component Abstraction:** **Crucial.** Build themed Shadcn components (or wrappers) that handle light/dark mode switching, interactive states, and correct text/background pairings internally. This ensures consistency and psychological intent implementation across the application with minimal developer overhead. E.g., `<ThemedButton variant="primary">` applies all correct classes for default, hover, focus, dark mode.
+*   **Cross-Media Consistency:** Ensure palette translations for print and presentation materials maintain the same psychological hierarchy and feel.
 
 ---
-*Version 1.1 - Updated for Tailwind CSS implementation.*
+*Version 1.3 - Revised by Dr. Elena Varga. Added Dark Mode considerations. Refined psychological rationale for shade choices and usage guidelines, including interactive states and data visualization. Enhanced accessibility recommendations. Strengthened emphasis on component abstraction for flawless implementation.*

@@ -21,17 +21,17 @@ export default async function ServicesPage() {
       <PageContainer 
         title={pageTitle} 
         subtitle={pageSubtitle} 
-        className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 bg-white dark:bg-gray-900 py-8 md:py-12"
+        // Removed className override to use default PageContainer styles (theme bg, py-16)
       >
         {/* Services CSS Grid */}
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 md:gap-8">
           {allServicesData.map((service) => (
             <InfoCard 
-              key={service.slug} // Key moves to the mapped element
+              key={service.slug}
               title={service.title}
               excerpt={service.excerpt}
-              image={service.image} // Pass image if available
-              link={service.link} // InfoCard expects a link prop
+              image={service.image}
+              link={service.link}
             />
           ))}
         </div>

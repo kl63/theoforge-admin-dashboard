@@ -2,40 +2,123 @@
 @tailwind components;
 @tailwind utilities;
 
+/*
+  Josh W Comeau custom reset
+  https://www.joshwcomeau.com/css/custom-css-reset/
+*/
+*, *::before, *::after {
+  box-sizing: border-box;
+}
+* {
+  margin: 0;
+}
+html, body {
+  height: 100%;
+}
+body {
+  line-height: 1.7; /* Increased slightly for serif readability */
+  -webkit-font-smoothing: antialiased;
+}
+img, picture, video, canvas, svg {
+  display: block;
+  max-width: 100%;
+}
+input, button, textarea, select {
+  font: inherit;
+}
+p, h1, h2, h3, h4, h5, h6 {
+  overflow-wrap: break-word;
+}
+#root, #__next {
+  isolation: isolate;
+}
+/* End Reset */
+
+/* Define CSS variables outside of layers for broader accessibility */
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
-  --background-rgb: 255, 255, 255;
-  --foreground-rgb: 23, 23, 23;
+  --background: 0 0% 100%; /* White */
+  --foreground: 222.2 84% 4.9%; /* Almost Black */
+  --card: 0 0% 100%;
+  --card-foreground: 222.2 84% 4.9%;
+  --popover: 0 0% 100%;
+  --popover-foreground: 222.2 84% 4.9%;
+  --primary: 222.2 47.4% 11.2%; /* Shadcn Default Primary */
+  --primary-foreground: 210 40% 98%;
+  --secondary: 210 40% 96.1%; /* Shadcn Default Secondary */
+  --secondary-foreground: 222.2 47.4% 11.2%;
+  --muted: 210 40% 96.1%;
+  --muted-foreground: 215.4 16.3% 46.9%;
+  --accent: 210 40% 96.1%; /* Shadcn Default Accent */
+  --accent-foreground: 222.2 47.4% 11.2%;
+  --destructive: 0 84.2% 60.2%;
+  --destructive-foreground: 210 40% 98%;
+  --border: 214.3 31.8% 91.4%;
+  --input: 214.3 31.8% 91.4%;
+  --ring: 222.2 84% 4.9%;
+  --radius: 0.5rem; /* Default border radius */
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-    --background-rgb: 10, 10, 10;
-    --foreground-rgb: 237, 237, 237;
+.dark {
+  --background: 222.2 84% 4.9%; /* Almost Black */
+  --foreground: 210 40% 98%; /* Almost White */
+  --card: 222.2 84% 4.9%;
+  --card-foreground: 210 40% 98%;
+  --popover: 222.2 84% 4.9%;
+  --popover-foreground: 210 40% 98%;
+  --primary: 210 40% 98%; /* Shadcn Dark Primary */
+  --primary-foreground: 222.2 47.4% 11.2%;
+  --secondary: 217.2 32.6% 17.5%; /* Shadcn Dark Secondary */
+  --secondary-foreground: 210 40% 98%;
+  --muted: 217.2 32.6% 17.5%;
+  --muted-foreground: 215 20.2% 65.1%;
+  --accent: 217.2 32.6% 17.5%; /* Shadcn Dark Accent */
+  --accent-foreground: 210 40% 98%;
+  --destructive: 0 62.8% 30.6%;
+  --destructive-foreground: 210 40% 98%;
+  --border: 217.2 32.6% 17.5%;
+  --input: 217.2 32.6% 17.5%;
+  --ring: 212.7 26.8% 83.9%;
+}
+
+@layer base {
+  /* Apply base body styles */
+  body {
+    line-height: 1.7; /* Keep existing line-height for serif */
+    -webkit-font-smoothing: antialiased;
+  }
+
+  /* Default paragraph spacing using modular scale */
+  p {
+    @apply mb-4; /* Apply 1rem margin */
+  }
+
+  /* Remove default paragraph margin when it's the last child */
+  p:last-child {
+    @apply mb-0;
+  }
+
+  /* Ensure headings have appropriate default margins (can be overridden) */
+  h1, h2, h3, h4, h5, h6 {
+    @apply mb-6; /* Apply 1.5rem margin */
+    @apply font-sans; /* Default to Poppins */
+    @apply font-semibold; /* Default to semibold */
+  }
+
+  h1:last-child, h2:last-child, h3:last-child, h4:last-child, h5:last-child, h6:last-child {
+    @apply mb-0;
+  }
+}
+
+@layer utilities {
+  .text-balance {
+    text-wrap: balance;
   }
 }
 
 html,
 body {
   max-width: 100vw;
-  overflow-x: hidden;
-}
-
-body {
-  /* Remove potentially conflicting font-family rule */
-  /* font-family: var(--font-public-sans), sans-serif; */
-  /* Use direct font-family names now */
-  font-family: 'Public Sans', sans-serif;
-  /* Ensure background and text colors are set for default - REMOVE @apply */
-  /* @apply bg-background text-foreground; */
-  /* Rely on :root variables set earlier */
-  color: rgb(var(--foreground-rgb));
-  background: rgb(var(--background-rgb));
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
+  /* overflow-x: hidden;  Temporarily commented out for testing Sheet */
 }
 
 h1, h2, h3, h4, h5, h6 {
@@ -52,10 +135,4 @@ h1, h2, h3, h4, h5, h6 {
 a {
   color: inherit;
   text-decoration: none;
-}
-
-@media (prefers-color-scheme: dark) {
-  html {
-    color-scheme: dark;
-  }
 }

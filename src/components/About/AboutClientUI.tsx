@@ -1,100 +1,142 @@
 // src/components/About/AboutClientUI.tsx
-"use client"; // Mark this as a Client Component
+"use client";
 
 import React from 'react';
 import Image from 'next/image';
-import PageContainer from '@/components/Layout/PageContainer'; // Import PageContainer
+import Link from 'next/link';
+import SectionContainer from '@/components/Layout/SectionContainer';
+import Heading from '@/components/Common/Heading';
+import Paragraph from '@/components/Common/Paragraph';
+import Button from '@/components/Common/Button';
 
-// Import the data fetching function and types
-import { AboutData } from '@/lib/about';
+// Icons (Placeholders - consider replacing with actual SVGs or an icon library like lucide-react)
+const PlaceholderIcon = ({ char }: { char: string }) => (
+  <div className="mx-auto mb-4 w-16 h-16 bg-primary/10 dark:bg-primary/20 rounded-full flex items-center justify-center text-primary dark:text-blue-300 text-3xl font-semibold font-poppins">
+    {char}
+  </div>
+);
 
-// Updated props interface name and prop name
 interface AboutClientUIProps {
-  aboutData: AboutData | null; // Use the fetched data passed as a prop
+  aboutData: any; // Prop kept for structure, but currently unused in this design
 }
 
-// Updated component name and prop destructuring
 export const AboutClientUI: React.FC<AboutClientUIProps> = ({ aboutData }) => {
-  // The data is now directly available via the aboutData prop
-  // Handle the case where data might not be available (simplify check)
-  if (!aboutData) {
-    // Display a loading state or an error message
-    // Wrapped loading state in PageContainer for consistency
-    return (
-      <PageContainer maxWidth="max-w-4xl" className="bg-white py-16">
-        <p className="text-center p-8">Loading about information...</p>
-      </PageContainer>
-    );
-  }
-
-  // Handle potential undefined image and name safely
-  const imageSrc = aboutData.image || '/placeholder-avatar.png';
-  const altText = aboutData.name || 'Author Avatar'; // Fallback for alt text
+  // Note: aboutData is ignored in this redesigned version.
+  // Content is hardcoded for a more personal/creative approach.
 
   return (
-    // Use PageContainer for outer layout
-    <PageContainer maxWidth="max-w-4xl" className="bg-white py-16">
-      {/* Removed the redundant container div */}
-      {/* Replace Paper with div and Tailwind classes */}
-      <div className="bg-white shadow-lg rounded-lg p-6 md:p-10">
-        {/* Profile header */}
-        {/* Replace Box with div and Tailwind classes */}
-        <div className="flex flex-col sm:flex-row items-center sm:items-start mb-8 pb-6 border-b border-gray-200">
-          {/* Replace Avatar with img and Tailwind classes */}
-          <div className="relative w-full h-36 md:w-48 md:h-48 overflow-hidden rounded-full shadow-md">
-            <Image
-              src={imageSrc} // Use the defined variable
-              alt={altText} // Use the defined variable
-              fill
-              style={{ objectFit: 'cover' }} // Use style prop for objectFit with fill
-              sizes="(max-width: 768px) 100vw, 50vw"
-            />
-          </div>
-          {/* Replace Box with div */}
-          <div>
-            {/* Replace Typography with h1 and Tailwind classes */}
-            <h1 className="text-3xl md:text-4xl font-bold mb-2">
-              {aboutData.name}
-            </h1>
-            {/* Replace Typography with p and Tailwind classes */}
-            <p className="text-xl text-gray-600 mb-4">
-              {aboutData.title}
-            </p>
-            {/* Replace Typography with p and Tailwind classes */}
-            <p className="text-base text-gray-700 leading-relaxed">
-              My approach centers on understanding the client&apos;s unique context and goals, allowing me to craft bespoke strategies that drive tangible results. Whether it&apos;s optimizing operations, navigating digital transformation, or enhancing customer engagement, I bring a blend of analytical rigor and creative problem-solving to every project.
-            </p>
-          </div>
-        </div>
+    <main className="bg-background dark:bg-neutral-950">
+      {/* --- Hero Section --- */}
+      <SectionContainer className="pt-20 pb-16 text-center">
+        <Image
+          src="/theo_keith.png"
+          alt="Keith Williams - Cartoon Profile"
+          width={240} // Increased size for prominence
+          height={240}
+          className="rounded-full mx-auto mb-8 shadow-lg border-4 border-white dark:border-neutral-800"
+          priority
+        />
+        <Heading
+          level={1}
+          className="font-poppins font-semibold text-4xl sm:text-5xl mb-4 text-neutral-900 dark:text-neutral-100"
+        >
+          Hi, I&apos;m <span className="text-primary dark:text-primary-light">Keith Williams</span>
+        </Heading>
+        <Paragraph className="text-xl max-w-3xl mx-auto text-neutral-800 dark:text-neutral-200">
+          Your partner in demystifying AI. I started TheoForge to bridge the gap between complex AI potential and real-world business value, helping leaders like you build strategic confidence through clear guidance and practical solutions.
+        </Paragraph>
+      </SectionContainer>
 
-        {/* Main content - Apply Tailwind prose classes */}
-        {/* Removed MarkdownContent styled component wrapper */}
-        <div className="prose prose-lg max-w-none">
-          {aboutData.contentHtml ? (
-            <div dangerouslySetInnerHTML={{ __html: aboutData.contentHtml }} />
-          ) : (
-            // Replace Typography with p and Tailwind classes
-            <p className="text-red-600">Content is missing.</p> // Fallback message
-          )}
+      {/* --- Inspired by Theophrastus Section --- */}
+      <SectionContainer>
+        <div className="max-w-3xl mx-auto text-center md:text-left"> {/* Center on small, left-align on medium+ */}
+          <Heading level={2} className="text-2xl md:text-3xl font-semibold mb-4 font-poppins text-neutral-900 dark:text-neutral-100">
+            Inspired by Theophrastus
+          </Heading>
+          <Paragraph className="mb-4 text-lg text-neutral-800 dark:text-neutral-200">
+            The name 'TheoForge' carries a special meaning. It's inspired by Theophrastus, the ancient Greek philosopher who succeeded Aristotle. He wasn't just a thinker; he was a keen observer and classifier of the natural world, dedicated to understanding how things actually worked and applying that knowledge practically.
+          </Paragraph>
+          <Paragraph className="text-lg text-neutral-800 dark:text-neutral-200 mb-6">
+            This spirit of rigorous observation, clear categorization, and practical application is the bedrock of TheoForge. Just as Theophrastus brought structure to botany, I aim to bring clarity and actionable strategy to the complexities of AI. We 'forge' solutions – robust, tailored, and effective – by connecting the potential of AI directly to your unique business challenges and goals. It’s about turning abstract concepts into tangible value, guided by a legacy of pragmatic wisdom.
+          </Paragraph>
         </div>
-        
-        {/* Contact CTA */}
-        {/* Replace Box with div and Tailwind classes */}
-        <div className="mt-10 pt-6 border-t border-gray-200 text-center">
-          {/* Replace Typography with p and Tailwind classes */}
-          <p className="text-2xl font-semibold mb-4">
-            Ready to Transform Complexity into Confidence?
-          </p>
-          {/* Replace Button/Link with a tag styled as button */}
-          <a 
-            href="/contact"
-            className="inline-block px-8 py-3 bg-indigo-600 text-white text-lg font-medium rounded-md shadow-md hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition duration-150 ease-in-out mt-2"
-          >
-            Discuss Your AI Strategy
-          </a>
+      </SectionContainer>
+
+      {/* --- Core Philosophy Section --- */}
+      <SectionContainer className="bg-muted/30 dark:bg-muted/10">
+        <Heading level={2} className="text-center mb-12 font-poppins font-semibold text-3xl text-neutral-900 dark:text-neutral-100">
+          My Approach: Clarity, Capability, Confidence
+        </Heading>
+        <div className="grid md:grid-cols-3 gap-10 max-w-6xl mx-auto">
+          {/* Strategy Block */}
+          <div className="text-center">
+            <PlaceholderIcon char="S" />
+            <Heading level={3} className="text-xl font-medium mb-2 text-neutral-900 dark:text-neutral-100">
+              Strategic Clarity
+            </Heading>
+            <Paragraph className="text-neutral-800 dark:text-neutral-200">
+              Together, we&apos;ll cut through the hype, defining an AI strategy precisely aligned with your unique business goals and context.
+            </Paragraph>
+          </div>
+          {/* Engineering Block */}
+          <div className="text-center">
+            <PlaceholderIcon char="E" />
+            <Heading level={3} className="text-xl font-medium mb-2 text-neutral-900 dark:text-neutral-100">
+              Pragmatic Engineering
+            </Heading>
+            <Paragraph className="text-neutral-800 dark:text-neutral-200">
+              We focus on building reliable, high-impact AI solutions (like RAG, LLM integrations, and Knowledge Graphs) that deliver tangible results, not just experiments.
+            </Paragraph>
+          </div>
+          {/* Education Block */}
+          <div className="text-center">
+            <PlaceholderIcon char="Ed" /> 
+            <Heading level={3} className="text-xl font-medium mb-2 text-neutral-900 dark:text-neutral-100">
+              Empowering Education
+            </Heading>
+            <Paragraph className="text-neutral-800 dark:text-neutral-200">
+              I believe in building your team&apos;s internal capabilities, transferring knowledge effectively so you can confidently own and scale your AI initiatives.
+            </Paragraph>
+          </div>
         </div>
-      </div>
-    </PageContainer>
+      </SectionContainer>
+
+      {/* --- Unique Blend Section --- */}
+      <SectionContainer>
+        <Heading level={2} className="text-center mb-6 font-poppins font-semibold text-3xl text-neutral-900 dark:text-neutral-100">
+          Bridging Worlds: Engineer, Educator, AI Strategist
+        </Heading>
+        <Paragraph className="max-w-3xl mx-auto text-center text-lg text-neutral-800 dark:text-neutral-200">
+          With <span className="text-foreground dark:text-foreground-dark font-medium">30 years in engineering leadership</span> and <span className="text-foreground dark:text-foreground-dark font-medium">20 years teaching at the university level</span>, I bring a unique perspective. I don&apos;t just understand the technology; I know how to translate it into practical business strategy and effectively teach your team how to leverage it. This blend is key to making complex AI accessible and impactful for you.
+        </Paragraph>
+      </SectionContainer>
+
+      {/* --- Brand Break Section --- */}
+      <SectionContainer className="py-10">
+        <Link href="/" className="flex justify-center">
+          <Image
+            src="/logo.png"
+            alt="TheoForge Logo"
+            width={100} // Smaller logo as a divider
+            height={27} // Maintain aspect ratio (approx 120:32 -> 100:26.6)
+            className="dark:invert opacity-80 hover:opacity-100 transition-opacity"
+          />
+        </Link>
+      </SectionContainer>
+
+      {/* --- CTA Section --- */}
+      <SectionContainer className="text-center bg-muted/30 dark:bg-muted/10">
+        <Heading level={2} className="mb-4 text-3xl font-poppins font-semibold text-neutral-900 dark:text-neutral-100">
+          Ready to Build Your AI Confidence?
+        </Heading>
+        <Paragraph className="text-lg max-w-2xl mx-auto text-neutral-800 dark:text-neutral-200 mb-6">
+          Let&apos;s discuss how TheoForge can help you navigate the AI landscape and achieve your strategic goals.
+        </Paragraph>
+        <Button href="/contact" variant="primary" size="lg">
+          Let&apos;s Chart Your AI Course
+        </Button>
+      </SectionContainer>
+    </main>
   );
 };
 

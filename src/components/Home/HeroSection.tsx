@@ -3,6 +3,8 @@
 import React from 'react';
 import Link from 'next/link';
 import Button from '../Common/Button'; // Import the Button component
+import Heading from '../Common/Heading'; // Import the Heading component
+import Paragraph from '../Common/Paragraph'; // Import the Paragraph component
 
 const HeroSection = () => (
   // Replaced outer Box with section, added Tailwind classes
@@ -19,25 +21,25 @@ const HeroSection = () => (
       <div 
         className="flex flex-col items-start text-left p-4 sm:p-6"
       >
-        {/* Replaced Typography H1 with h1, added Tailwind classes */}
-        <h1
-          className="font-bold text-white text-3xl sm:text-4xl md:text-5xl mb-6" // Adjusted font sizes and margin
+        {/* Use Heading component, map text-5xl to level 1 based on scale */}
+        <Heading
+          level={1} // H1 equivalent
+          className="font-semibold text-white text-3xl sm:text-4xl md:text-5xl mb-6" // Added font-semibold, keep responsive sizes for hero, override default color
         >
           Transform AI Complexity into Strategic Confidence
-        </h1>
-        {/* Replaced Typography H5 with p, added Tailwind classes */}
-        <p
-          className="text-white text-base sm:text-lg md:text-xl mb-8" // Adjusted font sizes and margin
+        </Heading>
+        {/* Use Paragraph component, variant defaults to body1 */}
+        <Paragraph
+          className="text-white text-lg mb-8" // Added gold accents
         >
-          Partner with Theoforge to navigate the AI landscape. Leverage integrated expertise in strategy, engineering, and education to build reliable, high-impact AI solutions that drive measurable business value.
-        </p>
-        {/* Use Button component */}
+          Partner with Theoforge to navigate the AI landscape. Leverage integrated expertise in strategy, engineering, and education to build reliable, <span className="text-[#B8860B] font-medium">high-impact AI solutions</span> that drive <span className="text-[#B8860B] font-medium">measurable business value</span>. Listen to our weekly podcast and join our Discord community to learn more.
+        </Paragraph>
+        {/* Use Button component with Secondary OUTLINE variant */}
         <Button 
+          variant="outline"
           href="/contact" 
-          variant="primary" // Or a custom variant if needed, but primary seems suitable
           size="lg" 
-          // Keeping the orange accent style
-          className="mt-4 bg-orange-500 hover:bg-orange-600 focus:ring-orange-400 focus:ring-offset-black/50 border-transparent"
+          className="mt-4 border-[#B8860B] text-white hover:bg-[#B8860B]/10" // Gold border, white text
         >
           Begin Your AI Transformation
         </Button>

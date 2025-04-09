@@ -1,6 +1,7 @@
 'use client';
 
 import React from 'react';
+import { twMerge } from 'tailwind-merge';
 
 // Helper function to add alpha - needed for consistency with graph link colors
 const addAlpha = (color: string, opacity: number): string => {
@@ -12,7 +13,28 @@ const addAlpha = (color: string, opacity: number): string => {
   return color + _opacity.toString(16).toUpperCase().padStart(2, '0');
 };
 
-const GraphLegend: React.FC = () => {
+// Helper function to calculate hue from era name (or other string)
+const getHueFromString = (str: string): number => {
+  let hash = 0;
+  for (let i = 0; i < str.length; i++) {
+    hash = Math.imul(31, hash) + str.charCodeAt(i) | 0;
+  }
+  return (hash % 256) / 256;
+};
+
+interface GraphLegendProps {
+  availableEras: string[];
+  activeEras: string[];
+  onToggleEra: (era: string) => void;
+  className?: string; // Allow passing additional classes
+}
+
+const GraphLegend: React.FC<GraphLegendProps> = ({
+  availableEras,
+  activeEras,
+  onToggleEra,
+  className, // Destructure className
+}) => {
   const linkOpacity = 0.6; // Consistent opacity for legend lines
 
   // Use hex codes matching EnterprisePhilosopherGraph
@@ -29,16 +51,20 @@ const GraphLegend: React.FC = () => {
   ];
 
   return (
-    <div 
-      className="p-4 absolute bottom-4 right-4 z-10 max-w-[200px] bg-white/90 rounded-lg shadow-lg border border-gray-200"
+    <div
+      // Use twMerge to combine base styles with passed className
+      className={twMerge(
+        'p-4 bg-white/90 dark:bg-neutral-800/90 rounded-lg shadow-lg border border-neutral-200 dark:border-neutral-700',
+        className // Apply additional classes
+      )}
     >
-      <h6 className="text-sm font-semibold mb-2">Legend</h6>
-      
+      <h6 className="text-sm font-semibold mb-2 text-text-primary dark:text-dark-text-primary">Legend</h6>
+
       <p className="text-xs font-bold mb-1 text-gray-700">Node States</p>
       {nodeStates.map((state) => (
         <div key={state.name} className="flex items-center mb-1">
           <div className="mr-2 flex items-center">
-            <div 
+            <div
               className="w-3 h-3 rounded-full border border-gray-400"
               style={{ backgroundColor: state.color }}
             ></div>
@@ -53,7 +79,7 @@ const GraphLegend: React.FC = () => {
       {relationshipTypes.map((rel) => (
         <div key={rel.name} className="flex items-center mb-1">
           <div className="mr-2 flex items-center">
-            <div 
+            <div
               className="w-4 h-1"
               style={{ backgroundColor: rel.color }}
             ></div>
@@ -61,6 +87,39 @@ const GraphLegend: React.FC = () => {
           <span className="text-xs text-gray-600">{rel.name}</span>
         </div>
       ))}
+
+      {/* Era Filters - Only show if availableEras has items */}
+      {availableEras.length > 0 && (
+        <>
+          <hr className="my-2 border-border-light dark:border-border-dark" />
+          <p className="text-xs font-bold mb-1 text-text-secondary dark:text-dark-text-secondary">Filter by Era</p>
+          <div className="flex flex-wrap gap-2">
+            {availableEras.map((era) => {
+              const isActive = activeEras.includes(era);
+              const hue = getHueFromString(era); // Get a consistent hue for the era
+              const bgColor = isActive ? `hsl(${hue}, 60%, 60%)` : `hsl(${hue}, 40%, 85%)`;
+              const textColor = isActive ? '#ffffff' : `hsl(${hue}, 50%, 30%)`;
+              const borderColor = isActive ? `hsl(${hue}, 60%, 50%)` : `hsl(${hue}, 40%, 75%)`;
+
+              return (
+                <button
+                  key={era}
+                  onClick={() => onToggleEra(era)}
+                  className={`px-3 py-1 rounded-full text-xs font-medium border transition-colors duration-150`}
+                  style={{
+                    backgroundColor: bgColor,
+                    color: textColor,
+                    borderColor: borderColor,
+                  }}
+                  title={`Toggle ${era} filter`}
+                >
+                  {era}
+                </button>
+              );
+            })}
+          </div>
+        </>
+      )}
     </div>
   );
 };

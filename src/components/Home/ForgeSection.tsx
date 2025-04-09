@@ -2,12 +2,14 @@
 
 import React from 'react';
 import NextLink from 'next/link';
-import { forgeProjects, ForgeProject } from '@/data/forgeProjects';
+import { ForgeProjectData } from '@/lib/forgeUtils';
+import Image from 'next/image';
 import JdenticonIcon from '../Common/JdenticonIcon';
 import SectionContainer from '../Layout/SectionContainer';
 import SectionHeading from '../Common/SectionHeading';
-import BaseCard from '../Common/BaseCard';
+import ForgeProjectCard from '../Forge/ForgeProjectCard'; // Import the new specific card
 import Button from '../Common/Button';
+import Paragraph from '../Common/Paragraph'; // Import Paragraph
 
 const GitHubIcon = () => (
   <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" fill="currentColor" className="w-4 h-4 mr-1.5">
@@ -21,90 +23,38 @@ const ArrowRightIcon = () => (
   </svg>
 );
 
-const ForgeSection: React.FC = () => {
-  const nonFeatured = forgeProjects.filter(p => !p.featured);
-  const displayProjects = nonFeatured.length >= 3 ? nonFeatured.slice(0, 3) : forgeProjects.slice(0, 3);
+interface ForgeSectionProps {
+  projects: ForgeProjectData[];
+}
+
+const ForgeSection: React.FC<ForgeSectionProps> = ({ projects }) => {
+  const allProjects = projects;
+  const nonFeatured = allProjects.filter((p: ForgeProjectData) => !p.featured);
+  const displayProjects = nonFeatured.length >= 3 ? nonFeatured.slice(0, 3) : allProjects.slice(0, 3);
 
   return (
-    <SectionContainer className="bg-white dark:bg-gray-900">
+    <SectionContainer className="bg-background dark:bg-background"> {/* Use theme background */}
       <SectionHeading className="md:text-5xl mb-2">
         From the Forge
       </SectionHeading>
-      <p className="text-lg text-gray-600 dark:text-gray-400 text-center mb-12 max-w-3xl mx-auto">
-        Explore recent experiments, tools, and creations forged by the network.
-      </p>
+      <Paragraph 
+        variant="body1" 
+        className="mt-4 mb-12 leading-8 text-muted-foreground dark:text-muted-foreground-dark text-center max-w-3xl mx-auto"
+      >
+        Welcome to the Forge, our experimental playground. Here, we showcase innovative proof-of-concept projects demonstrating the potential of emerging AI technologies like Knowledge Graphs, Multi-Agent Systems (MCP), RAG, and advanced character agents.
+      </Paragraph>
 
-      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-8">
-        {displayProjects.map((project: ForgeProject) => (
-          <BaseCard key={project.id} className="p-6">
-            <div className="mb-3">
-              <div className="leading-none mb-2">
-                <JdenticonIcon value={project.title} size={40} />
-              </div>
-              <h3 className="text-xl font-semibold text-gray-900 dark:text-white">
-                {project.title}
-              </h3>
-            </div>
-            <p className="text-sm text-gray-600 dark:text-gray-400 mb-4 flex-grow">
-              {project.description}
-            </p>
-            {project.tags && project.tags.length > 0 && (
-              <div className="flex flex-wrap gap-1 mt-2 mb-4">
-                {project.tags.map((tag) => (
-                  <span
-                    key={tag}
-                    className="inline-block px-2 py-0.5 text-xs font-medium bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 rounded-full"
-                  >
-                    {tag}
-                  </span>
-                ))}
-              </div>
-            )}
-            <div className="mt-auto flex flex-wrap gap-2 items-center">
-              <Button 
-                href={project.githubUrl} 
-                variant="secondary" 
-                size="sm" 
-                leftIcon={<GitHubIcon />} 
-                target="_blank" 
-                rel="noopener noreferrer"
-                className="border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 bg-white dark:bg-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600 focus:ring-indigo-500"
-              >
-                GitHub
-              </Button>
-              {project.liveUrl && (
-                <Button 
-                  href={project.liveUrl} 
-                  variant="link" 
-                  size="sm" 
-                  target="_blank" 
-                  rel="noopener noreferrer"
-                >
-                  Live Demo
-                </Button>
-              )}
-              {project.tryUrl && (
-                <NextLink href={project.tryUrl} legacyBehavior passHref>
-                  <Button 
-                    variant="primary" 
-                    size="sm"
-                  >
-                    Try It Out
-                  </Button>
-                </NextLink>
-              )}
-            </div>
-          </BaseCard>
+      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-8 items-stretch">
+        {displayProjects.map((project: ForgeProjectData) => (
+          <ForgeProjectCard key={project.id} project={project} />
         ))}
       </div>
 
-      {forgeProjects.length > 3 && (
-        <div className="text-center mt-12">
-          <NextLink href="/forge" legacyBehavior passHref>
-            <Button variant="outline" size="lg" rightIcon={<ArrowRightIcon />}>
-              Explore the Forge
-            </Button>
-          </NextLink>
+      {allProjects.length > 3 && (
+        <div className="mt-12 text-center">
+          <Button href="/forge" variant="outline" size="lg">
+            Explore All Projects
+          </Button>
         </div>
       )}
     </SectionContainer>

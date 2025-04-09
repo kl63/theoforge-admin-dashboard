@@ -5,10 +5,8 @@ import { getPostData, getAllPostSlugs, getPostsByTag } from '@/lib/posts';
 import { PostData } from '@/types/post';
 import MarkdownRenderer from '@/components/Common/MarkdownRenderer';
 import Image from 'next/image';
-import PodcastMetadata from '@/components/Blog/PodcastMetadata';
-import SocialShare from '@/components/Blog/SocialShare';
-import NewsletterSignup from '@/components/Blog/NewsletterSignup';
-import LinkedInPreview from '@/components/Blog/LinkedInPreview';
+// import PodcastMetadata from '@/components/Blog/PodcastMetadata'; // Commented out - Needs relocation/recreation
+// import SocialShare from '@/components/Blog/SocialShare';       // Commented out - Needs relocation/recreation
 import PageContainer from '@/components/Layout/PageContainer';
 
 // Inline SVG Icons
@@ -104,7 +102,7 @@ export default async function BlogPostPage({ params }: { params: Promise<{ slug:
       <div>
         <div className="mb-6">
           <Link
-            href="/blog"
+            href="/insights"
             className="inline-flex items-center text-sm font-medium text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-300 border border-gray-300 dark:border-gray-600 rounded-full px-4 py-2 transition-colors duration-150 hover:bg-gray-100 dark:hover:bg-gray-700"
           >
             <ArrowBackSvg />
@@ -138,7 +136,7 @@ export default async function BlogPostPage({ params }: { params: Promise<{ slug:
                     {post.tags.map((tag) => (
                       <Link
                         key={tag}
-                        href={`/blog?tag=${encodeURIComponent(tag)}`}
+                        href={`/insights?tag=${encodeURIComponent(tag)}`}
                         className="inline-block px-2.5 py-0.5 rounded text-xs font-medium border border-gray-300 dark:border-gray-600 text-gray-600 dark:text-gray-300 bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors"
                       >
                         {tag}
@@ -171,12 +169,12 @@ export default async function BlogPostPage({ params }: { params: Promise<{ slug:
                     </div>
                   </div>
                 )}
-                <SocialShare title={post.title} url={`https://theoforge.com/blog/${post.slug}`} description={post.excerpt} hashtags={post.tags} />
+                {/* <SocialShare title={post.title} url={`https://theoforge.com/insights/${post.slug}`} description={post.excerpt} hashtags={post.tags} /> */}
               </div>
             </div>
 
             {post.isPodcast && (
-              <PodcastMetadata episodeNumber={post.podcastEpisodeNumber} duration={post.podcastDuration} releaseDate={post.date} host={post.podcastHost} guest={post.podcastGuest} />
+              <div className="bg-muted p-4 rounded border border-border my-6">Podcast Metadata Placeholder (Component commented out)</div>
             )}
 
             <hr className="my-8 border-gray-200 dark:border-gray-700" />
@@ -194,7 +192,7 @@ export default async function BlogPostPage({ params }: { params: Promise<{ slug:
                   {post.tags?.map((tag) => (
                     <Link
                       key={tag}
-                      href={`/blog?tag=${encodeURIComponent(tag)}`}
+                      href={`/insights?tag=${encodeURIComponent(tag)}`}
                       className="inline-block px-2.5 py-0.5 rounded text-xs font-medium border border-gray-300 dark:border-gray-600 text-gray-600 dark:text-gray-300 bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors"
                     >
                       {tag}
@@ -206,7 +204,7 @@ export default async function BlogPostPage({ params }: { params: Promise<{ slug:
                 <h4 className="text-sm font-medium mb-2 text-gray-700 dark:text-gray-300">
                   Share This Article
                 </h4>
-                <SocialShare title={post.title} url={`https://theoforge.com/blog/${post.slug}`} description={post.excerpt} hashtags={post.tags} />
+                {/* <SocialShare title={post.title} url={`https://theoforge.com/insights/${post.slug}`} description={post.excerpt} hashtags={post.tags} /> */}
               </div>
             </div>
           </div>
@@ -217,7 +215,7 @@ export default async function BlogPostPage({ params }: { params: Promise<{ slug:
             <h3 className="text-2xl font-semibold mb-4 text-gray-900 dark:text-gray-100">Related Articles</h3>
             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
               {relatedPosts.map((relatedPost) => (
-                <Link key={relatedPost.slug} href={`/blog/${relatedPost.slug}`} passHref legacyBehavior>
+                <Link key={relatedPost.slug} href={`/insights/${relatedPost.slug}`} passHref legacyBehavior>
                   <a className="block rounded-lg overflow-hidden border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 text-decoration-none h-full transition shadow-sm hover:shadow-md hover:border-blue-500 dark:hover:border-blue-500">
                     {relatedPost.image && (
                       <div className="relative w-full h-40 bg-gray-100 dark:bg-gray-700">
@@ -241,12 +239,6 @@ export default async function BlogPostPage({ params }: { params: Promise<{ slug:
             </div>
           </div>
         )}
-
-        <div className="mt-16">
-          <LinkedInPreview post={post} baseUrl="https://theoforge.com" />
-        </div>
-
-        <NewsletterSignup title="Get the Latest AI Insights" subtitle="Subscribe to receive our weekly newsletter featuring expert insights, podcast episodes, and exclusive resources for enterprise leaders." />
       </div>
     </PageContainer>
   );

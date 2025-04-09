@@ -2,6 +2,7 @@
 
 import React, { useState } from 'react';
 import PageContainer from '@/components/Layout/PageContainer';
+import Button from '@/components/Common/Button'; // <-- Import Button
 
 // Rebuilt Contact Page Component
 const ContactPage: React.FC = () => {
@@ -74,7 +75,6 @@ const ContactPage: React.FC = () => {
       <PageContainer 
         title={pageTitle} 
         subtitle={pageSubtitle} 
-        className="py-8 md:py-16 bg-white dark:bg-gray-900"
       >
         {/* Form Section */}
         <form
@@ -85,7 +85,7 @@ const ContactPage: React.FC = () => {
           <div className="flex flex-col space-y-6"> 
             <input
               required
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
+              className="font-poppins w-full px-3 py-2 border border-border-light dark:border-border-dark rounded-md focus:outline-none focus:ring-1 focus:ring-primary focus:border-primary bg-background-input-light dark:bg-background-input-dark text-text-primary dark:text-dark-text-primary placeholder-text-secondary dark:placeholder-dark-text-secondary transition-colors duration-150 ease-in-out"
               id="name"
               placeholder="Full Name"
               name="name"
@@ -93,7 +93,7 @@ const ContactPage: React.FC = () => {
             />
             <input
               required
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
+              className="font-poppins w-full px-3 py-2 border border-border-light dark:border-border-dark rounded-md focus:outline-none focus:ring-1 focus:ring-primary focus:border-primary bg-background-input-light dark:bg-background-input-dark text-text-primary dark:text-dark-text-primary placeholder-text-secondary dark:placeholder-dark-text-secondary transition-colors duration-150 ease-in-out"
               id="email"
               placeholder="Email Address"
               name="email"
@@ -102,52 +102,55 @@ const ContactPage: React.FC = () => {
             />
             <textarea
               required
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
+              className="font-poppins w-full px-3 py-2 border border-border-light dark:border-border-dark rounded-md focus:outline-none focus:ring-1 focus:ring-primary focus:border-primary bg-background-input-light dark:bg-background-input-dark text-text-primary dark:text-dark-text-primary placeholder-text-secondary dark:placeholder-dark-text-secondary transition-colors duration-150 ease-in-out"
               id="message"
               placeholder="Your Message"
               name="message"
               rows={6}
             />
-            <button
+            {/* Use the Button component, standardize color to primary */}
+            <Button
               type="submit"
-              className="w-full inline-flex justify-center items-center px-6 py-3 border border-transparent text-base font-medium rounded-md shadow-sm text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 disabled:opacity-50 disabled:cursor-not-allowed"
-              disabled={isSubmitting}
+              variant="primary" 
+              size="lg" 
+              className="w-full" // Keep full width
+              disabled={isSubmitting} 
             >
               {isSubmitting ? 'Sending...' : 'Send Message'}
-            </button>
+            </Button>
           </div>
 
           {/* Submission Feedback */}
           {submitStatus === 'success' && (
-            <div className="mt-6 p-4 rounded-md bg-green-50 text-green-700">
+            <div className="font-poppins mt-6 p-4 rounded-md bg-success-light dark:bg-success-dark text-success-dark dark:text-success-light">
               {submitMessage}
             </div>
           )}
           {submitStatus === 'error' && (
-            <div className="mt-6 p-4 rounded-md bg-red-50 text-red-700">
+            <div className="font-poppins mt-6 p-4 rounded-md bg-error-light dark:bg-error-dark text-error-dark dark:text-error-light">
               {submitMessage}
             </div>
           )}
         </form>
 
         {/* Divider */}
-        <hr className="my-12 md:my-16 border-gray-200 dark:border-gray-700" />
+        <hr className="my-12 md:my-16 border-border-light dark:border-border-dark" />
 
         {/* Contact Info Section */}
         <div className="text-center"> 
-          <h2 className="text-2xl font-semibold mb-6">
+          <h2 className="font-poppins text-2xl font-semibold mb-6 text-text-primary dark:text-dark-text-primary">
             Contact Information
           </h2>
           <div className="flex flex-col space-y-3 items-center">
             <a
               href="mailto:info@yourcompany.com" 
-              className="flex items-center text-gray-700 hover:text-indigo-600"
+              className="font-poppins flex items-center text-text-secondary dark:text-dark-text-secondary hover:text-primary dark:hover:text-dark-primary transition-colors duration-150 ease-in-out"
             >
               <span className="ml-2">info@yourcompany.com</span> 
             </a>
             <a
               href="tel:+1234567890" 
-              className="flex items-center text-gray-700 hover:text-indigo-600"
+              className="font-poppins flex items-center text-text-secondary dark:text-dark-text-secondary hover:text-primary dark:hover:text-dark-primary transition-colors duration-150 ease-in-out"
             >
               <span className="ml-2">(123) 456-7890</span> 
             </a>

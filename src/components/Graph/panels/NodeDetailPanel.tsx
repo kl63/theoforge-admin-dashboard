@@ -2,7 +2,7 @@
 
 import React from 'react';
 // import Link from 'next/link'; // Commented out unused import
-import { GraphNode } from '../../../types/graph';
+import { GraphNode, GraphLink } from '../../../types/graph';
 
 const CloseIcon = () => (
   <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-5 h-5">
@@ -39,17 +39,28 @@ export interface NodeDetailPanelProps {
   /**
    * All nodes for connection lookup
    */
-  allNodes?: GraphNode[];
+  allNodes: GraphNode[];
   
   /**
    * All links for connection lookup
    */
-  links?: Array<{ source: string | number; target: string | number; type?: string }>;
+  links: GraphLink[];
   
   /**
    * Top score for normalization
    */
   topScore?: number;
+  
+  /**
+   * Optional theme colors
+   */
+  themeColors?: {
+    primary: string;
+    secondary: string;
+    muted: string;
+    lightMuted: string;
+    background: string;
+  };
 }
 
 function formatNumber(num: number | undefined): string {
@@ -65,9 +76,10 @@ export function NodeDetailPanel({
   onClose,
   position = 'right',
   width = 350,
-  allNodes = [],
-  links = [],
-  topScore = 1
+  allNodes,
+  links,
+  topScore = 0,
+  themeColors
 }: NodeDetailPanelProps) {
   interface Connection {
     node: GraphNode;
@@ -75,7 +87,8 @@ export function NodeDetailPanel({
   }
 
   const connections: Connection[] = React.useMemo(() => {
-    if (!node || !links || !allNodes) {
+    // Guard against missing data
+    if (!node || links.length === 0 || allNodes.length === 0) {
       console.log("Node, links, or allNodes not available for connections calculation.");
       return [];
     }
@@ -95,7 +108,7 @@ export function NodeDetailPanel({
   }, [node, links, allNodes]);
 
   const influenceProgress = node?.influenceScore !== undefined 
-                            ? Math.min(100, Math.max(0, (node.influenceScore / (topScore || 1)) * 100))
+                            ? Math.min(100, Math.max(0, (node.influenceScore / (topScore > 0 ? topScore : 1)) * 100)) // Avoid division by zero/NaN
                             : 0;
 
   return (
@@ -216,7 +229,7 @@ export function NodeDetailPanel({
 
         {connections.length > 0 && (
           <div className="space-y-1">
-            <h3 className="text-xs font-semibold uppercase tracking-wider text-gray-500 dark:text-gray-400">Connections</h3>
+            <h3 className="text-xs font-semibold uppercase tracking-wider text-gray-500 dark:text-gray-400" style={{ color: themeColors?.primary || '#000' }}>Connections</h3>
             <ul className="max-h-48 overflow-y-auto -mx-1">
               {connections.map((conn, index) => (
                 <li 

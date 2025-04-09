@@ -1,13 +1,16 @@
 'use client';
 
-import React, { useState, useEffect, useRef, useMemo } from 'react';
-import { PhilosopherData, GraphNode } from '@/types/graph';
+import React, { useState, useEffect, useRef, useMemo, useCallback } from 'react';
+import { PhilosopherData, GraphNode, GraphLink } from '@/types/graph';
 import { NodeObject, ForceGraphMethods } from 'react-force-graph-2d';
 import dynamic from 'next/dynamic';
-import GraphLegend from '@/components/Graph/GraphLegend'; // Import the GraphLegend component
 import SearchBar from '@/components/Graph/controls/SearchBar';
+import GraphLegend from '@/components/Graph/GraphLegend'; 
 import AnalyticsModal from '@/components/Graph/analytics/AnalyticsModal';
-import { NodeDetailPanel } from '@/components/Graph/panels/NodeDetailPanel'; // Use named import
+import { NodeDetailPanel } from '@/components/Graph/panels/NodeDetailPanel'; 
+import PageContainer from '@/components/Layout/PageContainer'; 
+import resolveConfig from 'tailwindcss/resolveConfig'; 
+import tailwindConfig from '../../../../tailwind.config.js'; 
 
 // Dynamically import the graph component to avoid SSR issues
 const DynamicPhilosopherGraph = dynamic(
@@ -16,25 +19,50 @@ const DynamicPhilosopherGraph = dynamic(
 );
 
 // Define the page component
-export default function PhilosopherGraphPage() { // Use default export function
+export default function PhilosopherGraphPage() { 
+  // --- Theme Colors (Resolved from Tailwind Config - MUST BE TOP LEVEL) ---
+  const fullConfig = resolveConfig(tailwindConfig);
+  const themeColors = useMemo(() => {
+    const getColor = (path: string[], fallback: string): string => {
+      let current: any = fullConfig.theme?.colors;
+      for (const key of path) {
+        if (!current || typeof current !== 'object' || !(key in current)) {
+          return fallback;
+        }
+        current = current[key];
+      }
+      return typeof current === 'string' ? current : fallback;
+    };
+
+    return {
+      primary: getColor(['primary', '600'], '#2563EB'), // blue-600
+      secondary: getColor(['secondary'], '#B8860B'), // Muted Gold
+      muted: getColor(['gray', '500'], '#6B7280'), // gray-500
+      lightMuted: getColor(['gray', '300'], '#D1D5DB'), // gray-300
+      background: getColor(['background'], '#FFFFFF') // background
+    };
+  }, [fullConfig]); // Dependency: fullConfig (though it rarely changes)
+
   // Theme and dimensions
-  const [dimensions, setDimensions] = useState({ width: 1200, height: 800 }); // Initialize with defaults
-  
+  // REMOVED state for fixed dimensions - will use relative sizing
+
   // Graph data state
   const [graphData, setGraphData] = useState<PhilosopherData>({ nodes: [], links: [] });
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
   
   // UI state
-  const [showAnalytics, setShowAnalytics] = useState<boolean>(false);
+  const [showAnalytics, setShowAnalytics] = useState(false);
   const [physicsEnabled, setPhysicsEnabled] = useState<boolean>(true);
-  // const [zoomLevel, setZoomLevel] = useState<number>(1); // Commented out unused state
+  const [selectedLayout, setSelectedLayout] = useState('force'); // e.g., 'force', 'radial'
   
   // Filtering state
   const [activeEras, setActiveEras] = useState<string[]>([]);
   const [searchQuery, setSearchQuery] = useState<string>('');
-  const [selectedNode, setSelectedNode] = useState<GraphNode | null>(null); // Add state for selected node
-  const [availableEras, setAvailableEras] = useState<string[]>([]); // State for dynamic eras
+  const [selectedNode, setSelectedNode] = useState<GraphNode | null>(null); 
+  
+  // Ref for the graph container div to potentially measure later if needed
+  const graphContainerRef = useRef<HTMLDivElement>(null);
   
   // Create a reference to the graph component
   const graphRef = useRef<ForceGraphMethods | null>(null);
@@ -74,7 +102,7 @@ export default function PhilosopherGraphPage() { // Use default export function
 
       // Reset the view after refresh if needed
       if (isRefresh && graphRef.current && data.nodes.length > 0) {
-        setTimeout(() => { // Check graphRef again inside timeout
+        setTimeout(() => { 
           if (graphRef.current) {
             try {
               graphRef.current.zoomToFit(400);
@@ -97,96 +125,121 @@ export default function PhilosopherGraphPage() { // Use default export function
 
   // Fetch data on initial load
   useEffect(() => {
-    loadGraphData(); // Call the reusable function
-  }, []); // Empty dependency array ensures this runs only once on mount
-  
-  // Effect to extract available eras from data
-  useEffect(() => {
-    if (graphData && graphData.nodes.length > 0) {
-      const erasInData = new Set(graphData.nodes
-        .map(node => node.era)
-        .filter((era): era is string => typeof era === 'string' && era.trim() !== '') // Filter out empty/non-string eras
-      );
-      // Add " Era" suffix and sort
-      const formattedEras = Array.from(erasInData)
-        .map(era => `${era} Era`)
-        .sort(); 
-      setAvailableEras(formattedEras);
-      console.log("Available eras updated:", formattedEras);
-    }
-  }, [graphData]); // Re-run when graphData changes
-  
-  // Handle window resize and set initial dimensions
-  useEffect(() => {
-    const handleResize = () => {
-      setDimensions({
-        width: window.innerWidth,
-        height: window.innerHeight,
-      });
+    const fetchData = async () => {
+      // Reset states before fetching
+      setLoading(true);
+      setError(null);
+      // Don't reset graphData or activeEras here, let filter handle empty state
+
+      try {
+        const response = await fetch('/data/philosophers.json');
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        const data: PhilosopherData = await response.json();
+
+        // Set data FIRST
+        setGraphData(data);
+
+        // THEN set active eras based on the *fetched* data
+        const allEras = Array.from(new Set(data.nodes.map(node => node.era).filter(Boolean)));
+        setActiveEras(allEras as string[]);
+
+      } catch (e) {
+        console.error("Failed to fetch philosopher data:", e);
+        setError(e instanceof Error ? e.message : 'Failed to load data');
+        // Reset data/eras on error
+        setGraphData({ nodes: [], links: [] });
+        setActiveEras([]);
+      } finally {
+        setLoading(false);
+      }
     };
 
-    handleResize(); // Call once initially to set dimensions
-    
-    window.addEventListener('resize', handleResize);
-    return () => window.removeEventListener('resize', handleResize);
+    fetchData();
+  }, []); // Empty dependency array ensures this runs once on mount
+
+  // Update Graph Dimensions on Container Resize
+  useEffect(() => {
+    if (typeof window === 'undefined' || !window.ResizeObserver) {
+      console.warn('ResizeObserver not supported or not available in this environment.');
+      // Optionally set default dimensions or handle the lack of observer
+      setGraphDimensions({ width: 600, height: 400 }); // Example default
+      return;
+    }
+
+    const resizeObserver = new window.ResizeObserver((entries: ResizeObserverEntry[]) => {
+      if (entries[0]) {
+        const { width, height } = entries[0].contentRect;
+        setGraphDimensions({ width, height });
+      }
+    });
+
+    if (graphContainerRef.current) {
+      resizeObserver.observe(graphContainerRef.current);
+    }
+
+    return () => {
+      resizeObserver.disconnect();
+    };
   }, []);
+
+  // Calculate available eras *only* when graphData.nodes changes and has items
+  const availableEras = useMemo(() => {
+    if (!graphData || graphData.nodes.length === 0) {
+      return [];
+    }
+    const erasInData = new Set(
+      graphData.nodes
+        .map(node => node.era)
+        .filter((era): era is string => typeof era === 'string' && era.trim() !== '')
+    );
+    return Array.from(erasInData).sort();
+  }, [graphData.nodes]); // Depend only on nodes array
 
   // Filter graph data based on active eras and search query
   const filteredData = useMemo(() => {
-    if (!graphData) return { nodes: [], links: [] };
-    
-    // If no data yet, return empty structure
-    if (!graphData.nodes || graphData.nodes.length === 0) {
-      console.log("No graph data available for filtering");
+    // Check if graphData or nodes/links are available
+    if (!graphData || !graphData.nodes || !graphData.links) {
+      console.log("Filtering: No graph data available yet.");
+      return { nodes: [], links: [] };
     }
-    
-    console.log(`Filtering data with ${activeEras.length} active eras and search: "${searchQuery}"`);
-    
-    // If no active filters, return all data
-    if (activeEras.length === 0 && searchQuery === '') {
-      console.log(`Returning all data: ${graphData.nodes.length} nodes and ${graphData.links.length} links`);
-      return graphData;
+
+    const nodesExist = graphData.nodes.length > 0;
+    const erasSelected = activeEras.length > 0;
+    const queryExists = searchQuery.trim() !== '';
+
+    // If no data, return empty
+    if (!nodesExist) {
+      console.log("Filtering: Nodes array is empty.");
+      return { nodes: [], links: [] };
     }
-    
-    // Filter nodes by era and search query
-    const filteredNodes = graphData.nodes.filter(node =>
-      (activeEras.length === 0 || (node.era && activeEras.includes(`${node.era} Era`))) && // Compare with " Era" suffix
-      (searchQuery === '' || (node.name && node.name.toLowerCase().includes(searchQuery.toLowerCase())))
-    );
-    
-    console.log(`Filtered to ${filteredNodes.length} nodes`);
-    
-    // Get set of filtered node IDs for quick lookup
-    const nodeIds = new Set(filteredNodes.map(node => node.id));
-    
-    // Filter links that connect filtered nodes
-    const filteredLinks = graphData.links.filter(link => {
-      // Handle both string and object references
-      let sourceId: string;
-      let targetId: string;
-      
-      if (typeof link.source === 'object' && link.source !== null) {
-        // Cast to NodeObject to access id
-        sourceId = (link.source as NodeObject).id as string;
-      } else {
-        sourceId = link.source as string;
-      }
-      
-      if (typeof link.target === 'object' && link.target !== null) {
-        // Cast to NodeObject to access id
-        targetId = (link.target as NodeObject).id as string;
-      } else {
-        targetId = link.target as string;
-      }
-      
-      return nodeIds.has(sourceId) && nodeIds.has(targetId);
+
+    // Filter nodes
+    const filteredNodes = graphData.nodes.filter(node => {
+      // Era check: if eras are selected, node must match one
+      const eraMatch = activeEras.length === 0 || activeEras.includes(node.era ?? 'Unknown');
+
+      // Search query check: if query exists, node name/desc must match (case-insensitive)
+      const searchMatch = searchQuery === '' || 
+                         (node.name && node.name.toLowerCase().includes(searchQuery.toLowerCase())) || 
+                         (node.description && node.description.toLowerCase().includes(searchQuery.toLowerCase()));
+
+      return eraMatch && searchMatch;
     });
-    
-    console.log(`Filtered to ${filteredLinks.length} links`);
-    
+
+    // Filter links: Keep links where BOTH source and target are in filteredNodes
+    const filteredNodeIds = new Set(filteredNodes.map(n => n.id));
+    const filteredLinks = graphData.links.filter(link => {
+      const sourceId = typeof link.source === 'object' ? (link.source as GraphNode).id : link.source;
+      const targetId = typeof link.target === 'object' ? (link.target as GraphNode).id : link.target;
+      return filteredNodeIds.has(sourceId) && filteredNodeIds.has(targetId);
+    });
+
+    console.log(`Filtering: ${activeEras.length} active eras, query: "${searchQuery}". Result: ${filteredNodes.length} nodes, ${filteredLinks.length} links.`);
     return { nodes: filteredNodes, links: filteredLinks };
   }, [graphData, activeEras, searchQuery]);
-  
+
   // Handle era filter toggle
   const handleEraFilter = (era: string) => {
     console.log(`Toggling era filter for: ${era}`);
@@ -198,9 +251,9 @@ export default function PhilosopherGraphPage() { // Use default export function
       return newEras;
     });
   };
-  
+
   // Handle search query change
-  const handleSearch = (query: string) => {
+  const handleSearchChange = (query: string) => {
     console.log(`Setting search query to: "${query}"`);
     setSearchQuery(query);
   };
@@ -216,163 +269,118 @@ export default function PhilosopherGraphPage() { // Use default export function
     }
   };
 
-  // Handle node click
-  const handleNodeClick = (node: NodeObject) => {
-    // Cast to GraphNode to access properties
-    const graphNode = node as GraphNode;
-    console.log("Node clicked:", graphNode);
-    setSelectedNode(graphNode);
-  };
+  // Handle clicking on a node
+  const handleNodeClick = useCallback((node: NodeObject) => {
+    // The node object from the graph might not have all our custom props initially,
+    // find the full data from our original dataset.
+    const fullNodeData = graphData.nodes.find(n => n.id === node.id);
+    console.log("Node clicked:", node.id, node.name);
+    if (fullNodeData) {
+      setSelectedNode(fullNodeData);
+    } else {
+      console.warn("Clicked node data not found in graphData.nodes");
+      // Fallback to the potentially partial data from the graph event
+      setSelectedNode(node as GraphNode); 
+    }
+  }, [graphData.nodes]); // Depend on graphData.nodes
 
-  // Handle panel close
-  const handleClosePanel = () => {
+  // Handle closing the detail panel
+  const handleClosePanel = useCallback(() => {
+    console.log("Closing panel");
     setSelectedNode(null);
-  };
+  }, []);
 
-  // Function to handle zoom change (passed to GraphControls)
-  // const handleZoomChange = (newZoomLevel: number) => {
-  //   setZoomLevel(newZoomLevel);
-  // };
+  // Placeholder: Handle node hover events - Use NodeObject type
+  const handleNodeHover = useCallback((node: NodeObject | null) => {
+    // console.log('Hovering over:', node?.name); // Access node properties safely
+    // Future: Implement tooltip or other hover effects
+  }, []);
 
-  // Function to toggle physics (passed to GraphControls)
-  const handlePhysicsToggle = () => {
-    setPhysicsEnabled(prev => !prev);
-  };
+  // Define Page Title/Subtitle
+  const pageTitle = "Philosopher Knowledge Graph";
+  const pageSubtitle = "Explore connections between philosophers and their ideas. Click nodes to see details.";
 
-  // Main return JSX
+  // State for graph dimensions
+  const [graphDimensions, setGraphDimensions] = useState({ width: 600, height: 400 });
+
   return (
-    // Replace Box with div and Tailwind classes
-    <div className="relative w-full h-screen overflow-hidden bg-gray-100">
-      {/* Header Area */}
-      {/* Replace Paper with div and Tailwind classes */}
-      <div className="absolute top-4 left-4 right-4 z-10 p-4 bg-white shadow-md rounded-lg flex flex-wrap items-center justify-between gap-4">
-        {/* Replace Typography with h2 and Tailwind classes */}
-        <h2 className="text-2xl font-semibold text-gray-800 flex-shrink-0">Philosopher Network</h2>
-        
-        {/* Search Bar - Pass correct props */}
-        <SearchBar 
-          data={graphData.nodes} // Use graphData.nodes
-          onSelect={handleNodeSelectFromSearch} // Handler for selection
-          onSearchChange={handleSearch} // Handler for input change
-          // Removed initialValue as SearchBar manages its own state
-        />
-
-        {/* Controls and Filters Container */}
-        <div className="flex items-center flex-wrap gap-4">
-          {/* Available Eras Chips */}
-          <div className="flex flex-wrap gap-2">
-            {availableEras.length > 0 ? availableEras.map((era) => (
-              // Replace Chip with button and Tailwind classes (mimicking chip style)
-              <button
-                key={era}
-                onClick={() => handleEraFilter(era)}
-                className={`px-3 py-1 rounded-full text-sm font-medium border ${activeEras.includes(era) 
-                    ? 'bg-indigo-600 text-white border-indigo-600' 
-                    : 'bg-gray-100 text-gray-700 border-gray-300 hover:bg-gray-200'}`}
-              >
-                {era}
-              </button>
-            )) : <span className="text-sm text-gray-500">Loading eras...</span>}
-          </div>
-
-          {/* Refresh Button */}
-          {/* Replace Button with button and Tailwind classes */}
-          <button
-            onClick={() => loadGraphData(true)} // Pass true for refresh
-            className="p-2 rounded-md bg-gray-200 text-gray-700 hover:bg-gray-300 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
-            title="Refresh Data"
-            disabled={loading}
-          >
-            {/* Replace RefreshIcon - using text/emoji for now */}
-            {loading ? '...' : '🔄'}
-          </button>
-
-          {/* Analytics Button */}
-          {/* Replace Button with button and Tailwind classes */}
-          <button
-            onClick={() => setShowAnalytics(true)}
-            className="p-2 rounded-md bg-gray-200 text-gray-700 hover:bg-gray-300 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
-            title="Show Analytics"
-            disabled={loading || !graphData || graphData.nodes.length === 0}
-          >
-            {/* Replace BarChartIcon - using text/emoji for now */}
-            📊
-          </button>
-          
-          {/* Physics Toggle */}
-          {/* Replace FormControlLabel/Switch with label/input and Tailwind */}
-          <label className="flex items-center space-x-2 cursor-pointer">
-            <span className="text-sm text-gray-700">Physics:</span>
-            <input 
-              type="checkbox" 
-              checked={physicsEnabled} 
-              onChange={handlePhysicsToggle} 
-              className="toggle-switch" // Requires custom CSS or a Tailwind plugin for Switch appearance
-            />
-            {/* Basic Tailwind Toggle (needs improvement for aesthetics) */}
-             {/* <div className={`w-10 h-5 flex items-center rounded-full p-1 cursor-pointer ${physicsEnabled ? 'bg-indigo-600' : 'bg-gray-300'}`}>
-                <div className={`bg-white w-4 h-4 rounded-full shadow-md transform duration-300 ease-in-out ${physicsEnabled ? 'translate-x-4' : ''}`}></div>
-             </div> */}
-          </label>
-
-          {/* Potentially add GraphControls here if it doesn't use MUI */}
-          {/* <GraphControls 
-            onZoomChange={handleZoomChange} 
-            onPhysicsToggle={handlePhysicsToggle} 
-            physicsEnabled={physicsEnabled}
-            currentZoom={zoomLevel}
-            graphRef={graphRef.current} 
-          /> */} 
+    // Main container for the page
+    <PageContainer title={pageTitle} subtitle={pageSubtitle}>
+      {/* Loading and Error States */}
+      {loading && (
+        <div className="absolute inset-0 z-50 flex items-center justify-center bg-white/80 dark:bg-black/80">
+          <p className="text-lg font-medium text-gray-700">Loading Graph Data...</p>
         </div>
-      </div>
+      )}
 
-      {/* Graph Area */}
-      {/* Replace Box with div */}
-      <div className="w-full h-full">
-        {loading && (
-          // Replace Box/Typography with div/p and Tailwind classes
-          <div className="absolute inset-0 flex items-center justify-center bg-gray-100 bg-opacity-75 z-20">
-            <p className="text-lg font-medium text-gray-700">Loading Graph Data...</p>
-            {/* Could add a simple spinner here if needed */}
-          </div>
-        )}
-        {error && (
-          // Replace Box/Typography with div/p and Tailwind classes
-          <div className="absolute inset-0 flex items-center justify-center bg-red-50 z-20 p-4">
-            <p className="text-lg font-medium text-red-700">Error: {error}</p>
-          </div>
-        )}
-        {!loading && !error && (
-          <DynamicPhilosopherGraph
-            data={filteredData} // Correct prop name: data, not graphData
-            width={dimensions.width}
-            height={dimensions.height}
-            onNodeClick={handleNodeClick}
-            ref={graphRef} // Correct prop: use ref, not graphRef
-            physicsEnabled={physicsEnabled}
-            selectedLayout={"force"} // Example: Assuming default layout
-            onNodeHover={() => {}} // Example: Placeholder hover handler
+      {error && (
+        <div className="flex items-center justify-center h-64 text-red-600 dark:text-red-400">
+          <p>Error loading graph data: {error}</p>
+        </div>
+      )}
+
+      {/* Main content area: Controls + Graph + Details */}
+      <div className="flex flex-col lg:flex-row gap-4 h-[calc(80vh)]"> 
+        {/* Left Column: Controls */}
+        <div className="flex flex-col space-y-4 w-full lg:w-64 shrink-0"> 
+          {/* Search Bar */}
+          <SearchBar 
+            onSearchChange={handleSearchChange} 
+            data={graphData.nodes} 
+            onSelect={handleNodeSelectFromSearch} 
+          />
+
+          {/* Era Filters (Legend) */}
+          <GraphLegend 
+            availableEras={availableEras} 
+            activeEras={activeEras} 
+            onToggleEra={handleEraFilter} 
+          />
+          
+          {/* Other controls (placeholder) */}
+          {/* <Button onClick={() => loadGraphData(true)}>Refresh Data</Button> */}
+          {/* <Button onClick={() => setShowAnalytics(true)}>Show Analytics</Button> */}
+        </div>
+
+        {/* Center Column: Graph Area */}
+        <div ref={graphContainerRef} className="flex-grow relative min-h-[400px] lg:min-h-0 border border-gray-200 dark:border-gray-700 rounded-lg overflow-hidden">
+          {!loading && !error && (
+            <DynamicPhilosopherGraph
+              ref={graphRef} 
+              data={filteredData} 
+              onNodeClick={handleNodeClick}
+              width={graphDimensions.width}
+              height={graphDimensions.height}
+              physicsEnabled={physicsEnabled}
+              selectedLayout={selectedLayout}
+              onNodeHover={handleNodeHover}
+              // Pass theme colors and selected node ID
+              themeColors={themeColors}
+              selectedNodeId={selectedNode ? String(selectedNode.id) : null} // Ensure string or null
+            />
+          )}
+          {/* Graph Controls Overlay (Zoom/Pan) could go here if not handled by library */}
+        </div>
+
+        {/* Right Column: Details Panel - Conditionally Rendered */}
+        {selectedNode && (
+          <NodeDetailPanel 
+            node={selectedNode} 
+            onClose={handleClosePanel} 
+            allNodes={graphData.nodes} 
+            links={graphData.links} 
+            // Pass theme colors to the panel if needed for styling connections
+            themeColors={themeColors}
           />
         )}
-      </div>
+      </div> 
 
-      {/* Legend Area */}
-      <GraphLegend />
-
-      {/* Node Detail Panel */}
-      <NodeDetailPanel 
-        node={selectedNode} 
-        onClose={handleClosePanel} 
+      {/* Modals */}
+      <AnalyticsModal
+        open={showAnalytics}
+        onClose={() => setShowAnalytics(false)}
+        data={graphData} 
       />
-
-      {/* Analytics Modal */}
-      {showAnalytics && graphData && (
-        <AnalyticsModal
-          open={showAnalytics}
-          onClose={() => setShowAnalytics(false)}
-          data={graphData}
-        />
-      )}
-    </div>
+    </PageContainer>
   );
 };

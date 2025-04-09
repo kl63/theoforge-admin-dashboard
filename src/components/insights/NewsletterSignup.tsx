@@ -2,6 +2,7 @@
 
 import React, { useState, Fragment, useEffect } from 'react';
 import { Transition } from '@headlessui/react';
+import Button from '../Common/Button';
 
 // Inline SVG Icon for Mail
 const MailOutlineSvg = () => (
@@ -144,13 +145,15 @@ export default function NewsletterSignup({
         
         {error && <p className="text-sm text-red-600 dark:text-red-400">{error}</p>}
         
-        <button
+        <Button 
           type="submit"
-          className={`inline-flex items-center justify-center w-full px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 dark:focus:ring-offset-gray-800 mt-1 ${variant === 'card' ? 'rounded-lg' : 'rounded-md'}`}
+          variant="primary"
+          size="sm"
+          leftIcon={<MailOutlineSvg />}
+          className={`w-full mt-1 ${variant === 'card' ? 'rounded-lg' : 'rounded-md'}`}
         >
-          <MailOutlineSvg />
           Subscribe
-        </button>
+        </Button>
       </form>
       
       {/* Snackbar Replacement */}

@@ -10,9 +10,10 @@ import CallToActionSection from '../components/Home/CallToActionSection';
 
 // Import data fetching functions and types
 import { getSortedPostsData } from '@/lib/posts';
-import { getSortedServicesData } from '@/lib/services'; 
-import { PostData } from '@/types/post'; 
-import { ServiceData } from '@/types/service'; 
+import { getSortedServicesData } from '@/lib/services';
+import { getAllForgeProjects, ForgeProjectData } from '@/lib/forgeUtils';
+import { PostData } from '@/types/post';
+import { ServiceData } from '@/types/service';
 
 export default async function HomePage() {
   // Fetch exactly 3 blog posts - now with await
@@ -23,6 +24,9 @@ export default async function HomePage() {
   const allServices: ServiceData[] = await getSortedServicesData(); 
   const displayServices = allServices.slice(0, 3);
 
+  // Fetch all forge projects
+  const allForgeProjects: ForgeProjectData[] = getAllForgeProjects();
+
   return (
     <main>
       <HeroSection />
@@ -32,7 +36,8 @@ export default async function HomePage() {
       <TestimonialsSection />
       {/* Correct prop name: blogSnippets */}
       <BlogSnippetsSection blogSnippets={latestPosts} />
-      <ForgeSection />
+      {/* Pass forge projects data as prop */}
+      <ForgeSection projects={allForgeProjects} />
       <CallToActionSection />
     </main>
   );

@@ -1,43 +1,71 @@
-'use client';
-
 import React from 'react';
-import { testimonials, Testimonial } from '@/data/testimonials';
-import JdenticonIcon from '../Common/JdenticonIcon';
+import { getAllTestimonials, TestimonialData } from '@/lib/testimonialUtils'; 
 import SectionContainer from '../Layout/SectionContainer';
 import SectionHeading from '../Common/SectionHeading';
-import BaseCard from '../Common/BaseCard';
+import TestimonialCard from '../Testimonials/TestimonialCard';
+import Button from '../Common/Button';
+import {
+  Carousel,
+  CarouselContent,
+  CarouselItem,
+  CarouselNext,
+  CarouselPrevious,
+} from "@/components/ui/carousel";
 
 interface TestimonialsSectionProps {
-  // Potential future props
+  maxItems?: number;
 }
 
-const TestimonialsSection: React.FC<TestimonialsSectionProps> = () => {
+const TestimonialsSection: React.FC<TestimonialsSectionProps> = ({ maxItems }) => {
+  const allTestimonials = getAllTestimonials(); 
+
+  const testimonialsToDisplay = maxItems 
+    ? allTestimonials.slice(0, maxItems) 
+    : allTestimonials;
+
+  if (testimonialsToDisplay.length === 0) {
+    return null;
+  }
+
   return (
-    <SectionContainer className="bg-gray-50 dark:bg-gray-800/50">
+    <SectionContainer className="bg-muted dark:bg-muted-dark">
       <SectionHeading align="center" className="md:text-5xl mb-12">
         What Our Clients Say
       </SectionHeading>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-        {testimonials.map((testimonial: Testimonial) => (
-          <BaseCard key={testimonial.id} className="p-6 text-center">
-            <div className="mb-4">
-              <div className="inline-block p-1 bg-white dark:bg-gray-700 rounded-full shadow mb-3">
-                <JdenticonIcon value={testimonial.name} size={60} />
+      <Carousel 
+        opts={{
+          align: "start",
+          loop: testimonialsToDisplay.length > 3, // Only loop if more items than visible
+        }}
+        className="w-full" 
+      >
+        <CarouselContent className="-ml-4"> {/* Adjust margin for item padding */} 
+          {testimonialsToDisplay.map((testimonial) => (
+            // Set basis to 1/3 for 3 cards, add padding
+            <CarouselItem key={testimonial.id} className="basis-1/3 pl-4"> 
+              <div className="h-full"> {/* Ensure card stretches */} 
+                <TestimonialCard testimonial={testimonial} />
               </div>
-              <h3 className="text-lg font-semibold text-gray-900 dark:text-white">
-                {testimonial.name}
-              </h3>
-              <p className="text-sm text-gray-500 dark:text-gray-400">
-                {testimonial.title}
-              </p>
-            </div>
-            <blockquote className="text-gray-600 dark:text-gray-300 italic">
-              &ldquo;{testimonial.quote}&rdquo;
-            </blockquote>
-          </BaseCard>
-        ))}
-      </div>
+            </CarouselItem>
+          ))}
+        </CarouselContent>
+        {/* Conditionally show controls if looping is possible */} 
+        {testimonialsToDisplay.length > 3 && (
+          <>
+            <CarouselPrevious className="hidden sm:flex" /> 
+            <CarouselNext className="hidden sm:flex" />
+          </>
+        )}
+      </Carousel>
+      
+      {maxItems && allTestimonials.length > maxItems && (
+          <div className="mt-12 text-center">
+              <Button href="/testimonials" variant="outline" size="md">
+                  View All Testimonials
+              </Button>
+          </div>
+      )}
     </SectionContainer>
   );
 };

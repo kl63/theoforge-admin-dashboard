@@ -2,8 +2,7 @@ import React, { Suspense } from 'react';
 import { getSortedPostsData } from '@/lib/posts';
 import { PostData } from '@/types/post';
 import { Metadata } from 'next';
-import NewsletterFooter from '@/components/Blog/NewsletterFooter';
-import BlogInteractivityWrapper from '@/components/Blog/BlogInteractivityWrapper';
+import InsightsListWrapper from '@/components/insights/InsightsListWrapper';
 import PageContainer from '@/components/Layout/PageContainer';
 
 export const metadata: Metadata = {
@@ -20,10 +19,11 @@ export default async function BlogPage() {
   return (
     <main>
       <PageContainer title={pageTitle} subtitle={pageSubtitle}>
-        <Suspense fallback={<p>Loading blog posts...</p>}>
-          <BlogInteractivityWrapper allPosts={allPostsData} /> 
+        <Suspense fallback={<div>Loading insights...</div>}>
+          <InsightsListWrapper 
+            allPostsData={allPostsData}
+          />
         </Suspense>
-        <NewsletterFooter /> 
       </PageContainer>
     </main>
   );

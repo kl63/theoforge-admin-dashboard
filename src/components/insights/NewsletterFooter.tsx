@@ -1,4 +1,5 @@
 import React from 'react';
+import Button from '../Common/Button';
 
 // Inline SVG for Email Icon
 const EmailIcon = () => (
@@ -44,15 +45,14 @@ const NewsletterFooter: React.FC = () => {
                          focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
             />
           </div>
-          <button
-            type="submit"
-            className="w-full sm:w-auto bg-blue-600 hover:bg-blue-700 text-white font-medium 
-                       py-2 px-4 rounded-md flex items-center justify-center gap-2 
-                       transition duration-150 ease-in-out"
+          <Button 
+            type="submit" 
+            variant="primary" 
+            className="w-full sm:w-auto"
+            rightIcon={<SendIcon />}
           >
             Subscribe
-            <SendIcon /> 
-          </button>
+          </Button>
         </form>
         
         <p className="block mt-4 text-xs text-gray-500 dark:text-gray-400">

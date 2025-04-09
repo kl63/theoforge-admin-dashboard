@@ -13,7 +13,7 @@ const FeaturedBlogCard: React.FC<FeaturedBlogCardProps> = ({ post }) => {
   const linkHref = `/blog/${post.slug}`;
 
   return (
-    <div className="flex flex-col md:flex-row rounded-lg shadow-lg mb-8 overflow-hidden bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700">
+    <div className="flex flex-col md:flex-row rounded-lg shadow-lg mb-8 overflow-hidden bg-card dark:bg-card-dark border border-border dark:border-border-dark">
       <Link href={linkHref} className="flex flex-col md:flex-row w-full no-underline text-inherit group relative">
         <div className="w-full md:w-1/2">
           <Image
@@ -26,24 +26,24 @@ const FeaturedBlogCard: React.FC<FeaturedBlogCardProps> = ({ post }) => {
           />
         </div>
         <div className="w-full md:w-1/2">
-          <div className="p-4 md:p-6 flex flex-col h-full">
-            <span className="text-xs font-semibold uppercase tracking-wider text-blue-600 dark:text-blue-400 mb-1">
+          <div className="p-6 flex flex-col h-full">
+            <span className="text-xs font-semibold uppercase tracking-wider text-primary dark:text-primary-dark mb-2">
               Featured Post
             </span>
-            <h2 className="text-2xl md:text-3xl font-bold mb-2 text-gray-900 dark:text-white group-hover:text-blue-700 dark:group-hover:text-blue-300 transition-colors duration-200">
+            <h2 className="font-heading text-2xl md:text-3xl font-semibold mb-3 text-foreground dark:text-foreground-dark group-hover:text-primary-hover dark:group-hover:text-primary-dark-hover transition-colors duration-200">
               {post.title}
             </h2>
-            <p className="text-base text-gray-600 dark:text-gray-400 mb-4 flex-grow">
+            <p className="text-base text-muted-foreground dark:text-muted-foreground-dark mb-4 flex-grow">
               {post.excerpt}
             </p>
             
             {post.tags && Array.isArray(post.tags) && post.tags.length > 0 && (
               <div className="mb-3">
-                <div className="flex flex-wrap gap-1">
+                <div className="flex flex-wrap gap-2">
                   {post.tags.slice(0, 4).map((tag) => (
                     <span 
                       key={tag} 
-                      className="inline-block bg-gray-100 dark:bg-gray-700 rounded-full px-2 py-0.5 text-xs font-medium text-gray-600 dark:text-gray-300 border border-gray-200 dark:border-gray-600"
+                      className="inline-block bg-muted dark:bg-muted-dark rounded-full px-2 py-0.5 text-xs text-muted-foreground dark:text-muted-foreground-dark border border-border dark:border-border-dark"
                     >
                       {tag}
                     </span>
@@ -51,8 +51,8 @@ const FeaturedBlogCard: React.FC<FeaturedBlogCardProps> = ({ post }) => {
                 </div>
               </div>
             )}
-            <div className="flex items-center gap-2 mt-auto pt-2 border-t border-gray-100 dark:border-gray-700">
-              <span className="text-xs text-gray-500 dark:text-gray-400 flex-grow">
+            <div className="flex items-center gap-2 mt-auto pt-2 border-t border-border dark:border-border-dark">
+              <span className="text-xs text-muted-foreground dark:text-muted-foreground-dark flex-grow">
                 {new Date(post.date).toLocaleDateString('en-US', {
                   year: 'numeric',
                   month: 'long',

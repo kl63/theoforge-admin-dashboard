@@ -1,27 +1,28 @@
 'use client';
 
 import React from 'react';
-import { forgeProjects, ForgeProject } from '@/data/forgeProjects';
+import { forgeProjects } from '@/data/forgeProjects';
+import PageContainer from '@/components/Layout/PageContainer';
+import ForgeProjectCard from '@/components/Forge/ForgeProjectCard';
 
 const ForgeClientPage = () => {
+  const pageTitle = "Forge Projects";
+  const pageSubtitle = "Explore a selection of internal projects, experiments, and tools developed at TheoForge.";
+
   return (
-    <div>
-      <h1>TheoForge Projects</h1>
-      <p>Explore a selection of projects developed at TheoForge.</p>
-      <div>
+    <PageContainer title={pageTitle} subtitle={pageSubtitle}>
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8">
         {forgeProjects.length > 0 ? (
-          forgeProjects.map((project: ForgeProject) => (
-            <div key={project.id} style={{ border: '1px solid #ccc', margin: '10px', padding: '10px' }}>
-              <h2>{project.title}</h2>
-              <p>{project.description}</p>
-              {/* Add more project details or a link here */}
-            </div>
+          forgeProjects.map((project) => (
+            <ForgeProjectCard key={project.id} project={project} />
           ))
         ) : (
-          <p>No projects found.</p>
+          <div className="col-span-full text-center py-12"> 
+            <p className="font-poppins text-lg text-text-secondary dark:text-dark-text-secondary">No projects found.</p>
+          </div>
         )}
       </div>
-    </div>
+    </PageContainer>
   );
 };
 
