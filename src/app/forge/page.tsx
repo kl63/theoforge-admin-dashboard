@@ -1,15 +1,24 @@
-'use client';
+import React from 'react';
+import { getAllForgeProjects } from '@/lib/forgeUtils';
+import PageContainer from '@/components/Layout/PageContainer';
+import ForgeProjectsList from './ForgeProjectsList';
+import { Metadata } from 'next';
 
-import dynamic from 'next/dynamic';
+export const metadata: Metadata = {
+  title: 'Forge Projects | TheoForge Experiments & Tools',
+  description: 'Explore the Forge - a collection of internal projects, experiments, and tools developed at TheoForge demonstrating AI capabilities and innovative solutions.',
+};
 
-// Dynamically import the actual page content, disabling SSR
-const DynamicForgePage = dynamic(() => import('./ForgeClientPage'), {
-  ssr: false,
-  // Optional: Add a loading component
-  // loading: () => <p>Loading Forge...</p>,
-});
-
-// This server component simply renders the dynamically imported client component
 export default function Page() {
-  return <DynamicForgePage />;
+  const pageTitle = "Forge Projects";
+  const pageSubtitle = "Explore a selection of internal projects, experiments, and tools developed at TheoForge.";
+
+  // Server-side data loading
+  const forgeProjects = getAllForgeProjects();
+  
+  return (
+    <PageContainer title={pageTitle} subtitle={pageSubtitle}>
+      <ForgeProjectsList projects={forgeProjects} />
+    </PageContainer>
+  );
 }

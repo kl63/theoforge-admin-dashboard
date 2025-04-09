@@ -2,6 +2,7 @@
 import React from 'react';
 import Link from 'next/link';
 import SocialIcons from '../Common/SocialIcons';
+import Image from 'next/image';
 
 const Footer: React.FC = () => {
   const currentYear = new Date().getFullYear();
@@ -13,14 +14,17 @@ const Footer: React.FC = () => {
 
           <div className="w-full sm:w-2/5 md:w-1/3 lg:w-2/5">
             <h3 className="font-heading font-semibold text-xl mb-3 text-gray-900 dark:text-white flex items-center"> 
-              <span className="w-6 h-6 mr-2 text-teal-700 dark:text-teal-500">
-                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
-                  <path d="M11.644 1.59a.75.75 0 01.712 0l9.75 5.25a.75.75 0 010 1.32l-9.75 5.25a.75.75 0 01-.712 0l-9.75-5.25a.75.75 0 010-1.32l9.75-5.25z" />
-                  <path d="M3.265 10.602l7.668 4.129a2.25 2.25 0 002.134 0l7.668-4.13 1.37.739a.75.75 0 010 1.32l-9.75 5.25a.75.75 0 01-.71 0l-9.75-5.25a.75.75 0 010-1.32l1.37-.738z" />
-                  <path d="M10.933 19.231l-7.668-4.13-1.37.739a.75.75 0 000 1.32l9.75 5.25c.221.12.489.12.71 0l9.75-5.25a.75.75 0 000-1.32l-1.37-.738-7.668 4.13a2.25 2.25 0 01-2.134-.001z" />
-                </svg>
-              </span>
-              TheoForge
+              <div className="mr-2">
+                <Image
+                  className="dark:invert"
+                  src="/logo.png"
+                  alt="TheoForge Logo"
+                  width={40}
+                  height={40}
+                  priority
+                />
+              </div>
+              <span>TheoForge</span>
             </h3>
             <p className="text-sm mb-6 leading-relaxed"> {/* Improved line height */}
               Guiding organizations through the complexities of AI adoption with strategic insight and technical expertise.

@@ -26,11 +26,11 @@ const AboutSection: React.FC = () => {
       <div className="flex flex-col md:flex-row gap-10 items-start mb-16">
         <div className="flex-1">
           <Paragraph className="mb-6 text-gray-700 dark:text-gray-200">
-            TheoForge is dedicated to <span className="text-secondary font-semibold">transforming AI complexity into strategic confidence</span> for businesses and educational institutions. Based in Newark, NJ, we provide expert guidance, pragmatic implementation, and tailored education to ensure you successfully navigate the AI landscape.
+            TheoForge is dedicated to <span className="text-secondary font-semibold">transforming AI complexity into strategic confidence</span> for businesses and educational institutions. Based in Newark, NJ, we provide expert guidance, pragmatic implementation, and tailored education to ensure you successfully navigate the AI landscape. Our solutions are compatible with emerging standards such as the <span className="text-secondary">Model Context Protocol (MCP)</span>.
           </Paragraph>
           
           <Paragraph className="mb-8 text-gray-600 dark:text-gray-300">
-            We focus on delivering practical, high-impact AI advisory services precisely aligned with your core objectives. Our service portfolio spans Technology Strategy and Leadership, AI Driven Modernisation Advisory, and Future Ready Workforce Training to ensure comprehensive support across your AI journey.
+            We focus on delivering practical, high-impact AI advisory services precisely aligned with your core objectives. Our service portfolio spans Technology Strategy and Leadership, AI Driven Modernisation Advisory, and Future Ready Workforce Training to ensure comprehensive support across your AI journey, including guidance on <span className="font-medium">AI agent development</span> and integration.
           </Paragraph>
           
           <Heading level={3} className="group text-2xl font-semibold mt-8 mb-5 text-gray-900 dark:text-gray-50 flex items-center">
@@ -43,7 +43,7 @@ const AboutSection: React.FC = () => {
           </Heading>
           
           <Paragraph className="mb-6 text-gray-600 dark:text-gray-300 pl-4 md:pl-11">
-            We bridge the gap between the potential of advanced AI and its practical, valuable application within your context. Whether charting your initial AI course or scaling sophisticated systems, TheoForge provides the strategic insight, technical skill, and educational support to build lasting AI capability and confidence.
+            We bridge the gap between the potential of advanced AI and its practical, valuable application within your context. Whether charting your initial AI course or scaling sophisticated systems that leverage the <span className="text-secondary">Model Context Protocol (MCP)</span> for AI agent orchestration, TheoForge provides the strategic insight, technical skill, and educational support to build lasting AI capability and confidence.
           </Paragraph>
         </div>
         

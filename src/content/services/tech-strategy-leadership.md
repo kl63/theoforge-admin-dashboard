@@ -16,5 +16,7 @@ Our services include:
 *   **Strategic Roadmapping:** Defining prioritized AI initiatives aligned with key performance indicators and long-term goals.
 *   **Technology Governance:** Establishing frameworks for ethical AI use, data management, and scalable infrastructure.
 *   **Vendor Evaluation:** Assisting in the selection of appropriate AI tools and platforms.
+*   **Emerging Standards Integration:** Guidance on incorporating industry protocols like Model Context Protocol (MCP) for enhanced AI agent capabilities.
+*   **AI Agent Development Strategy:** Evaluating opportunities for multi-agent systems to solve complex business challenges.
 
 We provide the strategic guidance necessary to ensure your technology investments deliver tangible business value and position you as a leader in your industry.

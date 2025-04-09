@@ -21,7 +21,26 @@ const publicSans = Public_Sans({
 import Header from '../components/Layout/Header'; 
 import Footer from '../components/Layout/Footer'; 
 
-/* import type { Metadata } from "next"; */
+import type { Metadata } from "next";
+
+export const metadata: Metadata = {
+  title: {
+    template: '%s | TheoForge - AI Strategy & Implementation',
+    default: 'TheoForge - AI Strategy & Implementation Specialists',
+  },
+  description: 'TheoForge specializes in AI strategy, Model Context Protocol (MCP) implementation, and AI agent development to transform your business with reliable, high-impact AI solutions.',
+  keywords: [
+    'AI Strategy', 'AI Consulting', 'AI Implementation', 'Model Context Protocol', 'MCP', 
+    'AI Agent Development', 'Multi-Agent Systems', 'Enterprise AI', 'Workforce Training',
+    'Generative AI', 'AI Solutions', 'TheoForge'
+  ],
+  authors: [{ name: 'TheoForge Team' }],
+  openGraph: {
+    title: 'TheoForge - AI Strategy & Implementation | Model Context Protocol (MCP) Compatible',
+    description: 'Strategic advisory for AI implementation featuring Model Context Protocol (MCP) and multi-agent systems to build reliable, enterprise-ready AI solutions.',
+    type: 'website',
+  },
+};
 
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
   return (

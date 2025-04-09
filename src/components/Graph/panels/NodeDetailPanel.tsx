@@ -99,7 +99,7 @@ export function NodeDetailPanel({
     const connectionData = relatedLinks.map(link => {
         const connectedNodeId = link.source === node.id ? link.target : link.source;
         const connectedNode = allNodes.find(n => n.id === connectedNodeId);
-        return { node: connectedNode, type: link.type ?? 'unknown' }; // Provide default type
+        return { node: connectedNode, type: link.relation ?? link.type ?? 'unknown' }; // Check for relation first, then type, then use unknown as fallback
       })
       .filter((conn): conn is Connection => conn.node !== undefined); // Type guard to filter out undefined nodes
 
@@ -114,18 +114,18 @@ export function NodeDetailPanel({
   return (
     <div
       className={`
-        absolute top-20 ${position === 'left' ? 'left-4' : 'right-4'}
+        fixed sm:absolute bottom-0 sm:top-20 left-0 right-0 sm:${position === 'left' ? 'left-4 right-auto' : 'right-4 left-auto'}
         bg-white/95 dark:bg-gray-800/95 backdrop-blur-sm 
         border border-gray-200 dark:border-gray-700
-        rounded-lg shadow-lg overflow-y-auto 
+        rounded-t-lg sm:rounded-lg shadow-lg overflow-y-auto 
         z-20 transition-all duration-300 ease-in-out
-        max-h-[calc(100vh-100px)] max-w-[90vw]
+        max-h-[70vh] sm:max-h-[calc(100vh-100px)] w-full sm:max-w-md
       `}
-      style={{ width: typeof width === 'number' ? `${width}px` : width }}
+      style={{ width: typeof width === 'number' && window.innerWidth >= 640 ? `${width}px` : 'auto' }}
     >
       <div className="
         flex justify-between items-center p-3 
-        bg-gradient-to-r from-blue-600 to-teal-500 text-white 
+        bg-gradient-to-r from-teal-700 to-teal-900 text-white 
         rounded-t-lg sticky top-0 z-10
       ">
         <h2 className="text-lg font-semibold truncate mr-2">
@@ -140,11 +140,11 @@ export function NodeDetailPanel({
         </button>
       </div>
       
-      <div className="p-4 space-y-4">
+      <div className="p-3 sm:p-4 space-y-3 sm:space-y-4">
         {node?.description && (
           <>
             <div>
-              <p className="text-sm text-gray-700 dark:text-gray-300">{node.description}</p>
+              <p className="text-sm text-gray-700 dark:text-gray-300 leading-relaxed">{node.description}</p>
             </div>
             <hr className="border-gray-200 dark:border-gray-600" />
           </>
@@ -216,7 +216,7 @@ export function NodeDetailPanel({
                 {node.schools.map((school) => (
                   <span 
                     key={school} 
-                    className="px-2 py-0.5 rounded-full bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200 text-xs font-medium"
+                    className="px-2 py-0.5 rounded-full bg-teal-100 text-teal-800 dark:bg-teal-900 dark:text-teal-200 text-xs font-medium"
                   >
                     {school}
                   </span>
@@ -227,29 +227,13 @@ export function NodeDetailPanel({
           </>
         )}
 
-        {connections.length > 0 && (
-          <div className="space-y-1">
-            <h3 className="text-xs font-semibold uppercase tracking-wider text-gray-500 dark:text-gray-400" style={{ color: themeColors?.primary || '#000' }}>Connections</h3>
-            <ul className="max-h-48 overflow-y-auto -mx-1">
-              {connections.map((conn, index) => (
-                <li 
-                  key={`${conn.node.id}-${index}`} 
-                  className="px-1 py-0.5 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 rounded"
-                >
-                  <span className="font-medium">{conn.node.name}</span> ({conn.type})
-                </li>
-              ))}
-            </ul>
-          </div>
-        )}
-
         {node?.contributions && node.contributions.length > 0 && (
           <>
             <div className="space-y-1">
               <h3 className="text-xs font-semibold uppercase tracking-wider text-gray-500 dark:text-gray-400">Key Contributions</h3>
-              <ul className="pl-4">
+              <ul className="pl-4 space-y-1">
                 {node.contributions.map((contribution, index) => (
-                  <li key={index} className="text-sm text-gray-700 dark:text-gray-300">
+                  <li key={index} className="text-sm text-gray-700 dark:text-gray-300 pb-1">
                     {contribution}
                   </li>
                 ))}
@@ -259,9 +243,42 @@ export function NodeDetailPanel({
           </>
         )}
 
+        {node?.key_ideas && node.key_ideas.length > 0 && (
+          <>
+            <div className="space-y-1">
+              <h3 className="text-xs font-semibold uppercase tracking-wider text-gray-500 dark:text-gray-400">Key Ideas</h3>
+              <ul className="pl-4 space-y-1">
+                {node.key_ideas.map((idea, index) => (
+                  <li key={index} className="text-sm text-gray-700 dark:text-gray-300 pb-1">
+                    {idea}
+                  </li>
+                ))}
+              </ul>
+            </div>
+            <hr className="border-gray-200 dark:border-gray-600" />
+          </>
+        )}
+
+        {connections.length > 0 && (
+          <div className="space-y-1">
+            <h3 className="text-xs font-semibold uppercase tracking-wider text-gray-500 dark:text-gray-400">Connections</h3>
+            <ul className="max-h-36 sm:max-h-48 overflow-y-auto -mx-1 rounded">
+              {connections.map((conn, index) => (
+                <li 
+                  key={`${conn.node.id}-${index}`} 
+                  className="px-2 py-1 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 rounded"
+                >
+                  <span className="font-medium">{conn.node.name}</span> 
+                  <span className="text-xs text-gray-500 dark:text-gray-400 ml-1">({conn.type})</span>
+                </li>
+              ))}
+            </ul>
+          </div>
+        )}
+
         {Object.entries(node || {})
           .filter(([key, value]) => 
-              !['id', 'name', 'description', 'wikipediaUrl', 'influenceScore', 'era', 'born', 'died', 'schools', 'contributions', 'x', 'y', 'vx', 'vy', 'fx', 'fy', 'community', 'index', '__indexColor', '__viz'].includes(key) &&
+              !['id', 'name', 'description', 'wikipediaUrl', 'influenceScore', 'era', 'born', 'died', 'schools', 'contributions', 'key_ideas', 'x', 'y', 'vx', 'vy', 'fx', 'fy', 'community', 'index', '__indexColor', '__viz'].includes(key) &&
               value !== undefined && value !== null && value !== '' && !(Array.isArray(value) && value.length === 0)
           )
           .map(([key, value]) => {

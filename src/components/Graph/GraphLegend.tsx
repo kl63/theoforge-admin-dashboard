@@ -32,30 +32,6 @@ const eraInfo = {
   'Contemporary': { order: 6, desc: 'Current Era (1950 - Present)' }
 };
 
-// Helper to get a consistent color for each era based on its order
-const getEraColor = (era: string, isActive: boolean): { bg: string, text: string, border: string } => {
-  // Use predetermined colors based on era rather than random hues
-  const eraOrder = eraInfo[era as keyof typeof eraInfo]?.order || 0;
-  
-  // Color palette based on historical timeline
-  const hues = {
-    1: 45,  // Ancient - Gold/Yellow
-    2: 270, // Medieval - Purple
-    3: 200, // Renaissance - Blue
-    4: 150, // Enlightenment - Teal
-    5: 350, // Modern - Red/Pink
-    6: 120  // Contemporary - Green
-  };
-  
-  const hue = hues[eraOrder as keyof typeof hues] || 0;
-  
-  return {
-    bg: isActive ? `hsl(${hue}, 70%, 60%)` : `hsl(${hue}, 30%, 90%)`,
-    text: isActive ? 'white' : `hsl(${hue}, 80%, 25%)`,
-    border: isActive ? `hsl(${hue}, 70%, 45%)` : `hsl(${hue}, 30%, 80%)`
-  };
-};
-
 interface GraphLegendProps {
   availableEras: string[];
   activeEras: string[];
@@ -137,19 +113,18 @@ const GraphLegend: React.FC<GraphLegendProps> = ({
               })
               .map((era) => {
                 const isActive = activeEras.includes(era);
-                const colors = getEraColor(era, isActive);
                 const eraDesc = eraInfo[era as keyof typeof eraInfo]?.desc || '';
 
                 return (
                   <button
                     key={era}
                     onClick={() => onToggleEra(era)}
-                    className={`px-3 py-1 rounded-full text-xs font-medium border transition-colors duration-150 hover:shadow-sm`}
-                    style={{
-                      backgroundColor: colors.bg,
-                      color: colors.text,
-                      borderColor: colors.border,
-                    }}
+                    className={`
+                      px-3 py-1 rounded-full text-xs font-medium transition-all duration-150 
+                      ${isActive 
+                        ? 'bg-primary text-white border border-primary-dark shadow-sm' 
+                        : 'bg-white text-gray-600 border border-gray-300 hover:border-primary/50 hover:text-primary'}
+                    `}
                     title={eraDesc ? `${era}: ${eraDesc}` : `Toggle ${era} filter`}
                   >
                     {era}

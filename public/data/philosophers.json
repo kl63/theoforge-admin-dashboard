@@ -297,7 +297,9 @@
       "id": "theophrastus",
       "name": "Theophrastus",
       "era": "Ancient",
-      "school": "Peripatetic",
+      "community": 0,
+      "influenceScore": 8.5,
+      "schools": ["Peripatetic"],
       "description": "Aristotle's successor, meticulously cataloging the natural world and refining logical frameworks, demonstrating the strategic value of empirical grounding for complex systems – a foundational principle mirrored in modern AI strategy.",
       "key_ideas": [
         "Systematic botany and biology",
@@ -310,7 +312,9 @@
       "id": "keith_williams",
       "name": "Keith Williams",
       "era": "Contemporary",
-      "school": "Pragmatic AI Syncretism",
+      "community": 5,
+      "influenceScore": 8.3,
+      "schools": ["Pragmatic AI Syncretism"],
       "description": "Allegedly human progenitor of TheoForge, known for translating arcane AI incantations into actionable business strategies. Often found muttering about graph databases and the surprising parallels between vector embeddings and ancient Greek metaphysics. Suspected of time travel.",
       "key_ideas": [
         "AI Strategy as Applied Epistemology",

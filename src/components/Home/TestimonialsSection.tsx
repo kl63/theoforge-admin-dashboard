@@ -40,15 +40,15 @@ const TestimonialsSection: React.FC<TestimonialsSectionProps> = ({ maxItems }) =
 
       <Carousel 
         opts={{
-          align: "start",
+          align: "center",
           loop: testimonialsToDisplay.length > 3, // Only loop if more items than visible
         }}
-        className="w-full" 
+        className="w-full max-w-[1200px] mx-auto"
       >
-        <CarouselContent className="-ml-4"> {/* Adjust margin for item padding */} 
+        <CarouselContent className="-ml-4 flex justify-center"> 
           {testimonialsToDisplay.map((testimonial) => (
             // Set responsive basis: 1 on mobile, 2 on md, 3 on lg
-            <CarouselItem key={testimonial.id} className="basis-full md:basis-1/2 lg:basis-1/3 pl-4 pb-6"> 
+            <CarouselItem key={testimonial.id} className="basis-full md:basis-1/2 lg:basis-1/3 pl-4 pb-6 max-w-[350px]"> 
               <div className="h-full"> {/* Ensure card stretches */} 
                 <TestimonialCard testimonial={testimonial} />
               </div>

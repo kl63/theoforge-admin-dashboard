@@ -45,7 +45,7 @@ export const forgeProjects: ForgeProjectData[] = [
     tryUrl: undefined,
     tags: ['Agents', 'LLM', 'Character AI', 'Memory', 'TBA'],
     featured: false,
-    image: '/images/forge/characters/forge_character_project.png',
+    image: '/images/forge/characters/forge_characters_project.png',
     status: 'Coming Soon', 
   },
   // Add more projects as needed
