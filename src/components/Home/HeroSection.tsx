@@ -7,24 +7,24 @@ import Heading from '../Common/Heading'; // Import the Heading component
 import Paragraph from '../Common/Paragraph'; // Import the Paragraph component
 
 const HeroSection = () => (
-  // Replaced outer Box with section, added Tailwind classes
+  // Replace fixed height with min-height, remove flex center, add explicit padding
   <section
-    className="h-[70vh] flex flex-col items-center justify-center text-white text-center bg-[url('/hero_bg.png')] bg-cover bg-center bg-no-repeat relative overflow-hidden"
+    className="min-h-[70vh] flex flex-col justify-center text-white bg-[url('/hero_bg.png')] bg-cover bg-center bg-no-repeat relative overflow-hidden py-20 sm:py-24 md:py-32"
   >
-    {/* Replaced Overlay Box with div, added Tailwind classes */}
+    {/* Overlay */}
     <div
       className="absolute inset-0 bg-black/65 z-10" // Using Tailwind color/opacity format
     />
-    {/* Replaced Content Container with div, added Tailwind classes */}
-    <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 relative z-20">
-      {/* Replaced inner content Box with div, added Tailwind classes */}
+    {/* Content Container: Add items-center here */}
+    <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 relative z-20 flex flex-col items-center">
+      {/* Inner Content Box: Increase padding, keep text-left */}
       <div 
-        className="flex flex-col items-start text-left p-4 sm:p-6"
+        className="flex flex-col items-start text-left p-6 sm:p-8"
       >
-        {/* Use Heading component, map text-5xl to level 1 based on scale */}
+        {/* Adjust smallest heading size */}
         <Heading
           level={1} // H1 equivalent
-          className="font-semibold text-white text-3xl sm:text-4xl md:text-5xl mb-6" // Added font-semibold, keep responsive sizes for hero, override default color
+          className="font-semibold text-white text-2xl sm:text-4xl md:text-5xl mb-6" // Changed 3xl to 2xl
         >
           Transform AI Complexity into Strategic Confidence
         </Heading>

@@ -213,25 +213,49 @@ const EnterprisePhilosopherGraph = forwardRef<ForceGraphMethods, EnterprisePhilo
 
     // Link color based on selection/hover - Use LinkObject type
     const getLinkColor = useCallback((link: LinkObject) => {
-      const graphLink = link as GraphLink; // Cast to access custom props if needed
+      const graphLink = link as GraphLink; // Cast to access custom props
       const sourceId = getNodeId(link.source);
       const targetId = getNodeId(link.target);
 
+      // 1. Determine base color based on relationship type
+      let baseColor = themeColors.lightMuted; // Default to light muted (grey)
+      const relation = graphLink.relation;
+
+      switch (relation) {
+        case 'Influenced by':
+          baseColor = '#81c784'; // Greenish (matching legend)
+          break;
+        case 'Student of':
+        case 'Successor & Student of': // Group with Student of
+          baseColor = '#64b5f6'; // Blueish (matching legend)
+          break;
+        case 'Intellectual Partner':
+          baseColor = '#ffb74d'; // Orangeish (matching legend)
+          break;
+        case 'Distant Admirer & Conceptual Disciple': // Treat as Other for now
+        case 'Other': 
+        default: // Fallback for any unknown relations
+          baseColor = '#9e9e9e'; // Grey (matching legend "Other")
+          break;
+      }
+
+      // 2. Apply hover/selection effects
       const isSelectedLink = selectedNodeId && (String(sourceId) === selectedNodeId || String(targetId) === selectedNodeId);
       const isHoverLink = hoverNode && (String(sourceId) === String(hoverNode.id) || String(targetId) === String(hoverNode.id));
 
-      // Highlight links connected to selected or hovered node
-      if (isSelectedLink || isHoverLink)
-      {    
-          return themeColors.secondary; 
+      // Highlight: Use base color without added alpha
+      if (isSelectedLink || isHoverLink) {
+        return baseColor; 
       }
 
-      // Dim links slightly if a node is selected but this link isn't connected
+      // Dim inactive links when a node is selected: Add alpha to base color
       if (selectedNodeId && !isSelectedLink) {
-         return themeColors.lightMuted + '80'; // Add alpha transparency
+         return addAlpha(baseColor, 0.3); // Dim significantly
       }
       
-      return themeColors.lightMuted; // Default dim color
+      // Default: Use base color with standard alpha (matching legend)
+      return addAlpha(baseColor, 0.6);
+
     }, [selectedNodeId, hoverNode, themeColors]);
 
     // Link width based on selection/hover - Use LinkObject type

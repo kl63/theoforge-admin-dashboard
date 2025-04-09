@@ -37,7 +37,7 @@ const Header: React.FC = () => {
         "backdrop-blur supports-[backdrop-filter]:bg-white/60 dark:supports-[backdrop-filter]:bg-neutral-950/60"
       )}
     >
-      <div className="container flex h-16 max-w-screen-2xl items-center justify-between">
+      <div className="container flex h-16 max-w-screen-2xl items-center justify-between px-4">
         {/* Logo and Name */}
         <Link href="/" className="flex items-center shrink-0 mr-4">
           <Image
@@ -77,7 +77,7 @@ const Header: React.FC = () => {
                 <MenuIcon className="h-6 w-6" />
               </Button>
             </SheetTrigger>
-            <SheetContent side="left" className="w-full max-w-xs p-6">
+            <SheetContent side="left" className="w-full max-w-sm p-6">
               {/* Optional Sheet Header */}
               <SheetHeader className="mb-6">
                 <SheetTitle>
@@ -97,13 +97,13 @@ const Header: React.FC = () => {
                 </SheetTitle>
               </SheetHeader>
               {/* Mobile Navigation Links */}
-              <nav className="flex flex-col gap-4">
+              <nav className="flex flex-col gap-4 overflow-y-auto">
                 {navItems.map((item) => (
                   <SheetClose asChild key={item.label}>
                     <Link
                       href={item.path}
                       className={cn(
-                        "text-base font-medium transition-colors hover:text-primary",
+                        "block py-2 text-sm font-medium transition-colors hover:text-primary",
                         pathname === item.path ? "text-primary dark:text-primary-light" : "text-muted-foreground"
                       )}
                     >

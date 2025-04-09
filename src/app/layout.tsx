@@ -28,7 +28,8 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
     <html lang="en" className={`${inter.variable} ${publicSans.variable} scroll-smooth`} suppressHydrationWarning>
       <body className="min-h-screen font-sans antialiased bg-background text-foreground dark:bg-background dark:text-foreground">
         <Header />
-        <main>{children}</main> 
+        {/* Add padding-top equal to header height (h-16 = 4rem = pt-16) */}
+        <main className="pt-16">{children}</main> 
         <Footer />
         <script async type='module' src='https://interfaces.zapier.com/assets/web-components/zapier-interfaces/zapier-interfaces.esm.js'></script>
         <zapier-interfaces-chatbot-embed is-popup='true' chatbot-id='cm91mcgc2002yc41mrfhan884'></zapier-interfaces-chatbot-embed>

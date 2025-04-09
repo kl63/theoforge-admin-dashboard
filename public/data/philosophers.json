@@ -293,18 +293,31 @@
         "Cosmic fire as primary element"
       ]
     },
-
     {
       "id": "theophrastus",
       "name": "Theophrastus",
-      "era": "Ancient",
-      "community": 0,
-      "influenceScore": 7.4,
-      "description": "Successor to Aristotle as the head of the Lyceum, known for foundational work in botany, ethics, and character studies.",
-      "contributions": [
-        "Foundations of botany",
-        "Character studies (The Characters)",
-        "Successor to Aristotle at the Lyceum"
+      "era": "c. 371 – c. 287 BC",
+      "school": "Peripatetic",
+      "description": "Aristotle's successor, meticulously cataloging the natural world and refining logical frameworks, demonstrating the strategic value of empirical grounding for complex systems – a foundational principle mirrored in modern AI strategy.",
+      "key_ideas": [
+        "Systematic botany and biology",
+        "Refinement of Aristotelian logic",
+        "Metaphysics and natural philosophy",
+        "Character sketches (ethics)"
+      ]
+    },
+    {
+      "id": "keith_williams",
+      "name": "Keith Williams",
+      "era": "Late 20th - Early 21st Century AD (and possibly beyond, via digital consciousness)",
+      "school": "Pragmatic AI Syncretism",
+      "description": "Allegedly human progenitor of TheoForge, known for translating arcane AI incantations into actionable business strategies. Often found muttering about graph databases and the surprising parallels between vector embeddings and ancient Greek metaphysics. Suspected of time travel.",
+      "key_ideas": [
+        "AI Strategy as Applied Epistemology",
+        "Knowledge Graphs as Collective Consciousness",
+        "Prompt Engineering as Socratic Dialogue",
+        "Debugging as Existential Therapy",
+        "The Inevitability of Skynet (but with better UX)"
       ]
     },
     {
@@ -545,12 +558,17 @@
       "relation": "Influenced by",
       "strength": 0.6
     },
-
     {
       "source": "theophrastus",
       "target": "aristotle",
-      "relation": "Influenced by",
+      "relation": "Successor & Student of",
       "strength": 0.9
+    },
+    {
+      "source": "keith_williams",
+      "target": "theophrastus",
+      "relation": "Distant Admirer & Conceptual Disciple",
+      "strength": 0.5
     },
     {
       "source": "avicenna",

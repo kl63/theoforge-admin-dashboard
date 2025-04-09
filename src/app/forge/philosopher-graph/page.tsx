@@ -132,7 +132,18 @@ export default function PhilosopherGraphPage() {
       // Don't reset graphData or activeEras here, let filter handle empty state
 
       try {
-        const response = await fetch('/data/philosophers.json');
+        // Add cache-busting parameter and headers to initial fetch
+        const cacheBuster = `?t=${Date.now()}`;
+        const response = await fetch(`/data/philosophers.json${cacheBuster}`, {
+          method: 'GET',
+          headers: {
+            'Cache-Control': 'no-cache, no-store, must-revalidate',
+            'Pragma': 'no-cache',
+            'Expires': '0'
+          },
+          credentials: 'same-origin'
+        });
+
         if (!response.ok) {
           throw new Error(`HTTP error! status: ${response.status}`);
         }
