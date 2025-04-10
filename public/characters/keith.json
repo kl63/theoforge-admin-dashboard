@@ -165,7 +165,7 @@
       "options": [
         {
           "text": "How does the Genesis Engine represent complex character relationships?",
-          "action": "Tell me about how the Genesis Engine represents complex character relationships in Neo4j."
+          "action": "How does the Genesis Engine represent complex character relationships in Neo4j?"
         },
         {
           "text": "What makes the Genesis Engine different from other systems?",
