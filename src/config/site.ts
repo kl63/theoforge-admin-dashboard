@@ -6,7 +6,7 @@ export const siteConfig = {
   name: "TheoForge",
   description: "TheoForge specializes in AI strategy and implementation, helping organizations build reliable, high-impact AI solutions.",
   url: process.env.NEXT_PUBLIC_BASE_URL || "https://theoforge.ai",
-  ogImage: "/images/theoforge-og.png",
+  ogImage: "/logo.png",
   author: "TheoForge Team",
   twitterHandle: "@theoforge",
   keywords: [
