@@ -8,6 +8,7 @@ import Image from 'next/image';
 // import PodcastMetadata from '@/components/Blog/PodcastMetadata'; // Commented out - Needs relocation/recreation
 // import SocialShare from '@/components/Blog/SocialShare';       // Commented out - Needs relocation/recreation
 import PageContainer from '@/components/Layout/PageContainer';
+import { createMetadataGenerator } from '@/lib/metadataUtils';
 
 // Inline SVG Icons
 const ArrowBackSvg = () => (
@@ -29,27 +30,11 @@ export async function generateStaticParams() {
   }));
 }
 
-export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }) {
-  const resolvedParams = await params;
-  const slug = resolvedParams.slug;
-  const post = await getPostData(slug);
-
-  if (!post) {
-    return {
-      title: 'Blog Post Not Found',
-    };
-  }
-
-  return {
-    title: `${post.title} - TheoForge Insights`,
-    description: post.excerpt,
-    openGraph: {
-      title: post.title,
-      description: post.excerpt,
-      images: post.image ? [post.image] : [],
-      type: 'article',
-    },
-  };
+// Use our enhanced metadata generator with dynamic slug parameter
+export async function generateMetadata({ params }: { params: { slug: string } }) {
+  // Create and use the metadata generator with the blog content type and the current slug
+  const metadataGenerator = createMetadataGenerator('blog', params.slug);
+  return metadataGenerator();
 }
 
 export default async function BlogPostPage({ params }: { params: Promise<{ slug: string }> }) {

@@ -9,6 +9,7 @@ import Heading from '../Common/Heading';
 import Paragraph from '../Common/Paragraph';
 import { ForgeProjectData } from '@/lib/forgeUtils';
 import { FaGithub, FaArrowUpRightFromSquare } from 'react-icons/fa6'; // Icons for links
+import { trackEvent, AnalyticsEvents } from '@/lib/analytics';
 
 interface ForgeProjectCardProps {
   project: ForgeProjectData;
@@ -30,6 +31,25 @@ const ForgeProjectCard: React.FC<ForgeProjectCardProps> = ({ project }) => {
 
   // Determine if the link is internal or external
   const isInternalLink = tryUrl && tryUrl.startsWith('/');
+  
+  // Handle tracking for GitHub button clicks
+  const handleGitHubClick = () => {
+    trackEvent(AnalyticsEvents.EXTERNAL_LINK_CLICK, {
+      destination: 'github',
+      project_id: id,
+      project_title: title
+    });
+  };
+  
+  // Handle tracking for Try It button clicks
+  const handleTryClick = () => {
+    trackEvent(AnalyticsEvents.FORGE_PROJECT_CLICKED, {
+      project_id: id,
+      project_title: title,
+      project_status: status || 'unknown',
+      destination: isInternalLink ? 'internal' : 'external'
+    });
+  };
 
   return (
     <BaseCard key={id} className="flex flex-col h-full shadow-sm"> 
@@ -92,7 +112,16 @@ const ForgeProjectCard: React.FC<ForgeProjectCardProps> = ({ project }) => {
         {/* Buttons */} 
         <div className="mt-auto pt-2 border-t border-gray-100 dark:border-gray-700 flex flex-wrap gap-2"> 
           {githubUrl && (
-            <Button href={githubUrl} variant="outline" size="sm" leftIcon={<FaGithub />} target="_blank" rel="noopener noreferrer" className="mt-2 text-sm py-1">
+            <Button 
+              href={githubUrl} 
+              variant="outline" 
+              size="sm" 
+              leftIcon={<FaGithub />} 
+              target="_blank" 
+              rel="noopener noreferrer" 
+              className="mt-2 text-sm py-1"
+              onClick={handleGitHubClick}
+            >
               GitHub
             </Button>
           )}
@@ -106,6 +135,7 @@ const ForgeProjectCard: React.FC<ForgeProjectCardProps> = ({ project }) => {
               rel={isInternalLink ? "" : "noopener noreferrer"}
               disabled={isComingSoon} 
               className="mt-2 text-sm py-1"
+              onClick={!isComingSoon ? handleTryClick : undefined}
             >
               {isComingSoon ? 'Coming Soon' : 'Try It'}
             </Button>

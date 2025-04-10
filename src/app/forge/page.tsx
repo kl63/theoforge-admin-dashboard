@@ -1,13 +1,12 @@
 import React from 'react';
-import { getAllForgeProjects } from '@/lib/forgeUtils';
+import { Metadata } from 'next';
+import { createMetadataGenerator } from '@/lib/metadataUtils';
 import PageContainer from '@/components/Layout/PageContainer';
 import ForgeProjectsList from './ForgeProjectsList';
-import { Metadata } from 'next';
+import { getAllForgeProjects } from '@/lib/forgeUtils';
 
-export const metadata: Metadata = {
-  title: 'Forge Projects | TheoForge Experiments & Tools',
-  description: 'Explore the Forge - a collection of internal projects, experiments, and tools developed at TheoForge demonstrating AI capabilities and innovative solutions.',
-};
+// Generate metadata dynamically from forge content
+export const generateMetadata = createMetadataGenerator('forge');
 
 export default function Page() {
   const pageTitle = "Forge Projects";

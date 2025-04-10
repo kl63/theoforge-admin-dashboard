@@ -6,12 +6,10 @@ import Button from '@/components/Common/Button';
 import { DiscordLogoIcon, ChatBubbleIcon, RocketIcon, LightningBoltIcon } from '@radix-ui/react-icons';
 import { Metadata } from 'next';
 import Image from 'next/image';
+import { createMetadataGenerator } from '@/lib/metadataUtils';
 
-export const metadata: Metadata = {
-    title: 'Community | TheoForge',
-    description: 'Join the TheoForge community where AI leaders connect, share challenges, and explore innovative solutions together. Get personalized guidance from Theophrastus, our AI guide.',
-    // Add other relevant metadata tags
-};
+// Generate metadata dynamically from community content
+export const generateMetadata = createMetadataGenerator('community');
 
 // Placeholder data for insight cards - replace with actual data fetching later
 const placeholderInsights = [

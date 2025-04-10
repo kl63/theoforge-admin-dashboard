@@ -4,11 +4,10 @@ import { ServiceData } from '@/types/service'; // Assuming this path is correct
 import InfoCard from '@/components/Common/InfoCard'; // Use InfoCard from Common components
 import { Metadata } from 'next';
 import PageContainer from '@/components/Layout/PageContainer'; // Import PageContainer
+import { createMetadataGenerator } from '@/lib/metadataUtils';
 
-export const metadata: Metadata = {
-  title: 'TheoForge Services | AI Strategy, Implementation & Enablement',
-  description: "Discover how Theoforge's integrated AI services transform complexity into confident action through expert strategy, pragmatic implementation, and workforce enablement.",
-};
+// Generate metadata dynamically from services content
+export const generateMetadata = createMetadataGenerator('services');
 
 export default async function ServicesPage() {
   const allServicesData: ServiceData[] = await getSortedServicesData();

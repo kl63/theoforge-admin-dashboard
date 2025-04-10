@@ -1,5 +1,7 @@
 import * as React from 'react';
 import SectionContainer from '../components/Layout/SectionContainer';
+import { Metadata } from 'next';
+import { createMetadataGenerator } from '@/lib/metadataUtils';
 
 import HeroSection from '../components/Home/HeroSection';
 import ServicesSection from '../components/Home/ServicesSection';
@@ -15,6 +17,9 @@ import { getSortedServicesData } from '@/lib/services';
 import { getAllForgeProjects, ForgeProjectData } from '@/lib/forgeUtils';
 import { PostData } from '@/types/post';
 import { ServiceData } from '@/types/service';
+
+// Generate metadata dynamically from home/about content
+export const generateMetadata = createMetadataGenerator('about');
 
 export default async function HomePage() {
   // Fetch exactly 3 blog posts - now with await

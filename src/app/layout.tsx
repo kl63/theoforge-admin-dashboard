@@ -2,6 +2,7 @@ import React from 'react';
 import "./globals.css";
 import { Inter, Public_Sans } from 'next/font/google'; 
 import { siteConfig } from '@/config/site';
+import { Analytics } from '@vercel/analytics/react';
 
 // Configure Inter for headings
 const inter = Inter({
@@ -71,6 +72,7 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
         {/* Remove top padding to eliminate the white space */}
         <main>{children}</main> 
         <Footer />
+        <Analytics />
       </body>
     </html>
   );

@@ -4,11 +4,10 @@ import { PostData } from '@/types/post';
 import { Metadata } from 'next';
 import InsightsListWrapper from '@/components/insights/InsightsListWrapper';
 import PageContainer from '@/components/Layout/PageContainer';
+import { createMetadataGenerator } from '@/lib/metadataUtils';
 
-export const metadata: Metadata = {
-  title: 'TheoForge Blog | Navigating AI Complexity with Confidence',
-  description: 'Expert insights on AI strategy, pragmatic implementation, and workforce enablement to help you confidently navigate the complexities of enterprise AI.',
-};
+// Generate metadata dynamically from blog/insights content
+export const generateMetadata = createMetadataGenerator('blog');
 
 export default async function BlogPage() {
   const allPostsData: PostData[] = await getSortedPostsData();

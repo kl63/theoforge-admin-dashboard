@@ -7,6 +7,10 @@ import { siteConfig } from '@/config/site';
 const DEFAULT_OG_IMAGE = siteConfig.ogImage;
 const SITE_URL = siteConfig.url;
 
+// Define the standard image dimensions for Open Graph
+const OG_IMAGE_WIDTH = 1200;
+const OG_IMAGE_HEIGHT = 630;
+
 interface ContentMetadata {
   id?: string;
   title?: string;
@@ -15,6 +19,7 @@ interface ContentMetadata {
   tags?: string[];
   status?: string;
   featured?: boolean;
+  publishDate?: string;
   [key: string]: any; // For any additional frontmatter properties
 }
 
@@ -31,12 +36,9 @@ export function createMetadata(contentMetadata: ContentMetadata, basePath: strin
     siteConfig.name;
   const description = contentMetadata.description || siteConfig.description;
   
-  // Determine the image to use - content image, default OG image, or site logo
-  const imagePath = contentMetadata.image || DEFAULT_OG_IMAGE;
-  const imageUrl = imagePath.startsWith('http') 
-    ? imagePath 
-    : `${SITE_URL}${imagePath}`;
-
+  // Process and optimize the image path
+  const imageInfo = processContentImage(contentMetadata.image);
+  
   // Construct canonical URL
   const canonicalUrl = contentMetadata.id 
     ? `${SITE_URL}${basePath}/${contentMetadata.id}` 
@@ -57,25 +59,61 @@ export function createMetadata(contentMetadata: ContentMetadata, basePath: strin
       title: title,
       description: description,
       siteName: siteConfig.name,
-      images: [
-        {
-          url: imageUrl,
-          width: 1200,
-          height: 630,
-          alt: `${contentMetadata.title || ''} | ${siteConfig.name}`
-        }
-      ]
+      images: [imageInfo]
     },
     twitter: {
       card: 'summary_large_image',
       title: title,
       description: description,
-      images: [imageUrl],
+      images: [imageInfo.url],
       creator: siteConfig.twitterHandle
     },
     alternates: {
       canonical: canonicalUrl,
     }
+  };
+}
+
+/**
+ * Process content image paths and ensure they're properly formatted for OG tags
+ * 
+ * @param imagePath Optional image path from content frontmatter
+ * @returns Formatted image object for OpenGraph tags
+ */
+export function processContentImage(imagePath?: string): {
+  url: string;
+  width: number;
+  height: number;
+  alt: string;
+} {
+  // Default fallback image
+  if (!imagePath) {
+    return {
+      url: `${SITE_URL}${DEFAULT_OG_IMAGE}`,
+      width: OG_IMAGE_WIDTH,
+      height: OG_IMAGE_HEIGHT,
+      alt: siteConfig.name
+    };
+  }
+
+  // Handle absolute URLs
+  if (imagePath.startsWith('http')) {
+    return {
+      url: imagePath,
+      width: OG_IMAGE_WIDTH,
+      height: OG_IMAGE_HEIGHT,
+      alt: siteConfig.name
+    };
+  }
+
+  // Handle relative paths - ensure they start with /
+  const normalizedPath = imagePath.startsWith('/') ? imagePath : `/${imagePath}`;
+  
+  return {
+    url: `${SITE_URL}${normalizedPath}`,
+    width: OG_IMAGE_WIDTH,
+    height: OG_IMAGE_HEIGHT,
+    alt: siteConfig.name
   };
 }
 
@@ -145,4 +183,52 @@ export async function loadContentMetadata(contentPath: string): Promise<ContentM
     console.error('Error loading content metadata:', error);
     return {}; // Return empty metadata on error
   }
+}
+
+/**
+ * Utility to create a unified function for generating metadata across different page types
+ * 
+ * @param contentType The content type/section (e.g., 'blog', 'forge', 'services')
+ * @param contentId Optional content ID for specific pages
+ * @returns Metadata generator function compatible with Next.js
+ */
+export function createMetadataGenerator(contentType: string, contentId?: string) {
+  return async function generateMetadata(): Promise<Metadata> {
+    const basePath = `/${contentType}`;
+    let contentPath: string;
+    
+    if (contentId) {
+      // For specific content pages (e.g., blog/[slug])
+      contentPath = path.join(process.cwd(), `src/content/${contentType}/${contentId}.md`);
+      
+      // Handle case where the content might be in a subdirectory with same name
+      if (!fs.existsSync(contentPath)) {
+        contentPath = path.join(process.cwd(), `src/content/${contentType}/${contentId}/index.md`);
+      }
+    } else {
+      // For section landing pages
+      contentPath = path.join(process.cwd(), `src/content/${contentType}/index.md`);
+      
+      // If no index.md exists, try to find any .md file for fallback metadata
+      if (!fs.existsSync(contentPath)) {
+        const contentDir = path.join(process.cwd(), `src/content/${contentType}`);
+        if (fs.existsSync(contentDir)) {
+          const files = fs.readdirSync(contentDir).filter(file => file.endsWith('.md'));
+          if (files.length > 0) {
+            contentPath = path.join(contentDir, files[0]);
+          }
+        }
+      }
+    }
+    
+    // Load metadata from content file
+    let contentMetadata: ContentMetadata = {};
+    
+    if (fs.existsSync(contentPath)) {
+      contentMetadata = await loadContentMetadata(contentPath);
+    }
+    
+    // Generate and return metadata
+    return createMetadata(contentMetadata, basePath);
+  };
 }
