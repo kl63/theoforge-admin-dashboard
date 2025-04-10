@@ -5,11 +5,17 @@ import path from 'path';
 import CharacterChatInterface from '@/components/Forge/CharacterChat/CharacterChatInterface';
 import { CharacterData, formatCharacterName } from '@/lib/characterUtils';
 import { generateDefaultConversationTopics } from '@/lib/characterUtils';
+import { loadContentMetadata, createMetadata } from '@/lib/metadataUtils';
 
-export const metadata: Metadata = {
-  title: 'Character Chat | TheoForge',
-  description: 'Interact with AI characters created with our Genesis Engine',
-};
+// Generate metadata for the page with Open Graph properties
+export async function generateMetadata(): Promise<Metadata> {
+  // Load the character chat markdown content
+  const contentPath = path.join(process.cwd(), 'src/content/forge/character-chat.md');
+  const contentMetadata = await loadContentMetadata(contentPath);
+  
+  // Use the content metadata to generate proper Open Graph metadata
+  return createMetadata(contentMetadata, '/forge');
+}
 
 // Server-side function to load characters
 async function loadCharacters(): Promise<CharacterData[]> {

@@ -14,15 +14,15 @@ interface SocialLink {
 const socialLinksData: SocialLink[] = [
   {
     name: 'LinkedIn',
-    href: 'https://www.linkedin.com/company/theoforge', // Use actual company URL if available
+    href: 'https://www.linkedin.com/in/keithwilliams5/', // Updated LinkedIn link
     icon: FaLinkedinIn,
-    ariaLabel: 'Follow Theoforge on LinkedIn',
+    ariaLabel: 'Follow Keith Williams on LinkedIn',
   },
   {
     name: 'YouTube',
-    href: 'https://youtube.com/@Theoforge', // Replace with actual YouTube channel URL
+    href: 'https://www.youtube.com/@Firehose360', // Updated YouTube channel link
     icon: FaYoutube,
-    ariaLabel: 'Subscribe to Theoforge on YouTube',
+    ariaLabel: 'Subscribe to Firehose360 on YouTube',
   },
   {
     name: 'GitHub',
@@ -38,7 +38,7 @@ const socialLinksData: SocialLink[] = [
   },
   {
     name: 'Discord',
-    href: 'https://discord.gg/placeholder', // <<<--- REPLACE WITH ACTUAL DISCORD INVITE LINK
+    href: 'https://discord.gg/fp4NrUjCa5', // Updated Discord invite link
     icon: FaDiscord,
     ariaLabel: 'Join the Theoforge Discord Community',
   },

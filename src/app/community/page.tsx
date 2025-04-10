@@ -119,7 +119,7 @@ const InsightsPage = () => {
                         
                         {/* CTA Button */}
                         <Button
-                            href="https://discord.gg/theoforge" // Replace with your actual Discord invite
+                            href="https://discord.gg/fp4NrUjCa5" // Updated Discord invite link
                             variant="secondary"
                             size="lg"
                             target="_blank"
@@ -218,7 +218,7 @@ const InsightsPage = () => {
                 {/* Final CTA */}
                 <div className="text-center mt-16">
                     <Button
-                        href="https://discord.gg/theoforge" // Replace with your actual Discord invite
+                        href="https://discord.gg/fp4NrUjCa5" // Updated Discord invite link
                         variant="primary"
                         size="lg"
                         target="_blank"

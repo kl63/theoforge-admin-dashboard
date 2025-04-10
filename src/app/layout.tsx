@@ -1,6 +1,7 @@
 import React from 'react';
 import "./globals.css";
 import { Inter, Public_Sans } from 'next/font/google'; 
+import { siteConfig } from '@/config/site';
 
 // Configure Inter for headings
 const inter = Inter({
@@ -25,21 +26,41 @@ import type { Metadata } from "next";
 
 export const metadata: Metadata = {
   title: {
-    template: '%s | TheoForge - AI Strategy & Implementation',
-    default: 'TheoForge - AI Strategy & Implementation Specialists',
+    template: `%s | ${siteConfig.name}`,
+    default: `${siteConfig.name} - AI Strategy & Implementation Specialists`,
   },
-  description: 'TheoForge specializes in AI strategy, Model Context Protocol (MCP) implementation, and AI agent development to transform your business with reliable, high-impact AI solutions.',
-  keywords: [
-    'AI Strategy', 'AI Consulting', 'AI Implementation', 'Model Context Protocol', 'MCP', 
-    'AI Agent Development', 'Multi-Agent Systems', 'Enterprise AI', 'Workforce Training',
-    'Generative AI', 'AI Solutions', 'TheoForge'
-  ],
-  authors: [{ name: 'TheoForge Team' }],
+  description: siteConfig.description,
+  keywords: siteConfig.keywords,
+  authors: [{ name: siteConfig.author }],
+  metadataBase: new URL(siteConfig.url),
   openGraph: {
-    title: 'TheoForge - AI Strategy & Implementation | Model Context Protocol (MCP) Compatible',
-    description: 'Strategic advisory for AI implementation featuring Model Context Protocol (MCP) and multi-agent systems to build reliable, enterprise-ready AI solutions.',
     type: 'website',
+    locale: 'en_US',
+    url: siteConfig.url,
+    title: `${siteConfig.name} - AI Strategy & Implementation | Genesis Engine`,
+    description: siteConfig.description,
+    siteName: siteConfig.name,
+    images: [
+      {
+        url: siteConfig.ogImage,
+        width: 1200,
+        height: 630,
+        alt: siteConfig.name
+      }
+    ]
   },
+  twitter: {
+    card: 'summary_large_image',
+    title: siteConfig.name,
+    description: siteConfig.description,
+    images: [siteConfig.ogImage],
+    creator: siteConfig.twitterHandle
+  },
+  icons: {
+    icon: '/favicon.ico',
+    shortcut: '/favicon-16x16.png',
+    apple: '/apple-touch-icon.png'
+  }
 };
 
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
