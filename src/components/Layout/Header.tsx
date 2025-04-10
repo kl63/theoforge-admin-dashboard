@@ -24,7 +24,7 @@ const Header: React.FC = () => {
     { label: "About", path: "/about" },
     { label: "Services", path: "/services" },
     { label: "Insights", path: "/insights" },
-    { label: "Forge", path: "/forge" }, 
+    { label: "The Forge", path: "/forge" }, 
     { label: "Community", path: "/community" },
     { label: "Contact", path: "/contact" },
   ];
