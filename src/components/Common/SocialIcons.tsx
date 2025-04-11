@@ -20,9 +20,9 @@ const socialLinksData: SocialLink[] = [
   },
   {
     name: 'YouTube',
-    href: 'https://www.youtube.com/@Firehose360', // Updated YouTube channel link
+    href: 'https://www.youtube.com/@theoforge', // Updated YouTube channel link
     icon: FaYoutube,
-    ariaLabel: 'Subscribe to Firehose360 on YouTube',
+    ariaLabel: 'Subscribe to TheoForge on YouTube',
   },
   {
     name: 'GitHub',

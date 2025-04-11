@@ -24,14 +24,13 @@ const HeroSection = () => (
           level={1} // H1 equivalent
           className="font-bold text-white text-3xl sm:text-5xl md:text-6xl mb-8 leading-tight" // Larger, bolder text
         >
-          Transform AI Complexity into Strategic Confidence
+          Empower Enterprise Engineering Through Strategic AI Transformation
         </Heading>
         {/* Use Paragraph component, variant defaults to body1 */}
         <Paragraph className="text-white text-xl mb-10 max-w-2xl"> 
-          Partner with TheoForge to navigate the AI landscape through 
-          <span className="text-secondary font-semibold"> integrated expertise</span> in strategy, 
-          engineering, and education to build reliable, 
-          <span className="text-secondary font-semibold"> high-impact AI solutions</span>
+          Enterprise leaders partner with TheoForge for our 
+          <span className="text-secondary font-semibold"> unique 360° perspective</span> that combines hands-on AI implementation, enterprise leadership, and founder experience to 
+          <span className="text-secondary font-semibold"> elevate engineering teams</span> to higher-impact work
         </Paragraph>
 
         {/* Use Button component with Secondary OUTLINE variant */}
@@ -42,15 +41,15 @@ const HeroSection = () => (
             size="lg" 
             className="shadow-md"
           >
-            Explore Our Services
+            Enterprise AI Services
           </Button>
           <Button 
             variant="outline"
-            href="/community" 
+            href="/about/theoforge-living-lab" 
             size="lg" 
             className="border-secondary text-white hover:bg-secondary/10" 
           >
-            Join Our Community
+            Our Living Lab Approach
           </Button>
         </div>
       </div>

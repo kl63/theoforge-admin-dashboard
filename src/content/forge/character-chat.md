@@ -1,20 +1,13 @@
 ---
 id: 'character-chat'
-title: 'Interactive Character Chat'
+title: 'Enterprise Character AI for Customer Engagement'
 githubUrl: 'https://github.com/theoforge/character-chat'
 liveUrl: undefined
 tryUrl: '/forge/character-chat'
-tags: ['AI Characters', 'Interactive Chat', 'Streaming', 'Next.js', 'LLM', 'Genesis Engine']
+tags: ['Enterprise AI', 'Customer Experience', 'Workforce Training']
 featured: true
 image: '/images/forge/characters/forge_characters_project.png'
 status: 'Alpha'
 ---
 
-An interactive chat interface powered by the Genesis Engine that allows you to converse with AI characters with distinct personalities, backstories, and communication styles. This demonstration showcases how AI agents can maintain consistent personas across conversations while providing engaging, character-appropriate responses.
-
-Key features include:
-- Character selection interface with profile pictures and biographical information
-- Streaming text responses that mimic natural typing patterns
-- Persistent chat history with each character
-- Character-specific system prompts that shape interaction style and knowledge base
-- Responsive design that works across desktop and mobile devices
+From our living lab: Enterprise-grade AI personas designed to enhance customer engagement and employee training programs. This technology aims to deliver measurable impact by maintaining brand consistency while ensuring regulatory compliance. Experience the innovative approach that informs our Workforce Training service in action.

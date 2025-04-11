@@ -1,19 +1,12 @@
 ---
 id: 'philosopher-graph'
-title: 'Philosopher Knowledge Graph'
+title: 'Enterprise Knowledge Graph Platform'
 githubUrl: 'https://github.com/theoforge/philosopher-graph-demo'
 liveUrl: undefined
 tryUrl: '/forge/philosopher-graph'
-tags: ['Knowledge Graph', 'Neo4j', 'Next.js', 'Visualization']
+tags: ['Knowledge Management', 'Engineering Empowerment', 'Enterprise Data']
 featured: true
-image: '/images/forge/philosphers/forge_philospher_project.png' # Corrected image path
+image: '/images/forge/philosphers/forge_philospher_project.png'
 ---
 
-An interactive visualization platform that maps the complex relationships between philosophers, their ideas, and influences across the history of thought. This project leverages Neo4j graph database technology to represent philosophical connections that traditional hierarchical systems cannot easily capture.
-
-Key features include:
-- Interactive network visualization allowing intuitive exploration of philosophical movements
-- Timeline-based filtering to discover how ideas evolved across different eras
-- Detailed philosopher profiles with biographical information and key contributions
-- Relationship mapping showing teacher-student connections and intellectual influences
-- Search functionality to quickly find specific philosophers or concepts
+From our living lab: Knowledge graph technology designed to help enterprises transform siloed data into actionable insights. While demonstrated with philosophical concepts, this system illustrates how similar approaches can enhance insight discovery across manufacturing, finance, and pharmaceutical sectors. Experience how our Engineering Empowerment service can help reveal hidden relationships that traditional hierarchical systems may not capture.

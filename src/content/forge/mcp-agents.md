@@ -1,20 +1,13 @@
 ---
 id: 'mcp-agents'
-title: 'Model Context Protocol (MCP) Multi-Agent Collaboration Platform'
+title: 'Enterprise AI Orchestration Platform'
 githubUrl: 'https://github.com/theoforge/mcp'
 liveUrl: undefined
 tryUrl: undefined
-tags: ['Model Context Protocol', 'MCP', 'AI Agents', 'Multi-Agent Systems', 'LLM Orchestration', 'AI Development']
+tags: ['Enterprise AI', 'Technology Strategy', 'Integration']
 featured: true
 image: '/images/forge/mcp/forge_mcp_project.png'
 status: 'Coming Soon'
 ---
 
-A framework implementing the Model Context Protocol (MCP) that enables multiple AI agents to collaborate effectively on complex enterprise tasks. This platform standardizes how agents communicate, share context, and coordinate their specialized capabilities.
-
-Key features include:
-- Standardized agent-to-agent communication protocols and interfaces
-- Task orchestration and workflow management across multiple specialized agents
-- Context-aware reasoning with unified memory and knowledge sharing
-- Flexible agent role definition and dynamic team composition
-- Scalable architecture for enterprise-grade AI agent deployment
+From our living lab: An AI governance framework designed to help enterprise CTOs coordinate specialized AI agents across their organization. This platform aims to eliminate silos, streamline AI integration, and provide centralized governance and visibility. See how our Technology Strategy & Leadership service can help transform scattered AI initiatives into a cohesive, enterprise-grade capability with measurable results.

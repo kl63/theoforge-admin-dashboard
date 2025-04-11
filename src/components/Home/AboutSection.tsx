@@ -19,18 +19,18 @@ const AboutSection: React.FC = () => {
 
       <div className="max-w-3xl mx-auto text-center mb-10">
         <p className="text-gray-600 dark:text-gray-300">
-          We provide <span className="text-secondary font-medium">strategic advisory</span>, <span className="text-secondary font-medium">implementation guidance</span>, and <span className="text-secondary font-medium">workforce training</span> to transform AI complexity into strategic confidence
+          We provide enterprise leaders with <span className="text-secondary font-medium">engineering empowerment</span>, <span className="text-secondary font-medium">strategic leadership</span>, and <span className="text-secondary font-medium">capability building</span> through our unique 360-degree perspective
         </p>
       </div>
 
       <div className="flex flex-col md:flex-row gap-10 items-start mb-16">
         <div className="flex-1">
           <Paragraph className="mb-6 text-gray-700 dark:text-gray-200">
-            TheoForge is dedicated to <span className="text-secondary font-semibold">transforming AI complexity into strategic confidence</span> for businesses and educational institutions. Based in Newark, NJ, we provide expert guidance, pragmatic implementation, and tailored education to ensure you successfully navigate the AI landscape. Our solutions are compatible with emerging standards such as the <span className="text-secondary">Model Context Protocol (MCP)</span>.
+            TheoForge operates as a <span className="text-secondary font-semibold">living laboratory for enterprise AI innovation</span>, where we practice what we advise. Our consultancy doesn't just recommend AI implementation strategies—we live them daily, testing and refining the same approaches we recommend to global enterprise clients.
           </Paragraph>
           
           <Paragraph className="mb-8 text-gray-600 dark:text-gray-300">
-            We focus on delivering practical, high-impact AI advisory services precisely aligned with your core objectives. Our service portfolio spans Technology Strategy and Leadership, AI Driven Modernisation Advisory, and Future Ready Workforce Training to ensure comprehensive support across your AI journey, including guidance on <span className="font-medium">AI agent development</span> and integration.
+            We focus on <span className="font-medium">empowering engineering teams</span> rather than replacing them, delivering practical, high-impact AI implementation strategies that position your technical talent for higher-value work while accelerating innovation. Our service portfolio spans Engineering Empowerment, Technology Strategy & Leadership, and Future Ready Workforce Training to ensure enterprise-scale transformation.
           </Paragraph>
           
           <Heading level={3} className="group text-2xl font-semibold mt-8 mb-5 text-gray-900 dark:text-gray-50 flex items-center">
@@ -39,11 +39,11 @@ const AboutSection: React.FC = () => {
                 <path d="M10.75 16.82A7.462 7.462 0 0115 15.5c.71 0 1.396.098 2.046.282A.75.75 0 0018 15.06v-11a.75.75 0 00-.546-.721A9.006 9.006 0 0015 3a8.963 8.963 0 00-4.25 1.065V16.82zM9.25 4.065A8.963 8.963 0 005 3c-.85 0-1.673.118-2.454.339A.75.75 0 002 4.06v11a.75.75 0 00.954.721A7.506 7.506 0 015 15.5c1.579 0 3.042.487 4.25 1.32V4.065z" />
               </svg>
             </span>
-            Our Approach: Clarity, Capability, Confidence
+            Our Approach: Experience, Implementation, Results
           </Heading>
           
           <Paragraph className="mb-6 text-gray-600 dark:text-gray-300 pl-4 md:pl-11">
-            We bridge the gap between the potential of advanced AI and its practical, valuable application within your context. Whether charting your initial AI course or scaling sophisticated systems that leverage the <span className="text-secondary">Model Context Protocol (MCP)</span> for AI agent orchestration, TheoForge provides the strategic insight, technical skill, and educational support to build lasting AI capability and confidence.
+            We bridge the gap between AI potential and enterprise implementation by combining hands-on programming experience, enterprise leadership perspective, and entrepreneurial insight. This 360-degree view enables us to deliver pragmatic solutions that transform complex AI capabilities into measurable business outcomes while elevating your engineering teams.
           </Paragraph>
         </div>
         
@@ -70,7 +70,7 @@ const AboutSection: React.FC = () => {
           </Paragraph>
           
           <Paragraph className="text-left text-gray-600 dark:text-gray-300">
-            Keith brings a unique blend of 30 years of engineering experience, 20 years of university-level teaching, and deep expertise in AI technologies to your most complex challenges.
+            Keith brings a unique perspective combining early adoption experience with generative AI systems, leadership background in technology investment, startup experience, and educational expertise.
           </Paragraph>
           
           <Button 
@@ -86,20 +86,20 @@ const AboutSection: React.FC = () => {
       </div>
 
       <Heading level={3} className="text-2xl font-semibold mt-16 mb-8 text-center text-gray-900 dark:text-white">
-        Why Partner with TheoForge?
+        Why Enterprise Leaders Partner with TheoForge
       </Heading>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-10">
         {[
           {
-            title: 'Integrated Expertise for Holistic Solutions',
+            title: 'A Unique 360-Degree Perspective',
             icon: "puzzle",
-            content: 'We combine deep AI technical skill (RAG, LLMs, Graphs) with strategic vision and user-centric design. This holistic approach moves beyond isolated features to deliver cohesive, high-impact AI systems you can trust.',
+            content: 'We combine daily hands-on AI implementation experience, enterprise leadership as a fund CTO, and startup founding success to identify opportunities and challenges that specialists with narrower experience simply cannot see.',
           },
           {
-            title: 'From Complexity to Confident Adoption',
+            title: 'Living Lab for Enterprise Innovation',
             icon: "path",
-            content: 'Leveraging decades of CTO leadership and instructional design mastery, we translate complex AI concepts into practical strategies and build internal capabilities, ensuring your team adopts and leverages AI effectively and confidently.',
+            content: 'Our advice comes from direct experience as a continuously evolving laboratory where we implement, test, and refine the same AI-powered approaches we recommend to enterprise clients—proving their effectiveness before recommending them.',
           },
         ].map((benefit, index) => {
           // Define icon components based on type
