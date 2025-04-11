@@ -30,7 +30,7 @@ Why partner with Theoforge? Because we bridge the critical gaps often missed in 
 
 ## The Living Lab Philosophy
 
-The heart of my approach at TheoForge is our [Living Lab](/about/livinglab) philosophy. Rather than offering theoretical advice, I've created an environment where we actively implement, test, and refine the same AI approaches we recommend to clients. This real-world testing ground includes our innovative [Forge projects](/forge) that demonstrate practical applications of emerging AI technologies.
+The heart of my approach at TheoForge is our [Living Lab](/about/living-lab) philosophy. Rather than offering theoretical advice, I've created an environment where we actively implement, test, and refine the same AI approaches we recommend to clients. This real-world testing ground includes our innovative [Forge projects](/forge) that demonstrate practical applications of emerging AI technologies.
 
 Through this living lab approach, I ensure that every recommendation comes from direct, hands-on experience rather than speculation. When I advise on an AI implementation strategy, it's because I've already tested and validated similar approaches in our own operations.
 

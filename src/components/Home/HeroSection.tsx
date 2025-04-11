@@ -37,19 +37,19 @@ const HeroSection = () => (
         <div className="flex flex-col sm:flex-row gap-4 mt-2">
           <Button 
             variant="primary"
-            href="/services" 
+            href="/about/living-lab" 
             size="lg" 
             className="shadow-md"
           >
-            Enterprise AI Services
+            Our Living Lab
           </Button>
           <Button 
             variant="outline"
-            href="/about/theoforge-living-lab" 
+            href="/community" 
             size="lg" 
             className="border-secondary text-white hover:bg-secondary/10" 
           >
-            Our Living Lab Approach
+            Join Our Community
           </Button>
         </div>
       </div>
