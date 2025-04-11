@@ -24,7 +24,7 @@ export default function LivingLabPage() {
       {/* Premium Hero Section with Dual-Layer Design */}
       <div className="relative">
         {/* Upper Section - Image with Overlay */}
-        <div className="relative h-[50vh] md:h-[65vh] overflow-hidden">
+        <div className="relative h-[45vh] sm:h-[50vh] md:h-[65vh] overflow-hidden">
           <Image 
             src="/images/about/living.png" 
             alt="Living Lab Concept" 
@@ -36,8 +36,8 @@ export default function LivingLabPage() {
           <div className="absolute inset-0 bg-gradient-to-b from-primary-dark/80 via-primary-dark/60 to-primary-dark"></div>
           
           <div className="absolute inset-0 flex flex-col items-center justify-center px-4">
-            <span className="inline-block px-4 py-1 bg-white/10 border border-white/20 backdrop-blur-sm text-white text-sm font-medium rounded-full mb-6">TheoForge Innovation</span>
-            <h1 className="font-heading text-5xl md:text-6xl lg:text-7xl font-bold mb-4 text-white text-center max-w-4xl mx-auto tracking-tight leading-none">
+            <span className="inline-block px-3 py-0.5 sm:px-4 sm:py-1 bg-white/10 border border-white/20 backdrop-blur-sm text-white text-xs sm:text-sm font-medium rounded-full mb-4 sm:mb-6">TheoForge Innovation</span>
+            <h1 className="font-heading text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold mb-4 text-white text-center max-w-4xl mx-auto tracking-tight leading-none">
               The Living Lab
             </h1>
           </div>
@@ -45,31 +45,31 @@ export default function LivingLabPage() {
         
         {/* Lower Section - Content Area */}
         <div className="bg-primary relative pb-16">
-          <div className="max-w-4xl mx-auto px-4 pt-10 md:pt-12 text-center">
-            <p className="text-xl md:text-2xl text-white mb-10 max-w-3xl mx-auto">
+          <div className="max-w-4xl mx-auto px-4 pt-8 sm:pt-10 md:pt-12 text-center">
+            <p className="text-lg sm:text-xl md:text-2xl text-white mb-8 sm:mb-10 max-w-3xl mx-auto">
               AI strategies proven in practice, not just theories on slides
             </p>
             
             <div className="flex justify-center">
-              <Link href="/community" className="inline-flex items-center justify-center px-6 py-3 bg-accent text-white rounded-lg font-medium shadow-lg hover:bg-accent/90 transition-all">
-                <MessageCircle className="w-5 h-5 mr-2.5" />
+              <Link href="/community" className="inline-flex items-center justify-center px-5 sm:px-6 py-2.5 sm:py-3 bg-accent text-white rounded-lg font-medium shadow-lg hover:bg-accent/90 transition-all">
+                <MessageCircle className="w-5 h-5 mr-2" aria-hidden="true" />
                 <span className="font-medium">Join the Conversation</span>
               </Link>
             </div>
           </div>
           
           {/* Diagonal Cut Bottom Edge */}
-          <div className="absolute -bottom-16 left-0 right-0 h-16 z-10 overflow-hidden">
+          <div className="absolute -bottom-12 sm:-bottom-16 left-0 right-0 h-12 sm:h-16 z-10 overflow-hidden">
             <div className="absolute inset-0 bg-white dark:bg-background transform -skew-y-2"></div>
           </div>
         </div>
       </div>
 
       {/* Introduction Section */}
-      <SectionContainer className="py-12 md:py-16">
-        <div className="max-w-3xl mx-auto">
+      <SectionContainer className="py-10 md:py-16">
+        <div className="max-w-3xl mx-auto px-4">
           <div className="prose prose-lg dark:prose-invert max-w-none">
-            <p className="lead text-xl">
+            <p className="lead text-lg sm:text-xl">
               At TheoForge, we don't theorize about AI integration—we live it daily. Our Living Lab approach ensures every strategy we recommend has been rigorously tested in our own operations first. 
             </p>
             <p>
@@ -92,13 +92,13 @@ export default function LivingLabPage() {
       </div>
 
       {/* Genesis Engine Section - Improved Responsiveness */}
-      <SectionContainer className="py-12 md:py-16">
-        <div className="flex flex-col lg:flex-row items-center gap-8 max-w-7xl mx-auto">
+      <SectionContainer className="py-10 sm:py-12 md:py-16">
+        <div className="flex flex-col lg:flex-row items-center gap-6 sm:gap-8 max-w-7xl mx-auto">
           <div className="lg:w-1/2 order-2 lg:order-1 px-4">
-            <div className="mb-6">
-              <span className="inline-block px-3 py-1 bg-primary-lightest dark:bg-primary-dark/30 text-primary dark:text-primary-light text-sm font-medium rounded-full mb-3">Enterprise AI Personas</span>
-              <h3 className="text-2xl md:text-3xl font-bold font-heading mb-3">Genesis Engine</h3>
-              <p className="text-neutral-800 dark:text-neutral-200 mb-4">
+            <div className="mb-5 sm:mb-6">
+              <span className="inline-block px-3 py-1 bg-primary-lightest dark:bg-primary-dark/30 text-primary dark:text-primary-light text-sm font-medium rounded-full mb-2 sm:mb-3">Enterprise AI Personas</span>
+              <h3 className="text-xl sm:text-2xl md:text-3xl font-bold font-heading mb-2 sm:mb-3">Genesis Engine</h3>
+              <p className="text-neutral-800 dark:text-neutral-200 mb-4 text-sm sm:text-base">
                 Our enterprise-grade AI persona platform transforms customer engagement and employee training programs with personalized, brand-consistent interactions.
               </p>
             </div>
@@ -166,9 +166,9 @@ export default function LivingLabPage() {
       </SectionContainer>
 
       {/* Knowledge Graph Section - Improved Responsiveness */}
-      <div className="bg-neutral-50 dark:bg-neutral-900 py-12 md:py-16">
-        <div className="flex flex-col lg:flex-row items-center gap-8 max-w-7xl mx-auto px-4">
-          <div className="lg:w-1/2">
+      <div className="bg-neutral-50 dark:bg-neutral-900 py-10 sm:py-12 md:py-16">
+        <div className="flex flex-col lg:flex-row items-center gap-6 sm:gap-8 max-w-7xl mx-auto px-4">
+          <div className="lg:w-1/2 mb-6 lg:mb-0">
             <div className="relative rounded-xl overflow-hidden shadow-xl transform hover:scale-[1.01] transition-transform duration-300">
               <Image 
                 src="/images/forge/philosphers/forge_philospher_project.png" 
@@ -186,10 +186,10 @@ export default function LivingLabPage() {
           </div>
 
           <div className="lg:w-1/2">
-            <div className="mb-6">
-              <span className="inline-block px-3 py-1 bg-primary-lightest dark:bg-primary-dark/30 text-primary dark:text-primary-light text-sm font-medium rounded-full mb-3">Enterprise Knowledge Discovery</span>
-              <h3 className="text-2xl md:text-3xl font-bold font-heading mb-3">Enterprise Knowledge Graph</h3>
-              <p className="text-neutral-800 dark:text-neutral-200 mb-4">
+            <div className="mb-5 sm:mb-6">
+              <span className="inline-block px-3 py-1 bg-primary-lightest dark:bg-primary-dark/30 text-primary dark:text-primary-light text-sm font-medium rounded-full mb-2 sm:mb-3">Enterprise Knowledge Discovery</span>
+              <h3 className="text-xl sm:text-2xl md:text-3xl font-bold font-heading mb-2 sm:mb-3">Enterprise Knowledge Graph</h3>
+              <p className="text-neutral-800 dark:text-neutral-200 mb-4 text-sm sm:text-base">
                 Our Philosopher Graph transforms fragmented organizational knowledge into a unified, actionable intelligence ecosystem.
               </p>
             </div>
@@ -239,13 +239,13 @@ export default function LivingLabPage() {
       </div>
 
       {/* MCP Platform Section - Improved Responsiveness */}
-      <SectionContainer className="py-12 md:py-16">
-        <div className="flex flex-col lg:flex-row items-center gap-8 max-w-7xl mx-auto">
+      <SectionContainer className="py-10 sm:py-12 md:py-16">
+        <div className="flex flex-col lg:flex-row items-center gap-6 sm:gap-8 max-w-7xl mx-auto">
           <div className="lg:w-1/2 order-2 lg:order-1 px-4">
-            <div className="mb-6">
-              <span className="inline-block px-3 py-1 bg-primary-lightest dark:bg-primary-dark/30 text-primary dark:text-primary-light text-sm font-medium rounded-full mb-3">Enterprise AI Governance</span>
-              <h3 className="text-2xl md:text-3xl font-bold font-heading mb-3">MCP Orchestration Platform</h3>
-              <p className="text-neutral-800 dark:text-neutral-200 mb-4">
+            <div className="mb-5 sm:mb-6">
+              <span className="inline-block px-3 py-1 bg-primary-lightest dark:bg-primary-dark/30 text-primary dark:text-primary-light text-sm font-medium rounded-full mb-2 sm:mb-3">Enterprise AI Governance</span>
+              <h3 className="text-xl sm:text-2xl md:text-3xl font-bold font-heading mb-2 sm:mb-3">MCP Orchestration Platform</h3>
+              <p className="text-neutral-800 dark:text-neutral-200 mb-4 text-sm sm:text-base">
                 Our Model Context Protocol framework addresses the critical challenge of coordinating and governing AI systems across large organizations.
               </p>
             </div>
@@ -303,18 +303,18 @@ export default function LivingLabPage() {
       </SectionContainer>
 
       {/* Benefits Grid Section - Improved Responsiveness */}
-      <div className="bg-neutral-50 dark:bg-neutral-900 py-12 md:py-16">
-        <div className="max-w-7xl mx-auto px-4">
-          <div className="text-center mb-10">
-            <Heading level={2} className="text-2xl md:text-3xl font-bold mb-4">
+      <div className="bg-neutral-50 dark:bg-neutral-900 py-10 sm:py-12 md:py-16">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6">
+          <div className="text-center mb-8 sm:mb-10">
+            <Heading level={2} className="text-xl sm:text-2xl md:text-3xl font-bold mb-3 sm:mb-4">
               How Your Enterprise Benefits
             </Heading>
-            <p className="text-neutral-800 dark:text-neutral-200 max-w-3xl mx-auto">
+            <p className="text-neutral-800 dark:text-neutral-200 max-w-3xl mx-auto text-sm sm:text-base">
               Our Living Lab approach translates to tangible advantages for your organization
             </p>
           </div>
 
-          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-5 md:gap-6">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-5 md:gap-6">
             {/* Benefit Card 1 */}
             <div className="bg-white dark:bg-neutral-800 rounded-xl shadow-md hover:shadow-lg transition-shadow p-6">
               <div className="w-10 h-10 bg-primary-lightest dark:bg-primary-dark/30 rounded-full flex items-center justify-center mb-4">
@@ -398,20 +398,21 @@ export default function LivingLabPage() {
       </div>
 
       {/* CTA Section - Improved Responsiveness */}
-      <SectionContainer className="py-12 md:py-16">
-        <div className="max-w-4xl mx-auto text-center px-4">
-          <Heading level={2} className="text-2xl md:text-3xl font-bold mb-4">
+      <SectionContainer className="py-10 sm:py-12 md:py-16">
+        <div className="max-w-4xl mx-auto text-center px-4 sm:px-6">
+          <Heading level={2} className="text-xl sm:text-2xl md:text-3xl font-bold mb-3 sm:mb-4">
             Experience the Living Lab Difference
           </Heading>
-          <p className="text-neutral-800 dark:text-neutral-200 mb-8 max-w-3xl mx-auto">
+          <p className="text-neutral-800 dark:text-neutral-200 mb-6 sm:mb-8 max-w-3xl mx-auto text-sm sm:text-base">
             The TheoForge Living Lab represents our commitment to providing guidance based on real-world implementation. When you partner with us, you benefit from lessons we've learned firsthand—significantly reducing the risks associated with enterprise AI adoption.
           </p>
           
-          <div className="flex flex-col sm:flex-row justify-center gap-4">
+          <div className="flex flex-col sm:flex-row justify-center gap-3 sm:gap-4">
             <Link href="/contact" passHref>
               <Button 
                 variant="primary" 
                 size="md" 
+                className="w-full sm:w-auto"
               >
                 Contact Us
               </Button>
@@ -420,6 +421,7 @@ export default function LivingLabPage() {
               <Button 
                 variant="outline" 
                 size="md"
+                className="w-full sm:w-auto"
               >
                 Explore Our Services
               </Button>
@@ -429,19 +431,19 @@ export default function LivingLabPage() {
       </SectionContainer>
 
       {/* Visit The Forge Banner - Improved Responsiveness */}
-      <div className="bg-primary-dark text-white py-8">
-        <div className="max-w-7xl mx-auto px-4 flex flex-col md:flex-row items-center justify-between gap-6">
+      <div className="bg-primary-dark text-white py-6 sm:py-8">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 flex flex-col md:flex-row items-center justify-between gap-4 sm:gap-6">
           <div>
-            <h3 className="text-xl font-bold mb-2 text-center md:text-left">Visit Our Forge</h3>
-            <p className="text-white/80 text-center md:text-left">
+            <h3 className="text-lg sm:text-xl font-bold mb-1 sm:mb-2 text-center md:text-left">Visit Our Forge</h3>
+            <p className="text-white/80 text-center md:text-left text-sm sm:text-base">
               Interact with our innovative projects and see how they can apply to your specific challenges.
             </p>
           </div>
-          <Link href="/forge" passHref>
+          <Link href="/forge" passHref className="w-full md:w-auto">
             <Button 
               variant="secondary" 
               size="md" 
-              className="whitespace-nowrap"
+              className="whitespace-nowrap w-full md:w-auto mt-2 md:mt-0"
               rightIcon={<ChevronRight className="w-5 h-5 ml-1" />}
             >
               Explore The Forge
