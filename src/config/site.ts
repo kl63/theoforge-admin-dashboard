@@ -14,7 +14,6 @@ export const siteConfig = {
     "AI Consulting", 
     "AI Implementation", 
     "Genesis Engine", 
-    "Character AI", 
     "Enterprise AI",
     "Knowledge Graphs",
     "Interactive AI",

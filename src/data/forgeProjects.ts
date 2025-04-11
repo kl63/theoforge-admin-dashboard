@@ -43,7 +43,7 @@ export const forgeProjects: ForgeProjectData[] = [
     content: 'Developing sophisticated AI agents with distinct personalities, memory, and interaction styles for specialized applications.',
     githubUrl: 'https://github.com/theoforge/character-agents', 
     tryUrl: undefined,
-    tags: ['Agents', 'LLM', 'Character AI', 'Memory', 'TBA'],
+    tags: ['Agents', 'LLM', 'Genesis Engine', 'Memory', 'TBA'],
     featured: false,
     image: '/images/forge/characters/forge_characters_project.png',
     status: 'Coming Soon', 

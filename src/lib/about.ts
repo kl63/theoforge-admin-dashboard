@@ -30,12 +30,23 @@ export interface AboutData {
   image?: string;       // Optional main image URL (e.g., profile picture)
   name?: string;        // Optional main name (e.g., profile name)
   items?: AboutItem[];  // Optional array of about items/sections
+  excerpt?: string;     // Optional excerpt for meta description
 }
 
-// Function to return the about data for a specific user
-export const getAboutData = async (userId: string): Promise<AboutData | null> => {
+// Function to return all about page slugs
+export const getAllAboutSlugs = (): string[] => {
   const aboutDirectory = path.join(process.cwd(), 'src', 'content', 'about');
-  const fullPath = path.join(aboutDirectory, `${userId}.md`);
+  const filenames = fs.readdirSync(aboutDirectory);
+  
+  return filenames
+    .filter(filename => filename.endsWith('.md'))
+    .map(filename => filename.replace(/\.md$/, ''));
+};
+
+// Function to return the about data for a specific slug
+export const getAboutData = async (slug: string): Promise<AboutData | null> => {
+  const aboutDirectory = path.join(process.cwd(), 'src', 'content', 'about');
+  const fullPath = path.join(aboutDirectory, `${slug}.md`);
 
   try {
     const fileContents = fs.readFileSync(fullPath, 'utf8');
@@ -49,16 +60,13 @@ export const getAboutData = async (userId: string): Promise<AboutData | null> =>
       .process(matterResult.content);
     const contentHtml = processedContent.toString();
 
-    // Combine the data with the id and contentHtml
-    // Assuming frontmatter directly maps to AboutData fields
-    // We might need more specific mapping later based on the MD structure
+    // Return the combined data
     return {
-      ...(matterResult.data as Omit<AboutData, 'contentHtml'>), // Cast frontmatter
+      ...matterResult.data as Omit<AboutData, 'contentHtml'>,
       contentHtml,
     };
   } catch (error) {
-    console.error(`Error reading or processing about file for ${userId}:`, error);
-    // If the file doesn't exist or there's an error, return null
+    console.error(`Error reading about file for ${slug}:`, error);
     return null;
   }
 };

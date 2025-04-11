@@ -8,7 +8,7 @@ bio_summary: Keith translates decades of engineering, teaching, and leadership i
 
 # Guiding Your AI Journey with Integrated Expertise
 
-Navigating the complexities of Artificial Intelligence requires more than just technical skill. It demands a partner who understands the technology deeply, grasps its strategic business implications, and knows how to empower your people for lasting success. I founded Theoforge to be that partner.
+Navigating the complexities of Artificial Intelligence requires more than just theoretical skill. It demands a partner who understands the technology deeply, grasps its strategic business implications, and knows how to empower your people for lasting success. I founded Theoforge to be that partner.
 
 With over 30 years immersed in software engineering – from building complex distributed systems to pioneering RAG implementations and researching LLM alignment – I bring a hands-on understanding of what works in the real world. This isn't theoretical; it's practical, proven expertise.
 
@@ -27,6 +27,12 @@ Why partner with Theoforge? Because we bridge the critical gaps often missed in 
 *   **Convergence is Key:** We blend deep engineering prowess, strategic business insight, and proven educational methods. This unique convergence allows us to develop holistic solutions tailored to your specific context.
 *   **From Complexity to Confidence:** Our core promise is to transform the often-bewildering AI landscape into a clear path forward. We replace uncertainty with strategy, and hype with measurable results.
 *   **Building Your Capability:** We don't just deliver solutions; we empower your teams through knowledge transfer, ensuring you build sustainable internal AI capabilities.
+
+## The Living Lab Philosophy
+
+The heart of my approach at TheoForge is our [Living Lab](/about/livinglab) philosophy. Rather than offering theoretical advice, I've created an environment where we actively implement, test, and refine the same AI approaches we recommend to clients. This real-world testing ground includes our innovative [Forge projects](/forge) that demonstrate practical applications of emerging AI technologies.
+
+Through this living lab approach, I ensure that every recommendation comes from direct, hands-on experience rather than speculation. When I advise on an AI implementation strategy, it's because I've already tested and validated similar approaches in our own operations.
 
 ## Ready to Transform Potential into Performance?
 
