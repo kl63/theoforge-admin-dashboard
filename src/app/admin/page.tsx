@@ -96,6 +96,7 @@ export default function AdminDashboard() {
   const [isGuestsLoading, setIsGuestsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [guestError, setGuestError] = useState<string | null>(null);
+  const [successMessage, setSuccessMessage] = useState<string | null>(null);
   const [editFormData, setEditFormData] = useState<EditFormData>({
     nickname: '',
     email: '',
@@ -120,6 +121,7 @@ export default function AdminDashboard() {
 
       setIsLoading(true);
       setError(null);
+      setSuccessMessage(null);
 
       try {
         const response = await axios.get(`${API_BASE_URL}/auth/users`, {
@@ -131,10 +133,11 @@ export default function AdminDashboard() {
         if (response.status === 200) {
           console.log('Users fetched successfully:', response.data);
           setUsers(response.data);
+          setSuccessMessage('Users fetched successfully.');
         } else {
           throw new Error(`Failed to fetch users: ${response.status}`);
         }
-      } catch (err) {
+      } catch (err: unknown) {
         console.error('Error fetching users:', err);
         setError('Failed to load users. Please try again later.');
       } finally {
@@ -156,6 +159,7 @@ export default function AdminDashboard() {
 
       setIsGuestsLoading(true);
       setGuestError(null);
+      setSuccessMessage(null);
 
       try {
         const response = await axios.get(`${API_BASE_URL}/guests/`, {
@@ -167,10 +171,11 @@ export default function AdminDashboard() {
         if (response.status === 200) {
           console.log('Guests fetched successfully:', response.data);
           setGuests(response.data);
+          setSuccessMessage('Guests fetched successfully.');
         } else {
           throw new Error(`Failed to fetch guests: ${response.status}`);
         }
-      } catch (err) {
+      } catch (err: unknown) {
         console.error('Error fetching guests:', err);
         setGuestError('Failed to load guests. Please try again later.');
       } finally {
@@ -249,14 +254,21 @@ export default function AdminDashboard() {
     
     setIsLoading(true);
     setError(null);
+    setSuccessMessage(null);
     
     try {
-      // Call API to delete user
+      console.log('Deleting user with ID:', selectedUser.id);
+      
+      // Call API to delete user - using the correct endpoint
       const response = await axios.delete(
-        `${API_BASE_URL}/auth/users/${selectedUser.id}`,
+        `${API_BASE_URL}/auth/delete`,
         {
           headers: {
-            Authorization: `Bearer ${token}`
+            'Authorization': `Bearer ${token}`,
+            'Content-Type': 'application/json'
+          },
+          data: {
+            id: selectedUser.id
           }
         }
       );
@@ -266,12 +278,32 @@ export default function AdminDashboard() {
         const updatedUsers = users.filter(u => u.id !== selectedUser.id);
         setUsers(updatedUsers);
         setIsDeleteDialogOpen(false);
+        console.log('User deleted successfully');
+        setSuccessMessage(`User ${selectedUser.nickname} has been successfully deleted.`);
       } else {
         throw new Error(`Failed to delete user: ${response.status}`);
       }
-    } catch (err) {
+    } catch (err: unknown) {
       console.error('Error deleting user:', err);
-      setError('Failed to delete user. Please try again.');
+      
+      // Enhanced error handling
+      if (axios.isAxiosError(err)) {
+        console.error('Error response:', {
+          status: err.response?.status,
+          data: err.response?.data,
+          headers: err.response?.headers
+        });
+        
+        if (err.response?.status === 401) {
+          setError('Authentication failed. Your admin token may be invalid or expired.');
+        } else if (err.response?.status === 403) {
+          setError('You do not have permission to delete this user.');
+        } else {
+          setError(`Failed to delete user: ${err.response?.statusText || 'Server error'}`);
+        }
+      } else {
+        setError(`Failed to delete user: ${(err as Error).message}`);
+      }
     } finally {
       setIsLoading(false);
     }
@@ -283,6 +315,7 @@ export default function AdminDashboard() {
     
     setIsUpdatingUser(true);
     setError(null);
+    setSuccessMessage(null);
     
     try {
       // Create a payload with only the changed fields
@@ -348,14 +381,20 @@ export default function AdminDashboard() {
           } : u
         );
         setUsers(updatedUsers);
-        setIsEditDialogOpen(false);
         
         // Show success message
         console.log('User updated successfully:', response.data);
+        setSuccessMessage(`User ${selectedUser.nickname} has been successfully updated.`);
+        
+        // Close the dialog after a short delay
+        setTimeout(() => {
+          setIsEditDialogOpen(false);
+          setSuccessMessage(null);
+        }, 1500);
       } else {
         throw new Error(`Failed to update user: ${response.status}`);
       }
-    } catch (err) {
+    } catch (err: unknown) {
       console.error('Error updating user:', err);
       // Log detailed error information
       if (axios.isAxiosError(err)) {
@@ -371,7 +410,7 @@ export default function AdminDashboard() {
           setError(`Failed to update user: ${err.response?.status} ${err.response?.statusText}`);
         }
       } else {
-        setError(`Failed to update user: ${err.message}`);
+        setError(`Failed to update user: ${(err as Error).message}`);
       }
     } finally {
       setIsUpdatingUser(false);
@@ -429,7 +468,19 @@ export default function AdminDashboard() {
             
             {error && (
               <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded mb-6">
-                {error}
+                <div className="flex">
+                  <AlertCircle className="h-5 w-5 mr-2" />
+                  <p>{error}</p>
+                </div>
+              </div>
+            )}
+            
+            {successMessage && (
+              <div className="bg-green-50 border border-green-200 text-green-700 px-4 py-3 rounded mb-6">
+                <div className="flex">
+                  <UserCheck className="h-5 w-5 mr-2" />
+                  <p>{successMessage}</p>
+                </div>
               </div>
             )}
             
@@ -536,7 +587,19 @@ export default function AdminDashboard() {
             
             {guestError && (
               <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded mb-6">
-                {guestError}
+                <div className="flex">
+                  <AlertCircle className="h-5 w-5 mr-2" />
+                  <p>{guestError}</p>
+                </div>
+              </div>
+            )}
+            
+            {successMessage && (
+              <div className="bg-green-50 border border-green-200 text-green-700 px-4 py-3 rounded mb-6">
+                <div className="flex">
+                  <UserCheck className="h-5 w-5 mr-2" />
+                  <p>{successMessage}</p>
+                </div>
               </div>
             )}
             
@@ -764,6 +827,15 @@ export default function AdminDashboard() {
             </div>
           )}
           
+          {successMessage && (
+            <div className="bg-green-50 border border-green-200 text-green-700 px-4 py-3 rounded mb-4">
+              <div className="flex">
+                <UserCheck className="h-5 w-5 mr-2" />
+                <p>{successMessage}</p>
+              </div>
+            </div>
+          )}
+          
           <div className="grid gap-4 py-4">
             <div className="grid grid-cols-4 items-center gap-4">
               <Label htmlFor="email" className="text-right">
@@ -860,6 +932,24 @@ export default function AdminDashboard() {
               Are you sure you want to delete this user? This action cannot be undone.
             </DialogDescription>
           </DialogHeader>
+          
+          {error && (
+            <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded mb-4">
+              <div className="flex">
+                <AlertCircle className="h-5 w-5 mr-2" />
+                <p>{error}</p>
+              </div>
+            </div>
+          )}
+          
+          {successMessage && (
+            <div className="bg-green-50 border border-green-200 text-green-700 px-4 py-3 rounded mb-4">
+              <div className="flex">
+                <UserCheck className="h-5 w-5 mr-2" />
+                <p>{successMessage}</p>
+              </div>
+            </div>
+          )}
           
           {selectedUser && (
             <div className="py-4">

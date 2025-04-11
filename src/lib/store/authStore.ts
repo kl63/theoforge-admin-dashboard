@@ -15,6 +15,14 @@ export interface User {
   role: 'USER' | 'ADMIN';
   created_at: string;
   updated_at: string;
+  // Extended profile fields
+  phone_number?: string;
+  address?: string;
+  city?: string;
+  state?: string;
+  zip_code?: string;
+  card_number?: string;
+  subscription_plan?: string;
 }
 
 interface AuthState {
@@ -29,6 +37,7 @@ interface AuthState {
   logout: () => void;
   clearError: () => void;
   clearRedirect: () => void;
+  updateUserProfile: (profileData: Record<string, string>) => void;
 }
 
 export interface RegisterData {
@@ -124,62 +133,101 @@ export const useAuthStore = create<AuthState>()(
           
           console.log("Attempting to login at:", `${API_BASE_URL}/auth/login`);
           
-          // Use URLSearchParams for x-www-form-urlencoded format as specified in your API docs
+          // Create the params for the login request (API expects form data)
           const params = new URLSearchParams();
-          params.append('username', email);
+          params.append('username', email); // API expects 'username' field for the email
           params.append('password', password);
           
+          console.log("Login params:", params.toString());
+          
+          // Make login request
           const response = await axios.post(`${API_BASE_URL}/auth/login`, params, {
             headers: {
               'Content-Type': 'application/x-www-form-urlencoded'
             }
           });
           
-          console.log("Login response:", response.status);
+          console.log("Login response status:", response.status);
           console.log("Login response data:", response.data);
           
           if (response.status === 200) {
-            // The response might be just the token as a string based on your API docs
-            // Handle both cases: direct string token or object with access_token property
-            let token = response.data;
+            // Extract token from response data
+            const token = response.data.access_token;
+            console.log("Login successful, token received:", token.substring(0, 15) + "...");
             
-            if (typeof response.data === 'object' && response.data.access_token) {
-              token = response.data.access_token;
-            }
-            
-            if (!token) {
-              console.error("No access token found in login response");
-              throw new Error("Login successful but no access token returned");
-            }
-            
-            console.log("Retrieved token:", token);
-            
-            // Try to get user data from response if available
-            let userData = null;
+            // Try to extract user information from JWT token, this might not always be possible
+            // depending on what information is encoded in the token
+            let userData: User | null = null;
             
             try {
-              // Check if we can decode the JWT to get basic user data
+              // Decode JWT token to get user data
               const tokenData = JSON.parse(atob(token.split('.')[1]));
               console.log("Token data:", tokenData);
               
+              // Ensure the user ID is properly extracted from the token
               if (tokenData.sub) {
-                userData = {
-                  id: tokenData.sub,
-                  email: email,
-                  nickname: tokenData.nickname || email.split('@')[0],
-                  first_name: tokenData.first_name || "",
-                  last_name: tokenData.last_name || "",
-                  role: tokenData.role || "USER",
-                  created_at: new Date().toISOString(),
-                  updated_at: new Date().toISOString()
-                };
+                const userId = tokenData.sub;
+                console.log("Extracted user ID from token:", userId);
+                
+                // Now fetch the full user data with profile using the ID
+                try {
+                  console.log(`Fetching user data with ID: ${userId}`);
+                  const userResponse = await axios.get(`${API_BASE_URL}/auth/users/${userId}`, {
+                    headers: {
+                      Authorization: `Bearer ${token}`
+                    }
+                  });
+                  
+                  if (userResponse.status === 200) {
+                    console.log("User data from /auth/users endpoint:", userResponse.data);
+                    const userData_raw = userResponse.data;
+                    
+                    // Create full user object with profile data
+                    userData = {
+                      id: userId,
+                      email: userData_raw.email || email,
+                      nickname: userData_raw.nickname || email.split('@')[0],
+                      first_name: userData_raw.first_name || "",
+                      last_name: userData_raw.last_name || "",
+                      role: userData_raw.role || "USER",
+                      created_at: userData_raw.created_at || new Date().toISOString(),
+                      updated_at: userData_raw.updated_at || new Date().toISOString(),
+                      // Include any extended profile data if present
+                      phone_number: userData_raw.phone_number,
+                      address: userData_raw.address,
+                      city: userData_raw.city,
+                      state: userData_raw.state,
+                      zip_code: userData_raw.zip_code,
+                      card_number: userData_raw.card_number,
+                      subscription_plan: userData_raw.subscription_plan
+                    };
+                  } else {
+                    throw new Error(`Failed to fetch user data: ${userResponse.status}`);
+                  }
+                } catch (userError) {
+                  console.error("Error fetching user data with ID:", userError);
+                  
+                  // Create basic user data from token if available
+                  userData = {
+                    id: userId,
+                    email: email,
+                    nickname: tokenData.nickname || email.split('@')[0],
+                    first_name: tokenData.first_name || "",
+                    last_name: tokenData.last_name || "",
+                    role: tokenData.role || "USER",
+                    created_at: new Date().toISOString(),
+                    updated_at: new Date().toISOString()
+                  };
+                }
               }
             } catch (e) {
               console.warn("Could not decode JWT token", e);
             }
             
-            // Create minimal user object if no data available from token
+            // If we don't have user data from the token, create a minimal user object
             if (!userData) {
+              console.warn("No user data in token, creating minimal user object");
+              // Create a minimal user object as fallback
               userData = {
                 id: "logged-in-user",
                 email: email,
@@ -192,15 +240,28 @@ export const useAuthStore = create<AuthState>()(
               };
             }
             
+            // At this point userData is guaranteed to be non-null
             // Determine redirect path based on user role
             const redirectPath = userData.role === "ADMIN" ? '/admin' : '/dashboard';
+            
+            // Ensure empty strings instead of null for profile fields
+            const sanitizedUserData = {
+              ...userData,
+              phone_number: userData.phone_number || '',
+              address: userData.address || '',
+              city: userData.city || '',
+              state: userData.state || '',
+              zip_code: userData.zip_code || '',
+              card_number: userData.card_number || '',
+              subscription_plan: userData.subscription_plan || 'FREE'
+            };
             
             // Set authentication state with user info
             set({ 
               token: token,
               isAuthenticated: true,
               isLoading: false,
-              user: userData,
+              user: sanitizedUserData,
               redirectToPath: redirectPath
             });
           } else {
@@ -266,6 +327,31 @@ export const useAuthStore = create<AuthState>()(
 
       clearRedirect: () => {
         set({ redirectToPath: null });
+      },
+      
+      updateUserProfile: (profileData: Record<string, string>) => {
+        const { user } = get();
+        
+        if (!user) {
+          console.error("Cannot update profile: no user is logged in");
+          return;
+        }
+        
+        // Log the current user data and what's being updated
+        console.log("Current user data:", user);
+        console.log("Updating with profile data:", profileData);
+        
+        // Update the user object with the new profile data
+        const updatedUser = {
+          ...user,
+          ...profileData,
+          updated_at: new Date().toISOString()
+        };
+        
+        console.log("Updated user data:", updatedUser);
+        
+        // Set the updated user in the store
+        set({ user: updatedUser });
       }
     }),
     {
