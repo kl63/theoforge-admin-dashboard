@@ -92,10 +92,18 @@ export default function AdminDashboard() {
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
   const [isGuestDetailsDialogOpen, setIsGuestDetailsDialogOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
+  const [isUpdatingUser, setIsUpdatingUser] = useState(false);
   const [isGuestsLoading, setIsGuestsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [guestError, setGuestError] = useState<string | null>(null);
   const [editFormData, setEditFormData] = useState<EditFormData>({
+    nickname: '',
+    email: '',
+    first_name: '',
+    last_name: '',
+    role: 'USER'
+  });
+  const [originalFormData, setOriginalFormData] = useState<EditFormData>({
     nickname: '',
     email: '',
     first_name: '',
@@ -208,13 +216,15 @@ export default function AdminDashboard() {
   // Handle user edit
   const handleEditUser = (user: AdminUser) => {
     setSelectedUser(user);
-    setEditFormData({
+    const formData = {
       nickname: user.nickname,
       email: user.email,
       first_name: user.first_name,
       last_name: user.last_name,
       role: user.role
-    });
+    };
+    setEditFormData(formData);
+    setOriginalFormData(formData);
     setIsEditDialogOpen(true);
   };
 
@@ -231,49 +241,6 @@ export default function AdminDashboard() {
       ...editFormData,
       [name]: value as string
     });
-  };
-
-  // Save edited user
-  const saveUserChanges = async () => {
-    if (!selectedUser || !token) return;
-    
-    setIsLoading(true);
-    setError(null);
-    
-    try {
-      // Call API to update user - using the endpoint mentioned in memory
-      const response = await axios.put(
-        `${API_BASE_URL}/auth/update`, 
-        {
-          id: selectedUser.id,
-          ...editFormData
-        },
-        {
-          headers: {
-            Authorization: `Bearer ${token}`
-          }
-        }
-      );
-      
-      if (response.status === 200) {
-        // Update local state with the updated user
-        const updatedUsers = users.map(u => 
-          u.id === selectedUser.id ? { 
-            ...u, 
-            ...editFormData
-          } : u
-        );
-        setUsers(updatedUsers);
-        setIsEditDialogOpen(false);
-      } else {
-        throw new Error(`Failed to update user: ${response.status}`);
-      }
-    } catch (err) {
-      console.error('Error updating user:', err);
-      setError('Failed to update user. Please try again.');
-    } finally {
-      setIsLoading(false);
-    }
   };
 
   // Confirm user deletion
@@ -307,6 +274,107 @@ export default function AdminDashboard() {
       setError('Failed to delete user. Please try again.');
     } finally {
       setIsLoading(false);
+    }
+  };
+
+  // Save edited user using the admin endpoint
+  const saveUserChanges = async () => {
+    if (!selectedUser || !token) return;
+    
+    setIsUpdatingUser(true);
+    setError(null);
+    
+    try {
+      // Create a payload with only the changed fields
+      const changedFields: Partial<EditFormData> = {};
+      
+      // Compare each field with original value and only include if changed
+      if (editFormData.nickname !== originalFormData.nickname) {
+        changedFields.nickname = editFormData.nickname;
+      }
+      
+      if (editFormData.email !== originalFormData.email) {
+        changedFields.email = editFormData.email;
+      }
+      
+      if (editFormData.first_name !== originalFormData.first_name) {
+        changedFields.first_name = editFormData.first_name;
+      }
+      
+      if (editFormData.last_name !== originalFormData.last_name) {
+        changedFields.last_name = editFormData.last_name;
+      }
+      
+      if (editFormData.role !== originalFormData.role) {
+        changedFields.role = editFormData.role;
+      }
+      
+      // If no fields were changed, just close the dialog
+      if (Object.keys(changedFields).length === 0) {
+        setIsEditDialogOpen(false);
+        setIsUpdatingUser(false);
+        return;
+      }
+      
+      console.log('Updating user with changed fields only:', changedFields);
+      
+      // Check if token is available and log its first few characters for debugging
+      if (!token) {
+        throw new Error('No authentication token available');
+      }
+      
+      console.log('Using token (first 10 chars):', token.substring(0, 10) + '...');
+      console.log('API endpoint:', `${API_BASE_URL}/auth/admin/users/${selectedUser.id}`);
+      
+      // Call the admin API endpoint to update user
+      const response = await axios.put(
+        `${API_BASE_URL}/auth/admin/users/${selectedUser.id}`, 
+        changedFields,
+        {
+          headers: {
+            'Authorization': `Bearer ${token}`,
+            'Content-Type': 'application/json'
+          }
+        }
+      );
+      
+      if (response.status === 200) {
+        // Update local state with the updated user
+        const updatedUsers = users.map(u => 
+          u.id === selectedUser.id ? { 
+            ...u, 
+            ...changedFields, // Only update the changed fields
+            email_verified: u.email_verified // Preserve verification status
+          } : u
+        );
+        setUsers(updatedUsers);
+        setIsEditDialogOpen(false);
+        
+        // Show success message
+        console.log('User updated successfully:', response.data);
+      } else {
+        throw new Error(`Failed to update user: ${response.status}`);
+      }
+    } catch (err) {
+      console.error('Error updating user:', err);
+      // Log detailed error information
+      if (axios.isAxiosError(err)) {
+        console.error('Error response:', {
+          status: err.response?.status,
+          data: err.response?.data,
+          headers: err.response?.headers
+        });
+        
+        if (err.response?.status === 401) {
+          setError('Authentication failed. Your admin token may be invalid or expired. Please log out and log back in.');
+        } else {
+          setError(`Failed to update user: ${err.response?.status} ${err.response?.statusText}`);
+        }
+      } else {
+        setError(`Failed to update user: ${err.message}`);
+      }
+    } finally {
+      setIsUpdatingUser(false);
     }
   };
 
@@ -687,6 +755,15 @@ export default function AdminDashboard() {
             </DialogDescription>
           </DialogHeader>
           
+          {error && (
+            <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded mb-4">
+              <div className="flex">
+                <AlertCircle className="h-5 w-5 mr-2" />
+                <p>{error}</p>
+              </div>
+            </div>
+          )}
+          
           <div className="grid gap-4 py-4">
             <div className="grid grid-cols-4 items-center gap-4">
               <Label htmlFor="email" className="text-right">
@@ -759,9 +836,9 @@ export default function AdminDashboard() {
             </Button>
             <Button 
               onClick={saveUserChanges}
-              disabled={isLoading}
+              disabled={isUpdatingUser}
             >
-              {isLoading ? (
+              {isUpdatingUser ? (
                 <>
                   <Loader2 className="mr-2 h-4 w-4 animate-spin" />
                   Saving...
