@@ -10,7 +10,7 @@ function generateId() {
 }
 
 // API URL
-const API_BASE_URL = 'http://localhost:8000';
+const API_BASE_URL = '/api';
 
 // Define message types
 interface Message {
@@ -240,9 +240,13 @@ const ChatBox: React.FC = () => {
         status: 'NEW'
       };
       
-      // Submit to API
+      // Submit to API - remove trailing slash to match our API route
       console.log('Submitting guest data:', updatedGuestData);
-      const response = await axios.post(`${API_BASE_URL}/guests/`, updatedGuestData);
+      const response = await axios.post(`${API_BASE_URL}/guests`, updatedGuestData, {
+        headers: {
+          'Content-Type': 'application/json'
+        }
+      });
       
       if (response.status === 200 || response.status === 201) {
         console.log('Guest data submitted successfully:', response.data);
@@ -255,6 +259,16 @@ const ChatBox: React.FC = () => {
       }
     } catch (error) {
       console.error('Error submitting guest data:', error);
+      
+      // Detailed error logging
+      if (axios.isAxiosError(error)) {
+        console.error('Axios error details:', {
+          status: error.response?.status,
+          statusText: error.response?.statusText,
+          data: error.response?.data
+        });
+      }
+      
       addMessage("I'm sorry, there was an error saving your information. Please try again later or contact us directly at contact@theoforge.com", true);
     } finally {
       setIsSubmitting(false);

@@ -4,7 +4,7 @@ import axios, { AxiosError } from 'axios';
 import { type StateCreator } from 'zustand';
 
 // Configure axios defaults
-axios.defaults.withCredentials = true; // Important for CORS with credentials
+// axios.defaults.withCredentials = true; // Commenting out to fix CORS issues
 
 export interface User {
   id: string;
@@ -62,7 +62,7 @@ type AuthStorePersist = (
 
 // Declare the API_BASE_URL with explicit type
 // Update this URL to match your FastAPI backend URL
-const API_BASE_URL = 'http://localhost:8000'; // Explicitly set to match your backend URL
+const API_BASE_URL = '/api'; // Using our Next.js proxy to avoid CORS issues
 
 // For debugging - log the API URL being used
 console.log("API URL being used:", API_BASE_URL);
@@ -132,6 +132,7 @@ export const useAuthStore = create<AuthState>()(
           set({ isLoading: true, error: null });
           
           console.log("Attempting to login at:", `${API_BASE_URL}/auth/login`);
+          console.log("With credentials for:", email);
           
           // Create the params for the login request (API expects form data)
           const params = new URLSearchParams();
@@ -143,7 +144,8 @@ export const useAuthStore = create<AuthState>()(
           // Make login request
           const response = await axios.post(`${API_BASE_URL}/auth/login`, params, {
             headers: {
-              'Content-Type': 'application/x-www-form-urlencoded'
+              'Content-Type': 'application/x-www-form-urlencoded',
+              'Accept': 'application/json'
             }
           });
           
@@ -234,7 +236,7 @@ export const useAuthStore = create<AuthState>()(
                 nickname: email.split('@')[0],
                 first_name: "",
                 last_name: "",
-                role: "USER" as "USER" | "ADMIN",
+                role: email.toLowerCase().includes('admin') ? "ADMIN" : "USER", // Use email to determine role as fallback
                 created_at: new Date().toISOString(),
                 updated_at: new Date().toISOString()
               };
@@ -247,6 +249,7 @@ export const useAuthStore = create<AuthState>()(
             // Ensure empty strings instead of null for profile fields
             const sanitizedUserData = {
               ...userData,
+              role: userData.role, // Explicitly preserve the role
               phone_number: userData.phone_number || '',
               address: userData.address || '',
               city: userData.city || '',

@@ -12,7 +12,7 @@ import { AlertCircle, Check, Loader2 } from 'lucide-react';
 import axios from 'axios';
 
 // API base URL - should match the one in authStore
-const API_BASE_URL = 'http://localhost:8000';
+const API_BASE_URL = '/api';
 
 // User Profile interface
 interface UserProfile {

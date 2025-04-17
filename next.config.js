@@ -19,6 +19,26 @@ const nextConfig = {
       },
     ],
   },
+  // Add API route rewriting to handle CORS issues in development
+  async rewrites() {
+    return [
+      // Specific rule for guests endpoint with exact path
+      {
+        source: '/api/guests/',
+        destination: 'http://dev.theoforge.com/API/guests/',
+      },
+      // Specific rule for guests endpoint with path parameters
+      {
+        source: '/api/guests/:path*',
+        destination: 'http://dev.theoforge.com/API/guests/:path*',
+      },
+      // General rule for other API paths
+      {
+        source: '/api/:path*',
+        destination: 'http://dev.theoforge.com/API/:path*',
+      },
+    ];
+  },
 };
 
 module.exports = nextConfig;

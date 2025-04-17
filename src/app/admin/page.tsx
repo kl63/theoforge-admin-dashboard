@@ -77,7 +77,7 @@ interface EditFormData {
 }
 
 // API base URL - should match the one in authStore
-const API_BASE_URL = 'http://localhost:8000';
+const API_BASE_URL = '/api';
 
 export default function AdminDashboard() {
   const { isAuthenticated, user, token } = useAuthStore();
@@ -162,9 +162,12 @@ export default function AdminDashboard() {
       setSuccessMessage(null);
 
       try {
-        const response = await axios.get(`${API_BASE_URL}/guests/`, {
+        console.log('Attempting to fetch guests from:', `/api/guests`);
+        const response = await axios.get(`/api/guests`, {
           headers: {
-            Authorization: `Bearer ${token}`
+            Authorization: `Bearer ${token}`,
+            'Cache-Control': 'no-cache',
+            'Pragma': 'no-cache'
           }
         });
 
@@ -177,6 +180,14 @@ export default function AdminDashboard() {
         }
       } catch (err: unknown) {
         console.error('Error fetching guests:', err);
+        if (axios.isAxiosError(err)) {
+          console.error('Axios error details:', {
+            status: err.response?.status,
+            statusText: err.response?.statusText,
+            data: err.response?.data,
+            config: err.config
+          });
+        }
         setGuestError('Failed to load guests. Please try again later.');
       } finally {
         setIsGuestsLoading(false);
